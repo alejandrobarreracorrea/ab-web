@@ -130,3 +130,84 @@ resource "aws_iam_role_policy" "pagos_exec" {
     ]
   })
 }
+
+# ---------------------------------------------------------------------------
+# Lambda pagos-iniciar: webhook BOOKING_REQUESTED de Cal.com + GET de solo
+# lectura para que /mentoria/pagar/ recupere los datos del checkout.
+# ---------------------------------------------------------------------------
+
+data "archive_file" "pagos_iniciar" {
+  type        = "zip"
+  output_path = "${path.module}/build/pagos_iniciar.zip"
+
+  source {
+    content  = file("${path.module}/lambda/pagos_iniciar.py")
+    filename = "pagos_iniciar.py"
+  }
+  source {
+    content  = file("${path.module}/lambda/wompi.py")
+    filename = "wompi.py"
+  }
+  source {
+    content  = file("${path.module}/lambda/calcom.py")
+    filename = "calcom.py"
+  }
+  source {
+    content  = file("${path.module}/lambda/trm.py")
+    filename = "trm.py"
+  }
+}
+
+resource "aws_lambda_function" "pagos_iniciar" {
+  function_name    = "ab-pagos-iniciar-${var.environment}"
+  role             = aws_iam_role.pagos_exec.arn
+  runtime          = "python3.12"
+  handler          = "pagos_iniciar.handler"
+  filename         = data.archive_file.pagos_iniciar.output_path
+  source_code_hash = data.archive_file.pagos_iniciar.output_base64sha256
+  timeout          = 15
+  memory_size      = 128
+  tags             = local.tags
+
+  environment {
+    variables = {
+      TABLE_NAME       = aws_dynamodb_table.pagos.name
+      CREDENCIALES_SSM = aws_ssm_parameter.pagos_credenciales.name
+      SENDER           = "Alejandro Barrera · IAOps <hola@${var.domain_name}>"
+      PRECIO_USD       = tostring(var.mentoria_precio_usd)
+      PAGINA_PAGO_URL  = "https://iaopslatam.com/mentoria/pagar/"
+    }
+  }
+}
+
+resource "aws_lambda_function_url" "pagos_iniciar" {
+  function_name      = aws_lambda_function.pagos_iniciar.function_name
+  authorization_type = "NONE"
+
+  cors {
+    allow_origins = ["https://iaopslatam.com", "https://www.iaopslatam.com"]
+    allow_methods = ["GET", "POST"]
+    allow_headers = ["content-type"]
+    max_age       = 86400
+  }
+}
+
+resource "aws_lambda_permission" "pagos_iniciar_url" {
+  statement_id           = "AllowPublicFunctionUrl"
+  action                 = "lambda:InvokeFunctionUrl"
+  function_name          = aws_lambda_function.pagos_iniciar.function_name
+  principal              = "*"
+  function_url_auth_type = "NONE"
+}
+
+resource "aws_lambda_permission" "pagos_iniciar_url_invoke" {
+  statement_id  = "AllowPublicFunctionUrlInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.pagos_iniciar.function_name
+  principal     = "*"
+}
+
+output "pagos_iniciar_url" {
+  description = "Function URL de pagos-iniciar (webhook Cal.com + GET de checkout)"
+  value       = aws_lambda_function_url.pagos_iniciar.function_url
+}
