@@ -7,7 +7,9 @@
 variable "mentoria_precio_usd" {
   description = "Precio de la mentoria 1:1 en USD, usado para calcular el cobro en COP"
   type        = number
-  default     = 80
+  # TEMPORAL: 20 mientras se valida el flujo end-to-end en sandbox de Wompi.
+  # Volver a 80 (precio real de produccion) antes de aceptar pagos reales.
+  default = 20
 }
 
 resource "aws_dynamodb_table" "pagos" {
