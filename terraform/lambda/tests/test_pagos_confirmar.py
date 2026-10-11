@@ -15,6 +15,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 os.environ.setdefault("TABLE_NAME", "ab-pagos-test")
 os.environ.setdefault("CREDENCIALES_SSM", "/ab-pagos/test/credenciales")
+os.environ.setdefault("SENDER", "Alejandro <hola@alejandrobarrera.net>")
 
 REGION = "us-east-1"
 
@@ -80,6 +81,7 @@ def test_pago_aprobado_confirma_la_reserva_y_marca_pagado(mock_confirmar, modulo
     item = modulo.TABLE.get_item(Key={"booking_uid": "abc123"}).get("Item")
     assert item["estado"] == "pagado"
     assert item["wompi_transaction_id"] == "tx-1"
+    assert "expira_en" not in item  # Fix 2: TTL removido al salir de "pendiente"
 
 
 @patch("pagos_confirmar.calcom.confirmar_reserva")
@@ -133,18 +135,83 @@ def test_webhook_reintentado_sobre_item_ya_pagado_es_idempotente(mock_confirmar,
     mock_confirmar.assert_not_called()
 
 
-def test_pago_aprobado_pero_reserva_sin_cupo_marca_pagado_sin_cupo(modulo):
+@patch("pagos_confirmar.SES")
+def test_pago_aprobado_pero_reserva_sin_cupo_marca_pagado_sin_cupo(mock_ses, modulo):
     modulo.TABLE.put_item(Item={
-        "booking_uid": "abc123", "estado": "pendiente", "wompi_reference": "abc123",
+        "booking_uid": "abc123", "estado": "pendiente", "email": "a@b.com", "wompi_reference": "abc123",
         "creado_en": int(time.time()), "expira_en": int(time.time()) + 7200,
     })
     import calcom
-    with patch("pagos_confirmar.calcom.confirmar_reserva", side_effect=calcom.CalComError("403: no cupo")):
+    with patch(
+        "pagos_confirmar.calcom.confirmar_reserva",
+        side_effect=calcom.CalComError("403: no cupo", status=403),
+    ):
         resultado = modulo.handler(_evento_wompi(), None)
 
     assert resultado["statusCode"] == 200
     item = modulo.TABLE.get_item(Key={"booking_uid": "abc123"}).get("Item")
     assert item["estado"] == "pagado_sin_cupo"
+    assert "expira_en" not in item  # Fix 2: TTL removido al salir de "pendiente"
+    mock_ses.send_email.assert_called_once()  # Fix 7: alerta por correo
+    destino = mock_ses.send_email.call_args.kwargs["Destination"]
+    assert destino == {"ToAddresses": ["hola@alejandrobarrera.net"]}
+
+
+def test_pago_tardio_sobre_item_expirado_confirma_la_reserva_y_marca_pagado(modulo):
+    """Fix 1: un item "expirado" (pago llego tarde) debe intentar confirmar en
+    Cal.com igual que uno "pendiente", y terminar "pagado" si Cal.com acepta."""
+    modulo.TABLE.put_item(Item={
+        "booking_uid": "abc123", "estado": "expirado", "wompi_reference": "abc123",
+        "creado_en": int(time.time()), "expira_en": int(time.time()) + 7200,
+    })
+    with patch("pagos_confirmar.calcom.confirmar_reserva") as mock_confirmar:
+        resultado = modulo.handler(_evento_wompi(), None)
+
+    assert resultado["statusCode"] == 200
+    mock_confirmar.assert_called_once_with("abc123", "cal_live_x")
+    item = modulo.TABLE.get_item(Key={"booking_uid": "abc123"}).get("Item")
+    assert item["estado"] == "pagado"
+
+
+@patch("pagos_confirmar.SES")
+def test_pago_tardio_sobre_item_expirado_sin_cupo_marca_pagado_sin_cupo(mock_ses, modulo):
+    """Fix 1: mismo caso pero Cal.com ya no puede confirmar (4xx) -> pagado_sin_cupo."""
+    modulo.TABLE.put_item(Item={
+        "booking_uid": "abc123", "estado": "expirado", "email": "a@b.com", "wompi_reference": "abc123",
+        "creado_en": int(time.time()), "expira_en": int(time.time()) + 7200,
+    })
+    import calcom
+    with patch(
+        "pagos_confirmar.calcom.confirmar_reserva",
+        side_effect=calcom.CalComError("409: ya no existe", status=409),
+    ):
+        resultado = modulo.handler(_evento_wompi(), None)
+
+    assert resultado["statusCode"] == 200
+    item = modulo.TABLE.get_item(Key={"booking_uid": "abc123"}).get("Item")
+    assert item["estado"] == "pagado_sin_cupo"
+    mock_ses.send_email.assert_called_once()
+
+
+@pytest.mark.parametrize("status_transitorio", [500, 502, None])
+def test_calcom_error_transitorio_no_cambia_estado_y_responde_500(status_transitorio, modulo):
+    """Fix 4: una falla transitoria de Cal.com (5xx o sin respuesta HTTP) no debe
+    marcar pagado_sin_cupo permanentemente; Wompi debe reintentar el webhook."""
+    modulo.TABLE.put_item(Item={
+        "booking_uid": "abc123", "estado": "pendiente", "wompi_reference": "abc123",
+        "creado_en": int(time.time()), "expira_en": int(time.time()) + 7200,
+    })
+    import calcom
+    with patch(
+        "pagos_confirmar.calcom.confirmar_reserva",
+        side_effect=calcom.CalComError("falla transitoria", status=status_transitorio),
+    ):
+        resultado = modulo.handler(_evento_wompi(), None)
+
+    assert resultado["statusCode"] == 500
+    item = modulo.TABLE.get_item(Key={"booking_uid": "abc123"}).get("Item")
+    assert item["estado"] == "pendiente"  # sin cambios
+    assert "expira_en" in item
 
 
 @patch("pagos_confirmar.calcom.confirmar_reserva")

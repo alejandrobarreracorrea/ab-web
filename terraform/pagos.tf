@@ -62,6 +62,12 @@ resource "aws_dynamodb_table" "pagos" {
   tags = local.tags
 }
 
+# Rotacion de credenciales en produccion: se hace actualizando los GitHub
+# Secrets (WOMPI_PUBLIC_KEY, WOMPI_PRIVATE_KEY, WOMPI_INTEGRITY_SECRET,
+# WOMPI_EVENTS_SECRET, CALCOM_API_KEY, CALCOM_WEBHOOK_SECRET) y re-corriendo el
+# pipeline — nunca editando este parametro SSM a mano desde la consola de AWS,
+# porque el siguiente "terraform apply" lo revertiria silenciosamente al valor
+# que tengan los GitHub Secrets en ese momento.
 resource "aws_ssm_parameter" "pagos_credenciales" {
   name = "/ab-pagos/${var.environment}/credenciales"
   type = "SecureString"
@@ -171,11 +177,12 @@ resource "aws_lambda_function" "pagos_iniciar" {
 
   environment {
     variables = {
-      TABLE_NAME       = aws_dynamodb_table.pagos.name
-      CREDENCIALES_SSM = aws_ssm_parameter.pagos_credenciales.name
-      SENDER           = "Alejandro Barrera · IAOps <hola@${var.domain_name}>"
-      PRECIO_USD       = tostring(var.mentoria_precio_usd)
-      PAGINA_PAGO_URL  = "https://iaopslatam.com/mentoria/pagar/"
+      TABLE_NAME           = aws_dynamodb_table.pagos.name
+      CREDENCIALES_SSM     = aws_ssm_parameter.pagos_credenciales.name
+      CREDENCIALES_VERSION = aws_ssm_parameter.pagos_credenciales.version
+      SENDER               = "Alejandro Barrera · IAOps <hola@${var.domain_name}>"
+      PRECIO_USD           = tostring(var.mentoria_precio_usd)
+      PAGINA_PAGO_URL      = "https://iaopslatam.com/mentoria/pagar/"
     }
   }
 }
@@ -248,8 +255,10 @@ resource "aws_lambda_function" "pagos_confirmar" {
 
   environment {
     variables = {
-      TABLE_NAME       = aws_dynamodb_table.pagos.name
-      CREDENCIALES_SSM = aws_ssm_parameter.pagos_credenciales.name
+      TABLE_NAME           = aws_dynamodb_table.pagos.name
+      CREDENCIALES_SSM     = aws_ssm_parameter.pagos_credenciales.name
+      CREDENCIALES_VERSION = aws_ssm_parameter.pagos_credenciales.version
+      SENDER               = "Alejandro Barrera · IAOps <hola@${var.domain_name}>"
     }
   }
 }
@@ -312,8 +321,9 @@ resource "aws_lambda_function" "pagos_liberar" {
 
   environment {
     variables = {
-      TABLE_NAME       = aws_dynamodb_table.pagos.name
-      CREDENCIALES_SSM = aws_ssm_parameter.pagos_credenciales.name
+      TABLE_NAME           = aws_dynamodb_table.pagos.name
+      CREDENCIALES_SSM     = aws_ssm_parameter.pagos_credenciales.name
+      CREDENCIALES_VERSION = aws_ssm_parameter.pagos_credenciales.version
     }
   }
 }
