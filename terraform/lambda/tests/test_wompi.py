@@ -57,3 +57,16 @@ def test_validar_checksum_rechaza_propiedad_faltante_en_data():
         },
     }
     assert wompi.validar_checksum(evento, "secreto") is False
+
+
+def test_validar_checksum_rechaza_evento_none():
+    assert wompi.validar_checksum(None, "secreto") is False
+
+
+def test_validar_checksum_rechaza_evento_no_dict():
+    assert wompi.validar_checksum([], "secreto") is False
+
+
+def test_validar_checksum_rechaza_signature_no_dict():
+    evento = {"signature": "bad string", "data": {}}
+    assert wompi.validar_checksum(evento, "secreto") is False

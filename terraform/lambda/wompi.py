@@ -11,7 +11,13 @@ def firmar_integridad(reference: str, amount_in_cents: int, currency: str, secre
 
 
 def validar_checksum(evento: dict, events_secret: str) -> bool:
+    if not isinstance(evento, dict):
+        return False
+
     firma = evento.get("signature") or {}
+    if not isinstance(firma, dict):
+        return False
+
     properties = firma.get("properties") or []
     checksum_esperado = (firma.get("checksum") or "").lower()
     timestamp = firma.get("timestamp")
