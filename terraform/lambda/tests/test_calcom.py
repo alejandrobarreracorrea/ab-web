@@ -27,6 +27,14 @@ def test_validar_firma_webhook_rechaza_firma_vacia():
     assert calcom.validar_firma_webhook(b"{}", "", "secret") is False
 
 
+def test_validar_firma_webhook_rechaza_secret_none():
+    assert calcom.validar_firma_webhook(b"{}", "somehash", None) is False
+
+
+def test_validar_firma_webhook_rechaza_body_no_bytes():
+    assert calcom.validar_firma_webhook("not-bytes-a-string", "somehash", "secret") is False
+
+
 @patch("calcom.urllib.request.urlopen")
 def test_confirmar_reserva_llama_endpoint_correcto(mock_urlopen):
     mock_resp = MagicMock()

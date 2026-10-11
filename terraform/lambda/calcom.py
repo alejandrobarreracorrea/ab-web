@@ -18,8 +18,15 @@ class CalComError(Exception):
 def validar_firma_webhook(body_raw: bytes, header_signature: str, secret: str) -> bool:
     if not header_signature:
         return False
-    calculado = hmac.new(secret.encode(), body_raw, hashlib.sha256).hexdigest()
-    return hmac.compare_digest(calculado, header_signature.lower())
+    if not isinstance(body_raw, bytes):
+        return False
+    if not isinstance(secret, str):
+        return False
+    try:
+        calculado = hmac.new(secret.encode(), body_raw, hashlib.sha256).hexdigest()
+        return hmac.compare_digest(calculado, header_signature.lower())
+    except (TypeError, AttributeError):
+        return False
 
 
 def _llamar(path: str, api_key: str, body: dict | None = None) -> dict:
