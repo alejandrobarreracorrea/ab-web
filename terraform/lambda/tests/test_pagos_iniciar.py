@@ -74,6 +74,29 @@ def _evento_webhook(uid="abc123", email="Cliente@Example.com  "):
     }
 
 
+def _evento_con_payload(payload):
+    """Construye un webhook con firma valida sobre el body dado (dict ya armado a mano,
+    para probar formas invalidas de payload/attendees/email sin pasar por _evento_webhook)."""
+    body = json.dumps({"triggerEvent": "BOOKING_REQUESTED", "payload": payload}).encode()
+    firma = _firmar(body, "webhook_secreto")
+    return {
+        "requestContext": {"http": {"method": "POST"}},
+        "headers": {"x-cal-signature-256": firma},
+        "body": body.decode(),
+    }
+
+
+def _evento_con_cuerpo_crudo(cuerpo_top_level):
+    """Igual, pero el JSON top-level completo (para probar que `data` no sea un dict)."""
+    body = json.dumps(cuerpo_top_level).encode()
+    firma = _firmar(body, "webhook_secreto")
+    return {
+        "requestContext": {"http": {"method": "POST"}},
+        "headers": {"x-cal-signature-256": firma},
+        "body": body.decode(),
+    }
+
+
 @patch("pagos_iniciar.trm.obtener_trm_actual", return_value=4000.0)
 @patch("pagos_iniciar.SES")
 def test_webhook_booking_requested_guarda_pendiente_y_envia_correo(mock_ses, _mock_trm, modulo):
@@ -170,3 +193,102 @@ def test_metodo_no_soportado_devuelve_405(modulo):
     event = {"requestContext": {"http": {"method": "DELETE"}}}
     resultado = modulo.handler(event, None)
     assert resultado["statusCode"] == 405
+
+
+# ---------------------------------------------------------------------------
+# TRM invalida (cero o negativa): mismo guard de "trm_no_disponible" que TRM=None.
+# ---------------------------------------------------------------------------
+
+@patch("pagos_iniciar.trm.obtener_trm_actual", return_value=0)
+def test_webhook_trm_cero_responde_500(_mock_trm, modulo):
+    resultado = modulo.handler(_evento_webhook(uid="trmcero"), None)
+    assert resultado["statusCode"] == 500
+    assert modulo.TABLE.get_item(Key={"booking_uid": "trmcero"}).get("Item") is None
+
+
+@patch("pagos_iniciar.trm.obtener_trm_actual", return_value=-50.0)
+def test_webhook_trm_negativa_responde_500(_mock_trm, modulo):
+    resultado = modulo.handler(_evento_webhook(uid="trmneg"), None)
+    assert resultado["statusCode"] == 500
+    assert modulo.TABLE.get_item(Key={"booking_uid": "trmneg"}).get("Item") is None
+
+
+# ---------------------------------------------------------------------------
+# Webhooks con firma valida pero cuerpo malformado: ninguno debe lanzar una
+# excepcion no controlada (500 por crash); cada forma invalida navega las
+# guardas isinstance y devuelve una respuesta controlada sin tocar DynamoDB.
+# Ninguno de estos casos llega a llamar TRM o SES (se corta antes), por eso
+# no se mockean.
+# ---------------------------------------------------------------------------
+
+def test_webhook_data_top_level_no_dict_se_ignora_sin_crashear(modulo):
+    resultado = modulo.handler(_evento_con_cuerpo_crudo(["no", "es", "un", "dict"]), None)
+
+    assert resultado["statusCode"] == 200
+    assert json.loads(resultado["body"])["ignorado"] is True
+    assert modulo.TABLE.scan()["Items"] == []
+
+
+def test_webhook_payload_ausente_responde_400(modulo):
+    body = json.dumps({"triggerEvent": "BOOKING_REQUESTED"}).encode()  # sin "payload"
+    firma = _firmar(body, "webhook_secreto")
+    evento = {
+        "requestContext": {"http": {"method": "POST"}},
+        "headers": {"x-cal-signature-256": firma},
+        "body": body.decode(),
+    }
+
+    resultado = modulo.handler(evento, None)
+
+    assert resultado["statusCode"] == 400
+    assert modulo.TABLE.scan()["Items"] == []
+
+
+def test_webhook_payload_no_dict_responde_400(modulo):
+    resultado = modulo.handler(_evento_con_cuerpo_crudo(
+        {"triggerEvent": "BOOKING_REQUESTED", "payload": "no-es-un-dict"}
+    ), None)
+
+    assert resultado["statusCode"] == 400
+    assert modulo.TABLE.scan()["Items"] == []
+
+
+def test_webhook_attendees_ausente_responde_400(modulo):
+    resultado = modulo.handler(_evento_con_payload({"uid": "sin-attendees"}), None)
+
+    assert resultado["statusCode"] == 400
+    assert modulo.TABLE.get_item(Key={"booking_uid": "sin-attendees"}).get("Item") is None
+
+
+def test_webhook_attendees_vacio_responde_400(modulo):
+    resultado = modulo.handler(_evento_con_payload({"uid": "attendees-vacio", "attendees": []}), None)
+
+    assert resultado["statusCode"] == 400
+    assert modulo.TABLE.get_item(Key={"booking_uid": "attendees-vacio"}).get("Item") is None
+
+
+def test_webhook_attendee_no_dict_responde_400(modulo):
+    resultado = modulo.handler(
+        _evento_con_payload({"uid": "attendee-no-dict", "attendees": ["no-es-un-dict"]}), None
+    )
+
+    assert resultado["statusCode"] == 400
+    assert modulo.TABLE.get_item(Key={"booking_uid": "attendee-no-dict"}).get("Item") is None
+
+
+def test_webhook_email_no_string_responde_400(modulo):
+    resultado = modulo.handler(
+        _evento_con_payload({"uid": "email-numero", "attendees": [{"email": 123}]}), None
+    )
+
+    assert resultado["statusCode"] == 400
+    assert modulo.TABLE.get_item(Key={"booking_uid": "email-numero"}).get("Item") is None
+
+
+def test_webhook_email_null_responde_400(modulo):
+    resultado = modulo.handler(
+        _evento_con_payload({"uid": "email-null", "attendees": [{"email": None}]}), None
+    )
+
+    assert resultado["statusCode"] == 400
+    assert modulo.TABLE.get_item(Key={"booking_uid": "email-null"}).get("Item") is None
