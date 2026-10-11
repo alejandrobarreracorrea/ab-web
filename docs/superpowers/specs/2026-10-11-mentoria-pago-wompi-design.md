@@ -23,7 +23,7 @@ un checkout ajeno.
 |---|---|
 | Cuenta Wompi | **Corregido 2026-10-11, validado en vivo**: cuenta `IAOPSLATAM` creada, pero en estado "en revisión" — modo **Sandbox** (`pub_test_...`), no producción. Wompi aún no ha aprobado el cambio a `_prod_`. Secretos de Eventos e Integridad sí existen en sandbox. La implementación se construye y prueba 100% contra sandbox; el paso a producción (reemplazar llaves `_test_` por `_prod_` en el secret) queda pendiente de que Wompi apruebe la cuenta |
 | Nivel de automatización | Totalmente automatizado (sin intervención manual por reserva) |
-| Precio | USD 20 (confirmado en vivo); el cobro real en Wompi se calcula en COP al momento de la reserva |
+| Precio | USD 80 (confirmado en vivo); el cobro real en Wompi se calcula en COP al momento de la reserva |
 | Fuente de la TRM | Automática, API oficial `datos.gov.co` (dataset `32sa-8pi3`, Superintendencia Financiera), sin autenticación |
 | Arquitectura | Opción A: tres Lambdas pequeñas y enfocadas, componente aislado de `ab-leads` |
 
@@ -164,7 +164,7 @@ exclusivamente server-side, dentro de las Lambdas. El frontend solo recibe
 2. Alguien reserva un horario → Cal.com crea la reserva en estado `pending` y dispara el
    webhook `BOOKING_REQUESTED` hacia `pagos-iniciar`.
 3. `pagos-iniciar`: lee el secret, consulta la TRM del día en `datos.gov.co` (o usa
-   `trm_cache` si falla), calcula `monto_cop = 20 × TRM` redondeado, arma la firma de
+   `trm_cache` si falla), calcula `monto_cop = 80 × TRM` redondeado, arma la firma de
    integridad de Wompi, guarda el ítem `pendiente` en DynamoDB (`expira_en = ahora + 2h`),
    **envía por correo (SES) al email del reservante el link
    `iaopslatam.com/mentoria/pagar/?uid=<booking_uid>`** (mismo mecanismo que ya usa
