@@ -61,6 +61,7 @@ def test_libera_pendientes_vencidos(mock_declinar, modulo):
     mock_declinar.assert_called_once_with("viejo", "cal_live_x", "Pago no completado")
     item = modulo.TABLE.get_item(Key={"booking_uid": "viejo"}).get("Item")
     assert item["estado"] == "expirado"
+    assert "expira_en" not in item  # Fix 2: TTL removido al salir de "pendiente"
 
 
 @patch("pagos_liberar.calcom.declinar_reserva")
@@ -126,10 +127,43 @@ def test_un_error_en_una_reserva_no_detiene_las_demas(_mock_declinar, modulo):
         import calcom
         def side_effect(uid, *_args, **_kwargs):
             if uid == "falla":
-                raise calcom.CalComError("500")
+                # Fix 5: status=500 (transitorio) -> se deja pendiente para reintentar.
+                raise calcom.CalComError("500", status=500)
         mock_declinar.side_effect = side_effect
         resultado = modulo.handler({}, None)
 
     assert resultado["liberados"] == 1
     assert modulo.TABLE.get_item(Key={"booking_uid": "ok"}).get("Item")["estado"] == "expirado"
     assert modulo.TABLE.get_item(Key={"booking_uid": "falla"}).get("Item")["estado"] == "pendiente"
+
+
+@patch("pagos_liberar.calcom.declinar_reserva")
+def test_error_4xx_al_declinar_marca_expirado_y_cuenta(mock_declinar, modulo):
+    """Fix 5: si Cal.com responde 4xx (la reserva ya no existe/cambio de su lado),
+    no hay nada que reintentar: se libera el item de todos modos."""
+    import calcom
+    modulo.TABLE.put_item(Item=_item("ya-no-existe", "pendiente", hace_segundos=3 * 3600))
+    mock_declinar.side_effect = calcom.CalComError("404: not found", status=404)
+
+    resultado = modulo.handler({}, None)
+
+    assert resultado["liberados"] == 1
+    item = modulo.TABLE.get_item(Key={"booking_uid": "ya-no-existe"}).get("Item")
+    assert item["estado"] == "expirado"
+    assert "expira_en" not in item
+
+
+@patch("pagos_liberar.calcom.declinar_reserva")
+def test_error_5xx_al_declinar_deja_pendiente_y_no_cuenta(mock_declinar, modulo):
+    """Fix 5: un 5xx (o sin status, URLError) es transitorio: se deja pendiente
+    para que el proximo ciclo del cron lo reintente."""
+    import calcom
+    modulo.TABLE.put_item(Item=_item("falla-500", "pendiente", hace_segundos=3 * 3600))
+    mock_declinar.side_effect = calcom.CalComError("502: bad gateway", status=502)
+
+    resultado = modulo.handler({}, None)
+
+    assert resultado["liberados"] == 0
+    item = modulo.TABLE.get_item(Key={"booking_uid": "falla-500"}).get("Item")
+    assert item["estado"] == "pendiente"
+    assert "expira_en" in item

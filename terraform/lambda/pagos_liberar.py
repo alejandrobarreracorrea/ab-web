@@ -27,6 +27,23 @@ def _credenciales():
     return _creds_cache
 
 
+def _marcar_expirado(booking_uid):
+    """Intenta marcar el item como expirado (y lo saca de TTL). Devuelve True si
+    lo marco, False si no (p.ej. ya se pago entre el scan y este intento)."""
+    try:
+        TABLE.update_item(
+            Key={"booking_uid": booking_uid},
+            UpdateExpression="SET estado = :e REMOVE expira_en",
+            ConditionExpression="estado = :p",
+            ExpressionAttributeValues={":e": "expirado", ":p": "pendiente"},
+        )
+        return True
+    except ClientError as exc:
+        if exc.response["Error"]["Code"] != "ConditionalCheckFailedException":
+            raise
+        return False
+
+
 def handler(_event, _context):
     creds = _credenciales()
     now = int(time.time())
@@ -40,19 +57,19 @@ def handler(_event, _context):
         booking_uid = item["booking_uid"]
         try:
             calcom.declinar_reserva(booking_uid, creds["calcom_api_key"], "Pago no completado")
-        except calcom.CalComError:
+        except calcom.CalComError as exc:
+            if exc.status is not None and 400 <= exc.status < 500:
+                # La reserva ya no existe/cambio del lado de Cal.com (4xx): no hay
+                # nada que reintentar, liberamos el cupo de todos modos.
+                if _marcar_expirado(booking_uid):
+                    liberados += 1
+                continue
+            # Falla transitoria (5xx o sin respuesta HTTP): dejamos el item
+            # pendiente para reintentar en el proximo ciclo.
+            print(f"pagos-liberar: fallo transitorio al declinar {booking_uid}, reintenta en el proximo ciclo")
             continue
 
-        try:
-            TABLE.update_item(
-                Key={"booking_uid": booking_uid},
-                UpdateExpression="SET estado = :e",
-                ConditionExpression="estado = :p",
-                ExpressionAttributeValues={":e": "expirado", ":p": "pendiente"},
-            )
+        if _marcar_expirado(booking_uid):
             liberados += 1
-        except ClientError as exc:
-            if exc.response["Error"]["Code"] != "ConditionalCheckFailedException":
-                raise
 
     return {"ok": True, "liberados": liberados}
