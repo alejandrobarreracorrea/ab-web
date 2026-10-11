@@ -211,3 +211,70 @@ output "pagos_iniciar_url" {
   description = "Function URL de pagos-iniciar (webhook Cal.com + GET de checkout)"
   value       = aws_lambda_function_url.pagos_iniciar.function_url
 }
+
+# ---------------------------------------------------------------------------
+# Lambda pagos-confirmar: webhook transaction.updated de Wompi; confirma la
+# reserva en Cal.com y marca el item pagado en DynamoDB.
+# ---------------------------------------------------------------------------
+
+data "archive_file" "pagos_confirmar" {
+  type        = "zip"
+  output_path = "${path.module}/build/pagos_confirmar.zip"
+
+  source {
+    content  = file("${path.module}/lambda/pagos_confirmar.py")
+    filename = "pagos_confirmar.py"
+  }
+  source {
+    content  = file("${path.module}/lambda/wompi.py")
+    filename = "wompi.py"
+  }
+  source {
+    content  = file("${path.module}/lambda/calcom.py")
+    filename = "calcom.py"
+  }
+}
+
+resource "aws_lambda_function" "pagos_confirmar" {
+  function_name    = "ab-pagos-confirmar-${var.environment}"
+  role             = aws_iam_role.pagos_exec.arn
+  runtime          = "python3.12"
+  handler          = "pagos_confirmar.handler"
+  filename         = data.archive_file.pagos_confirmar.output_path
+  source_code_hash = data.archive_file.pagos_confirmar.output_base64sha256
+  timeout          = 15
+  memory_size      = 128
+  tags             = local.tags
+
+  environment {
+    variables = {
+      TABLE_NAME       = aws_dynamodb_table.pagos.name
+      CREDENCIALES_SSM = aws_ssm_parameter.pagos_credenciales.name
+    }
+  }
+}
+
+resource "aws_lambda_function_url" "pagos_confirmar" {
+  function_name      = aws_lambda_function.pagos_confirmar.function_name
+  authorization_type = "NONE"
+}
+
+resource "aws_lambda_permission" "pagos_confirmar_url" {
+  statement_id           = "AllowPublicFunctionUrl"
+  action                 = "lambda:InvokeFunctionUrl"
+  function_name          = aws_lambda_function.pagos_confirmar.function_name
+  principal              = "*"
+  function_url_auth_type = "NONE"
+}
+
+resource "aws_lambda_permission" "pagos_confirmar_url_invoke" {
+  statement_id  = "AllowPublicFunctionUrlInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.pagos_confirmar.function_name
+  principal     = "*"
+}
+
+output "pagos_confirmar_url" {
+  description = "Function URL de pagos-confirmar (webhook Wompi)"
+  value       = aws_lambda_function_url.pagos_confirmar.function_url
+}
