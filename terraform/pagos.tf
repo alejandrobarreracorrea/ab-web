@@ -278,3 +278,61 @@ output "pagos_confirmar_url" {
   description = "Function URL de pagos-confirmar (webhook Wompi)"
   value       = aws_lambda_function_url.pagos_confirmar.function_url
 }
+
+# ---------------------------------------------------------------------------
+# Lambda pagos-liberar: cron EventBridge (cada 15 min) que declina en
+# Cal.com las reservas pendientes con mas de 2 horas sin pagarse y las
+# marca expiradas, liberando el cupo.
+# ---------------------------------------------------------------------------
+
+data "archive_file" "pagos_liberar" {
+  type        = "zip"
+  output_path = "${path.module}/build/pagos_liberar.zip"
+
+  source {
+    content  = file("${path.module}/lambda/pagos_liberar.py")
+    filename = "pagos_liberar.py"
+  }
+  source {
+    content  = file("${path.module}/lambda/calcom.py")
+    filename = "calcom.py"
+  }
+}
+
+resource "aws_lambda_function" "pagos_liberar" {
+  function_name    = "ab-pagos-liberar-${var.environment}"
+  role             = aws_iam_role.pagos_exec.arn
+  runtime          = "python3.12"
+  handler          = "pagos_liberar.handler"
+  filename         = data.archive_file.pagos_liberar.output_path
+  source_code_hash = data.archive_file.pagos_liberar.output_base64sha256
+  timeout          = 30
+  memory_size      = 128
+  tags             = local.tags
+
+  environment {
+    variables = {
+      TABLE_NAME       = aws_dynamodb_table.pagos.name
+      CREDENCIALES_SSM = aws_ssm_parameter.pagos_credenciales.name
+    }
+  }
+}
+
+resource "aws_cloudwatch_event_rule" "pagos_liberar" {
+  name                = "ab-pagos-liberar-${var.environment}"
+  schedule_expression = "rate(15 minutes)"
+  tags                = local.tags
+}
+
+resource "aws_cloudwatch_event_target" "pagos_liberar" {
+  rule = aws_cloudwatch_event_rule.pagos_liberar.name
+  arn  = aws_lambda_function.pagos_liberar.arn
+}
+
+resource "aws_lambda_permission" "pagos_liberar_schedule" {
+  statement_id  = "AllowEventBridgeInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.pagos_liberar.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.pagos_liberar.arn
+}
