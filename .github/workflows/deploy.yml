@@ -39,6 +39,7 @@ jobs:
       REGISTER_URL: ${{ steps.tf-output.outputs.register_url }}
       IAOPS_BUCKET: ${{ steps.tf-output.outputs.iaops_bucket }}
       IAOPS_DIST: ${{ steps.tf-output.outputs.iaops_dist }}
+      PAGOS_INICIAR_URL: ${{ steps.tf-output.outputs.pagos_iniciar_url }}
 
     steps:
       - name: Checkout del repositorio
@@ -67,6 +68,13 @@ jobs:
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform validate
 
+      - name: Pruebas unitarias de las Lambdas de pagos
+        working-directory: terraform/lambda
+        run: |
+          python3 -m venv .venv
+          .venv/bin/pip install --quiet -r requirements-dev.txt
+          .venv/bin/pytest tests/ -v
+
       - name: Terraform apply
         working-directory: ${{ env.TF_WORKING_DIR }}
         env:
@@ -74,6 +82,12 @@ jobs:
           TF_VAR_enable_custom_domain: ${{ env.ENABLE_CUSTOM_DOMAIN }}
           TF_VAR_enable_iaopslatam: ${{ env.ENABLE_IAOPSLATAM }}
           TF_VAR_enable_aisre_redirect: ${{ env.ENABLE_AISRE_REDIRECT }}
+          TF_VAR_wompi_public_key: ${{ secrets.WOMPI_PUBLIC_KEY }}
+          TF_VAR_wompi_private_key: ${{ secrets.WOMPI_PRIVATE_KEY }}
+          TF_VAR_wompi_integrity_secret: ${{ secrets.WOMPI_INTEGRITY_SECRET }}
+          TF_VAR_wompi_events_secret: ${{ secrets.WOMPI_EVENTS_SECRET }}
+          TF_VAR_calcom_api_key: ${{ secrets.CALCOM_API_KEY }}
+          TF_VAR_calcom_webhook_secret: ${{ secrets.CALCOM_WEBHOOK_SECRET }}
         run: terraform apply -auto-approve -input=false
 
       - name: Exportar outputs de Terraform
@@ -85,6 +99,7 @@ jobs:
           echo "register_url=$(terraform output -raw register_url)" >> "$GITHUB_OUTPUT"
           echo "iaops_bucket=$(terraform output -raw iaops_bucket_name)" >> "$GITHUB_OUTPUT"
           echo "iaops_dist=$(terraform output -raw iaops_distribution_id)" >> "$GITHUB_OUTPUT"
+          echo "pagos_iniciar_url=$(terraform output -raw pagos_iniciar_url)" >> "$GITHUB_OUTPUT"
 
   deploy:
     name: Publicar sitio (S3 sync + invalidación CloudFront)
@@ -101,6 +116,7 @@ jobs:
       REGISTER_URL: ${{ needs.infra.outputs.REGISTER_URL }}
       IAOPS_BUCKET: ${{ needs.infra.outputs.IAOPS_BUCKET }}
       IAOPS_DIST: ${{ needs.infra.outputs.IAOPS_DIST }}
+      PAGOS_INICIAR_URL: ${{ needs.infra.outputs.PAGOS_INICIAR_URL }}
 
     steps:
       - name: Checkout del repositorio
@@ -121,8 +137,9 @@ jobs:
           find "${SITE_DIR}" site-iaops -name "*.html" -print0 | xargs -0 sed -i \
             -e "s|/styles\.css\"|/styles.css?v=${VER}\"|g" \
             -e "s|/script\.js\"|/script.js?v=${VER}\"|g" \
-            -e "s|__REGISTER_ENDPOINT__|${REGISTER_URL}|g"
-          echo "Assets versionados con ?v=${VER} y endpoint de registro inyectado"
+            -e "s|__REGISTER_ENDPOINT__|${REGISTER_URL}|g" \
+            -e "s|__PAGOS_ENDPOINT__|${PAGOS_INICIAR_URL}|g"
+          echo "Assets versionados con ?v=${VER} y endpoints inyectados"
           grep -o 'styles\.css?v=[a-f0-9]*\|script\.js?v=[a-f0-9]*' "${SITE_DIR}/index.html" || true
 
       - name: Sincronizar assets (img/css/js/svg) con caché moderada
