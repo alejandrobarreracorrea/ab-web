@@ -61,20 +61,25 @@
             return;
           }
 
-          var cop = (data.monto_cop || 0).toLocaleString("es-CO");
-          mensaje.textContent = "Paga con PSE, Nequi, tarjeta o Bancolombia para confirmar tu horario.";
-          montoEl.textContent = "$" + cop + " COP";
-          montoEl.style.display = "block";
+          if (data.estado === "pendiente") {
+            var cop = (data.monto_cop || 0).toLocaleString("es-CO");
+            mensaje.textContent = "Paga con PSE, Nequi, tarjeta o Bancolombia para confirmar tu horario.";
+            montoEl.textContent = "$" + cop + " COP";
+            montoEl.style.display = "block";
 
-          var script = document.createElement("script");
-          script.src = "https://checkout.wompi.co/widget.js";
-          script.setAttribute("data-render", "button");
-          script.setAttribute("data-public-key", data.public_key);
-          script.setAttribute("data-currency", data.currency);
-          script.setAttribute("data-amount-in-cents", String(data.amount_in_cents));
-          script.setAttribute("data-reference", data.reference);
-          script.setAttribute("data-signature:integrity", data.signature);
-          widgetEl.appendChild(script);
+            var script = document.createElement("script");
+            script.src = "https://checkout.wompi.co/widget.js";
+            script.setAttribute("data-render", "button");
+            script.setAttribute("data-public-key", data.public_key);
+            script.setAttribute("data-currency", data.currency);
+            script.setAttribute("data-amount-in-cents", String(data.amount_in_cents));
+            script.setAttribute("data-reference", data.reference);
+            script.setAttribute("data-signature:integrity", data.signature);
+            widgetEl.appendChild(script);
+            return;
+          }
+
+          mensaje.textContent = "Algo salió mal con tu reserva. Escríbenos para ayudarte.";
         })
         .catch(function () {
           mensaje.textContent = "Hubo un problema cargando tu reserva. Intenta de nuevo en un momento.";
