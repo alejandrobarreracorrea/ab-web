@@ -13,6 +13,8 @@ def firmar_integridad(reference: str, amount_in_cents: int, currency: str, secre
 def validar_checksum(evento: dict, events_secret: str) -> bool:
     if not isinstance(evento, dict):
         return False
+    if not isinstance(events_secret, str) or not events_secret:
+        return False
 
     firma = evento.get("signature") or {}
     if not isinstance(firma, dict):

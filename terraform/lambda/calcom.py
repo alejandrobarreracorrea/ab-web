@@ -12,7 +12,9 @@ API_VERSION = "2024-06-14"
 
 
 class CalComError(Exception):
-    pass
+    def __init__(self, message, status=None):
+        super().__init__(message)
+        self.status = status
 
 
 def validar_firma_webhook(body_raw: bytes, header_signature: str, secret: str) -> bool:
@@ -20,7 +22,7 @@ def validar_firma_webhook(body_raw: bytes, header_signature: str, secret: str) -
         return False
     if not isinstance(body_raw, bytes):
         return False
-    if not isinstance(secret, str):
+    if not isinstance(secret, str) or not secret:
         return False
     try:
         calculado = hmac.new(secret.encode(), body_raw, hashlib.sha256).hexdigest()
@@ -47,9 +49,9 @@ def _llamar(path: str, api_key: str, body: dict | None = None) -> dict:
             return json.loads(resp.read())
     except urllib.error.HTTPError as exc:
         detalle = exc.read().decode() if hasattr(exc, "read") else ""
-        raise CalComError(f"{exc.code}: {detalle}") from exc
+        raise CalComError(f"{exc.code}: {detalle}", status=exc.code) from exc
     except urllib.error.URLError as exc:
-        raise CalComError(str(exc)) from exc
+        raise CalComError(str(exc), status=None) from exc
 
 
 def confirmar_reserva(booking_uid: str, api_key: str) -> dict:

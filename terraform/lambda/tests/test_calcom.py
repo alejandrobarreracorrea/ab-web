@@ -31,6 +31,10 @@ def test_validar_firma_webhook_rechaza_secret_none():
     assert calcom.validar_firma_webhook(b"{}", "somehash", None) is False
 
 
+def test_validar_firma_webhook_rechaza_secret_vacio():
+    assert calcom.validar_firma_webhook(b"{}", "somehash", "") is False
+
+
 def test_validar_firma_webhook_rechaza_body_no_bytes():
     assert calcom.validar_firma_webhook("not-bytes-a-string", "somehash", "secret") is False
 
@@ -74,3 +78,14 @@ def test_confirmar_reserva_lanza_calcom_error_en_http_error(mock_urlopen):
         assert False, "debia lanzar CalComError"
     except calcom.CalComError as exc:
         assert "403" in str(exc)
+        assert exc.status == 403
+
+
+@patch("calcom.urllib.request.urlopen")
+def test_calcom_error_de_url_error_tiene_status_none(mock_urlopen):
+    mock_urlopen.side_effect = urllib.error.URLError("timed out")
+    try:
+        calcom.confirmar_reserva("abc123", "cal_live_x")
+        assert False, "debia lanzar CalComError"
+    except calcom.CalComError as exc:
+        assert exc.status is None

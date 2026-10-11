@@ -70,3 +70,20 @@ def test_validar_checksum_rechaza_evento_no_dict():
 def test_validar_checksum_rechaza_signature_no_dict():
     evento = {"signature": "bad string", "data": {}}
     assert wompi.validar_checksum(evento, "secreto") is False
+
+
+def test_validar_checksum_rechaza_secret_vacio():
+    secret = ""
+    timestamp = 1530291411
+    data = {"transaction": {"id": "1234-1610641025-49201", "status": "APPROVED", "amount_in_cents": 44900}}
+    crudo = "1234-1610641025-49201APPROVED44900" + str(timestamp) + secret
+    checksum = hashlib.sha256(crudo.encode()).hexdigest()
+    evento = {
+        "data": data,
+        "signature": {
+            "properties": ["transaction.id", "transaction.status", "transaction.amount_in_cents"],
+            "checksum": checksum,
+            "timestamp": timestamp,
+        },
+    }
+    assert wompi.validar_checksum(evento, secret) is False
