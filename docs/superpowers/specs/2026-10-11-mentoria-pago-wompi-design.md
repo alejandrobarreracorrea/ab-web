@@ -5,10 +5,12 @@
 
 ## 1. Problema
 
-Hoy `/mentoria` enlaza directo a `cal.com/alejandrobarrera/mentoria-1-1` (USD 80) y el
-pago ocurre dentro del flujo nativo de Cal.com. En la práctica eso excluye a quien no
-tiene PayPal/tarjeta internacional — una fracción importante de la audiencia
-colombiana/LATAM del programa.
+Hoy `/mentoria` enlaza directo a `cal.com/alejandrobarrera/mentoria-1-1` (**USD 20**,
+confirmado en vivo vía API — no USD 80 como se asumió en la primera versión de este
+documento) y el pago ocurre dentro del flujo nativo de Cal.com con **PayPal**
+(`paymentOption: "ON_BOOKING"`, cobro al momento de reservar). En la práctica eso
+excluye a quien no tiene PayPal/tarjeta internacional — una fracción importante de la
+audiencia colombiana/LATAM del programa.
 
 **Objetivo:** seguir agendando el 100% en Cal.com (calendario, disponibilidad, Zoom/Meet,
 reprogramaciones sin tocar) pero mover el **cobro** a Wompi (PSE, Nequi, tarjetas,
@@ -21,9 +23,29 @@ un checkout ajeno.
 |---|---|
 | Cuenta Wompi | Producción lista (llaves `pub_prod_`/`prv_prod_` + Integrity Secret ya emitidas) |
 | Nivel de automatización | Totalmente automatizado (sin intervención manual por reserva) |
-| Precio | Se muestra en USD (indicativo); el cobro real en Wompi se calcula en COP al momento de la reserva |
+| Precio | USD 20 (confirmado en vivo); el cobro real en Wompi se calcula en COP al momento de la reserva |
 | Fuente de la TRM | Automática, API oficial `datos.gov.co` (dataset `32sa-8pi3`, Superintendencia Financiera), sin autenticación |
 | Arquitectura | Opción A: tres Lambdas pequeñas y enfocadas, componente aislado de `ab-leads` |
+
+## 2.1 Validación en vivo contra la cuenta real de Cal.com (2026-10-11)
+
+Antes de seguir, se probó cada supuesto del diseño contra la cuenta real de Cal.com
+(`app.cal.com`, plan **Individual/gratis**), vía UI y vía API v2 (`PATCH
+/v2/event-types/6948287`, revertido inmediatamente después de cada prueba; la API key
+de prueba se revocó al terminar). Resultados:
+
+| Supuesto | UI (plan gratis) | API v2 | Conclusión |
+|---|---|---|---|
+| `confirmationPolicy` (requires confirmation) | No existe el toggle en ninguna de las 12 pestañas del event type | **Acepta `{"type":"always","blockUnconfirmedBookingsInBooker":true}` → HTTP 200** | **Sí es posible, gratis — pero solo configurable vía API, no desde el dashboard** |
+| `successRedirectUrl` (redirect on booking) | Bloqueado con candado "Actualizar a Equipos" (~USD 12/mes/usuario) | **Rechazado: HTTP 403 `forbidden_error`, "Redirect on booking is a feature for team plan users"** | **No es posible sin plan Teams — bloqueo real de servidor, no solo de UI** |
+| Apps de pago nativas disponibles | Cal Pay, PayPal, Stripe, BTCPayServer, HitPay | — | Wompi no es una de ellas; confirma que no hay integración nativa posible |
+| Webhooks y sus triggers | Disponibles sin restricción de plan | — | `BOOKING_CREATED`, `BOOKING_REQUESTED`, `BOOKING_PAYMENT_INITIATED`, `BOOKING_PAID`, etc. todos disponibles |
+
+**Consecuencia para el diseño:** se mantiene el flujo original "pending → confirmar tras
+pago" (§5), activando `confirmationPolicy` por API en vez de por el dashboard. Pero como
+`successRedirectUrl` sí está bloqueado de verdad, **no hay redirect del navegador** hacia
+`/mentoria/pagar/`: en su lugar, `pagos-iniciar` envía el link de pago **por correo**
+(SES) apenas crea el ítem `pendiente` — ver §5, paso 4.
 
 ## 3. Arquitectura y componentes
 
@@ -134,22 +156,23 @@ exclusivamente server-side, dentro de las Lambdas. El frontend solo recibe
 
 ## 5. Flujo end-to-end
 
-1. El event type "mentoria-1-1" en Cal.com pasa a modo **"Requires confirmation"**
-   (cambio manual en el dashboard de Cal.com, fuera de Terraform).
+1. El event type "mentoria-1-1" en Cal.com pasa a modo **"Requires confirmation"**,
+   configurado por **llamada a la API** (`PATCH /v2/event-types/6948287` con
+   `confirmationPolicy: {"type":"always","blockUnconfirmedBookingsInBooker":true}`) —
+   confirmado que esto funciona en el plan gratis (§2.1); no existe en el dashboard, así
+   que debe hacerse así y documentarse, no buscarse en la UI.
 2. Alguien reserva un horario → Cal.com crea la reserva en estado `pending` y dispara el
    webhook `BOOKING_REQUESTED` hacia `pagos-iniciar`.
 3. `pagos-iniciar`: lee el secret, consulta la TRM del día en `datos.gov.co` (o usa
-   `trm_cache` si falla), calcula `monto_cop = 80 × TRM` redondeado, arma la firma de
+   `trm_cache` si falla), calcula `monto_cop = 20 × TRM` redondeado, arma la firma de
    integridad de Wompi, guarda el ítem `pendiente` en DynamoDB (`expira_en = ahora + 2h`),
-   responde 200 a Cal.com.
-4. Cal.com redirige al visitante a una URL propia con el booking ya identificado
-   (configuración de "redirect on booking" del event type; Cal.com añade el ID de la
-   reserva como query param `uid`, p.ej. `iaopslatam.com/mentoria/pagar/?uid=<uid>`).
-   **Riesgo a validar en la implementación:** confirmar que el redirect se dispara
-   también cuando la reserva queda `pending` (requiere confirmación) y no solo tras ser
-   aceptada — si Cal.com solo redirige una vez confirmada, el plan B es que
-   `pagos-iniciar` mande el link de pago por correo vía SES (mismo mecanismo que ya usa
-   `ab-leads` para la verificación), sin depender del redirect del navegador.
+   **envía por correo (SES) al email del reservante el link
+   `iaopslatam.com/mentoria/pagar/?uid=<booking_uid>`** (mismo mecanismo que ya usa
+   `ab-leads` para la verificación), y responde 200 a Cal.com.
+   `successRedirectUrl` **no se usa**: confirmado en vivo que ese campo está bloqueado
+   por el servidor para cuentas fuera del plan Teams (§2.1), así que no hay redirect del
+   navegador — todo pasa por el correo.
+4. El visitante abre el correo y entra a `/mentoria/pagar/?uid=<booking_uid>`.
 5. La página hace GET a `pagos-iniciar` con el `uid` de la reserva, recibe los datos del
    checkout y monta el Widget de Wompi. El visitante paga con PSE, Nequi, tarjeta o
    Bancolombia (según lo que tengas habilitado en el comercio).
@@ -195,14 +218,16 @@ exclusivamente server-side, dentro de las Lambdas. El frontend solo recibe
 
 ## 8. Cambios operativos fuera de Terraform
 
-- Cal.com: event type "mentoria-1-1" → "Requires confirmation" + redirect a
-  `/mentoria/pagar/?uid={uid}` + webhook `BOOKING_REQUESTED` apuntando a la Function URL de
-  `pagos-iniciar` con su secret configurado.
+- Cal.com: activar `confirmationPolicy` en el event type "mentoria-1-1" vía API
+  (`PATCH /v2/event-types/6948287`, ver §5 paso 1 — no está disponible en el dashboard
+  de este plan) + desactivar la app de pago nativa (PayPal) del evento, ya que el pago
+  ahora lo gestiona Wompi fuera de Cal.com + webhook `BOOKING_REQUESTED` apuntando a la
+  Function URL de `pagos-iniciar` con su secret configurado.
 - Wompi: webhook `transaction.updated` apuntando a la Function URL de `pagos-confirmar`.
 - Seis GitHub Secrets nuevos en el repo (§4), creados antes del primer `terraform apply`
   de este componente.
 - Actualizar el copy de `/mentoria` (hoy dice "Reservas y pagas en Cal.com") para reflejar
-  que el pago es con Wompi.
+  que el pago es con Wompi y que el link de pago llega por correo tras reservar.
 
 ## 9. Fuera de alcance (este diseño)
 
