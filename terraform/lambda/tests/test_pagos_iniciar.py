@@ -267,6 +267,15 @@ def test_webhook_attendees_vacio_responde_400(modulo):
     assert modulo.TABLE.get_item(Key={"booking_uid": "attendees-vacio"}).get("Item") is None
 
 
+def test_webhook_attendees_no_list_responde_400(modulo):
+    resultado = modulo.handler(
+        _evento_con_payload({"uid": "attendees-no-list", "attendees": "not-a-list"}), None
+    )
+
+    assert resultado["statusCode"] == 400
+    assert modulo.TABLE.get_item(Key={"booking_uid": "attendees-no-list"}).get("Item") is None
+
+
 def test_webhook_attendee_no_dict_responde_400(modulo):
     resultado = modulo.handler(
         _evento_con_payload({"uid": "attendee-no-dict", "attendees": ["no-es-un-dict"]}), None
