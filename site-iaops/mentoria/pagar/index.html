@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Completa tu pago — IAOps LATAM</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="nav">
+    <div class="shell nav__inner">
+      <a class="nav__brand" href="/">IAOps <b>LATAM</b></a>
+    </div>
+  </header>
+  <main class="shell page">
+    <span class="kicker">Mentoría 1:1 · pago</span>
+    <h1>Completa tu <span class="grad">pago</span></h1>
+    <p class="lead" id="mensaje">Cargando los datos de tu reserva…</p>
+    <div id="monto" style="display:none;margin:24px 0;font-family:var(--mono);font-size:1.4rem;"></div>
+    <div id="wompi-widget"></div>
+  </main>
+  <footer class="footer">
+    <div class="shell footer__inner">
+      <span>© <span id="year">2026</span> IAOps LATAM</span>
+    </div>
+  </footer>
+  <script>
+    (function () {
+      var ENDPOINT = "__PAGOS_ENDPOINT__";
+      var params = new URLSearchParams(window.location.search);
+      var uid = params.get("uid");
+      var mensaje = document.getElementById("mensaje");
+      var montoEl = document.getElementById("monto");
+      var widgetEl = document.getElementById("wompi-widget");
+
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      if (!uid) {
+        mensaje.textContent = "Falta el identificador de tu reserva. Revisa el link del correo.";
+        return;
+      }
+
+      fetch(ENDPOINT + "?uid=" + encodeURIComponent(uid))
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (!data.ok) {
+            mensaje.textContent = "No encontramos esa reserva. Si el link es viejo, vuelve a reservar en /mentoria/.";
+            return;
+          }
+          if (data.estado === "pagado") {
+            mensaje.textContent = "Tu pago ya está confirmado. Revisa tu correo para el link de la reunión.";
+            return;
+          }
+          if (data.estado === "expirado" || data.estado === "pagado_sin_cupo") {
+            mensaje.textContent = "Este cupo ya no está disponible. Vuelve a reservar en /mentoria/.";
+            return;
+          }
+
+          var cop = (data.monto_cop || 0).toLocaleString("es-CO");
+          mensaje.textContent = "Paga con PSE, Nequi, tarjeta o Bancolombia para confirmar tu horario.";
+          montoEl.textContent = "$" + cop + " COP";
+          montoEl.style.display = "block";
+
+          var script = document.createElement("script");
+          script.src = "https://checkout.wompi.co/widget.js";
+          script.setAttribute("data-render", "button");
+          script.setAttribute("data-public-key", data.public_key);
+          script.setAttribute("data-currency", data.currency);
+          script.setAttribute("data-amount-in-cents", String(data.amount_in_cents));
+          script.setAttribute("data-reference", data.reference);
+          script.setAttribute("data-signature:integrity", data.signature);
+          widgetEl.appendChild(script);
+        })
+        .catch(function () {
+          mensaje.textContent = "Hubo un problema cargando tu reserva. Intenta de nuevo en un momento.";
+        });
+    })();
+  </script>
+</body>
+</html>
