@@ -21,7 +21,7 @@ un checkout ajeno.
 
 | Decisión | Valor |
 |---|---|
-| Cuenta Wompi | Producción lista (llaves `pub_prod_`/`prv_prod_` + Integrity Secret ya emitidas) |
+| Cuenta Wompi | **Corregido 2026-10-11, validado en vivo**: cuenta `IAOPSLATAM` creada, pero en estado "en revisión" — modo **Sandbox** (`pub_test_...`), no producción. Wompi aún no ha aprobado el cambio a `_prod_`. Secretos de Eventos e Integridad sí existen en sandbox. La implementación se construye y prueba 100% contra sandbox; el paso a producción (reemplazar llaves `_test_` por `_prod_` en el secret) queda pendiente de que Wompi apruebe la cuenta |
 | Nivel de automatización | Totalmente automatizado (sin intervención manual por reserva) |
 | Precio | USD 20 (confirmado en vivo); el cobro real en Wompi se calcula en COP al momento de la reserva |
 | Fuente de la TRM | Automática, API oficial `datos.gov.co` (dataset `32sa-8pi3`, Superintendencia Financiera), sin autenticación |
@@ -209,9 +209,14 @@ exclusivamente server-side, dentro de las Lambdas. El frontend solo recibe
   credenciales) de forma inyectable; pruebas con `moto` (mock de DynamoDB/SSM) sin tocar
   AWS real. Cubrir: firma válida/inválida, checksum válido/inválido, idempotencia del
   webhook de pago, cálculo de TRM con y sin `trm_cache`.
-- **Integración manual en sandbox de Wompi**: mismas rutas de API, llaves `pub_test_` /
-  `prv_test_` en vez de `_prod_`. Permite probar el flujo completo (firma, widget,
-  webhook) sin mover dinero real, cambiando solo el secret antes del go-live.
+- **Integración en sandbox de Wompi** (es el único modo disponible hoy — la cuenta
+  `IAOPSLATAM` está en revisión, ver §2): mismas rutas de API, llaves `pub_test_` /
+  `prv_test_` ya emitidas. Permite construir y probar el flujo completo (firma, widget,
+  webhook) sin mover dinero real.
+- **Go-live a producción (bloqueado por un tercero, no por el código)**: cuando Wompi
+  apruebe la cuenta y entregue llaves `_prod_`, el único cambio es actualizar el valor
+  del parámetro SSM (§4) — nada de código ni de Terraform cambia. No se puede estimar
+  fecha; depende de la revisión de Wompi.
 - **End-to-end manual pre-lanzamiento**: reservar con el widget en modo test, confirmar
   que el booking pasa a `accepted` solo tras el webhook de pago (nunca antes), y verificar
   que `pagos-liberar` libera un pendiente simulando `creado_en` viejo.
