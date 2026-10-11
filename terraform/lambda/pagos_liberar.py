@@ -16,10 +16,15 @@ CREDENCIALES_SSM = os.environ["CREDENCIALES_SSM"]
 
 EXPIRA_SEGUNDOS = 2 * 60 * 60
 
+_creds_cache = None
+
 
 def _credenciales():
-    resp = SSM.get_parameter(Name=CREDENCIALES_SSM, WithDecryption=True)
-    return json.loads(resp["Parameter"]["Value"])
+    global _creds_cache
+    if _creds_cache is None:
+        resp = SSM.get_parameter(Name=CREDENCIALES_SSM, WithDecryption=True)
+        _creds_cache = json.loads(resp["Parameter"]["Value"])
+    return _creds_cache
 
 
 def handler(_event, _context):
