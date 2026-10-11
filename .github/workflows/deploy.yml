@@ -82,12 +82,6 @@ jobs:
           TF_VAR_enable_custom_domain: ${{ env.ENABLE_CUSTOM_DOMAIN }}
           TF_VAR_enable_iaopslatam: ${{ env.ENABLE_IAOPSLATAM }}
           TF_VAR_enable_aisre_redirect: ${{ env.ENABLE_AISRE_REDIRECT }}
-          TF_VAR_wompi_public_key: ${{ secrets.WOMPI_PUBLIC_KEY }}
-          TF_VAR_wompi_private_key: ${{ secrets.WOMPI_PRIVATE_KEY }}
-          TF_VAR_wompi_integrity_secret: ${{ secrets.WOMPI_INTEGRITY_SECRET }}
-          TF_VAR_wompi_events_secret: ${{ secrets.WOMPI_EVENTS_SECRET }}
-          TF_VAR_calcom_api_key: ${{ secrets.CALCOM_API_KEY }}
-          TF_VAR_calcom_webhook_secret: ${{ secrets.CALCOM_WEBHOOK_SECRET }}
         run: terraform apply -auto-approve -input=false
 
       - name: Exportar outputs de Terraform

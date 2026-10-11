@@ -10,36 +10,6 @@ variable "mentoria_precio_usd" {
   default     = 80
 }
 
-variable "wompi_public_key" {
-  type      = string
-  sensitive = true
-}
-
-variable "wompi_private_key" {
-  type      = string
-  sensitive = true
-}
-
-variable "wompi_integrity_secret" {
-  type      = string
-  sensitive = true
-}
-
-variable "wompi_events_secret" {
-  type      = string
-  sensitive = true
-}
-
-variable "calcom_api_key" {
-  type      = string
-  sensitive = true
-}
-
-variable "calcom_webhook_secret" {
-  type      = string
-  sensitive = true
-}
-
 resource "aws_dynamodb_table" "pagos" {
   name         = "ab-pagos-${var.environment}"
   billing_mode = "PAY_PER_REQUEST"
@@ -62,24 +32,23 @@ resource "aws_dynamodb_table" "pagos" {
   tags = local.tags
 }
 
-# Rotacion de credenciales en produccion: se hace actualizando los GitHub
-# Secrets (WOMPI_PUBLIC_KEY, WOMPI_PRIVATE_KEY, WOMPI_INTEGRITY_SECRET,
-# WOMPI_EVENTS_SECRET, CALCOM_API_KEY, CALCOM_WEBHOOK_SECRET) y re-corriendo el
-# pipeline — nunca editando este parametro SSM a mano desde la consola de AWS,
-# porque el siguiente "terraform apply" lo revertiria silenciosamente al valor
-# que tengan los GitHub Secrets en ese momento.
+# Credenciales gestionadas DIRECTAMENTE en este parametro SSM (SecureString),
+# fuera de Terraform y fuera de GitHub Secrets, por decision explicita: nunca
+# viajan por el repo ni por el pipeline. Se escriben/rotan a mano con
+# `aws ssm put-parameter --overwrite` (perfil essionix). `ignore_changes` le
+# dice a Terraform que nunca intente revertir ese valor a lo que diga el
+# placeholder de abajo — el placeholder solo importa en la creacion inicial
+# del recurso. Tras rotar el valor, re-correr el pipeline para que
+# CREDENCIALES_VERSION (mas abajo, en cada Lambda) fuerce cold starts nuevos.
 resource "aws_ssm_parameter" "pagos_credenciales" {
-  name = "/ab-pagos/${var.environment}/credenciales"
-  type = "SecureString"
-  value = jsonencode({
-    wompi_public_key       = var.wompi_public_key
-    wompi_private_key      = var.wompi_private_key
-    wompi_integrity_secret = var.wompi_integrity_secret
-    wompi_events_secret    = var.wompi_events_secret
-    calcom_api_key         = var.calcom_api_key
-    calcom_webhook_secret  = var.calcom_webhook_secret
-  })
-  tags = local.tags
+  name  = "/ab-pagos/${var.environment}/credenciales"
+  type  = "SecureString"
+  value = jsonencode({ gestionado_fuera_de_terraform = true })
+  tags  = local.tags
+
+  lifecycle {
+    ignore_changes = [value]
+  }
 }
 
 resource "aws_iam_role" "pagos_exec" {
