@@ -60,8 +60,8 @@ def _evento_wompi(reference="abc123", status="APPROVED", secret="eventos_secreto
         "signature": {
             "properties": ["transaction.id", "transaction.status", "transaction.reference"],
             "checksum": checksum,
-            "timestamp": timestamp,
         },
+        "timestamp": timestamp,
     }
     return {"requestContext": {"http": {"method": "POST"}}, "body": json.dumps(body)}
 

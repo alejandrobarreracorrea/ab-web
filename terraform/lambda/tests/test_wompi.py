@@ -24,8 +24,8 @@ def test_validar_checksum_acepta_firma_correcta():
         "signature": {
             "properties": ["transaction.id", "transaction.status", "transaction.amount_in_cents"],
             "checksum": checksum,
-            "timestamp": timestamp,
         },
+        "timestamp": timestamp,
     }
     assert wompi.validar_checksum(evento, secret) is True
 
@@ -36,8 +36,8 @@ def test_validar_checksum_rechaza_firma_incorrecta():
         "signature": {
             "properties": ["transaction.id", "transaction.status", "transaction.amount_in_cents"],
             "checksum": "0" * 64,
-            "timestamp": 123,
         },
+        "timestamp": 123,
     }
     assert wompi.validar_checksum(evento, "secreto") is False
 
@@ -53,8 +53,8 @@ def test_validar_checksum_rechaza_propiedad_faltante_en_data():
         "signature": {
             "properties": ["transaction.id", "transaction.status"],
             "checksum": "0" * 64,
-            "timestamp": 123,
         },
+        "timestamp": 123,
     }
     assert wompi.validar_checksum(evento, "secreto") is False
 
@@ -83,7 +83,7 @@ def test_validar_checksum_rechaza_secret_vacio():
         "signature": {
             "properties": ["transaction.id", "transaction.status", "transaction.amount_in_cents"],
             "checksum": checksum,
-            "timestamp": timestamp,
         },
+        "timestamp": timestamp,
     }
     assert wompi.validar_checksum(evento, secret) is False

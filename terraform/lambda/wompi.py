@@ -22,7 +22,9 @@ def validar_checksum(evento: dict, events_secret: str) -> bool:
 
     properties = firma.get("properties") or []
     checksum_esperado = (firma.get("checksum") or "").lower()
-    timestamp = firma.get("timestamp")
+    # El timestamp va en la raiz del evento (hermano de "signature"), no
+    # anidado dentro de "signature". Ver docs.wompi.co/en/docs/colombia/eventos/.
+    timestamp = evento.get("timestamp")
     if not properties or not checksum_esperado or timestamp is None:
         return False
 
