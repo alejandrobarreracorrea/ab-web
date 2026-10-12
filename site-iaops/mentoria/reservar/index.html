@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elige cómo pagar — IAOps LATAM</title>
+  <meta name="robots" content="noindex" />
+  <link rel="canonical" href="https://iaopslatam.com/mentoria/reservar/" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    .paymethods { display: grid; gap: 18px; margin-top: 10px; max-width: 560px; }
+    .paymethod { display: block; border: 1px solid var(--line); border-radius: 14px; padding: 24px 26px; text-decoration: none; transition: border-color .15s ease; }
+    .paymethod:hover { border-color: var(--accent); }
+    .paymethod .t { font-family: var(--display); font-weight: 600; font-size: 1.15rem; color: var(--fg, #fff); }
+    .paymethod .d { color: var(--muted); font-size: .92rem; margin-top: 6px; }
+    .paymethod .m { font-family: var(--mono); font-size: .82rem; color: var(--accent); margin-top: 10px; display: block; }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <div class="shell nav__inner">
+      <a class="nav__brand" href="/">IAOps <b>LATAM</b></a>
+    </div>
+  </header>
+  <main class="shell page">
+    <span class="kicker">Mentoría 1:1 · reservar</span>
+    <h1>Elige cómo <span class="grad">pagar</span></h1>
+    <p class="lead">50 minutos de trabajo 1:1 sobre tu caso. Primero eliges el método de pago, luego seleccionas el horario en Cal.com.</p>
+
+    <div class="paymethods">
+      <a class="paymethod" href="https://cal.com/alejandrobarrera/mentoria-1-1-paypal" target="_blank" rel="noopener">
+        <span class="t">Tarjeta / PayPal</span>
+        <span class="d">Pagas en el mismo paso de la reserva, con tu cuenta PayPal o tarjeta internacional. Confirmación inmediata.</span>
+        <span class="m">USD 20 →</span>
+      </a>
+
+      <!--
+        Wompi temporalmente oculto: la cuenta Wompi sigue en modo sandbox
+        (no aprueban produccion aun), asi que un cliente real no podria
+        completar el pago con tarjeta real. Reactivar quitando este
+        comentario cuando Wompi apruebe produccion y se roten las llaves
+        _prod_ en SSM (/ab-pagos/pdn/credenciales).
+
+      <a class="paymethod" href="https://cal.com/alejandrobarrera/mentoria-1-1" target="_blank" rel="noopener">
+        <span class="t">PSE / Nequi / Bancolombia (Wompi)</span>
+        <span class="d">Reservas el horario y te llega el link de pago por correo. Ideal si no tienes tarjeta internacional.</span>
+        <span class="m">USD 20 (COP al momento de pagar) →</span>
+      </a>
+      -->
+    </div>
+  </main>
+  <footer class="footer">
+    <div class="shell footer__inner">
+      <span>© <span id="year">2026</span> IAOps LATAM</span>
+    </div>
+  </footer>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>
