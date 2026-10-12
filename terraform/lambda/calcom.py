@@ -8,7 +8,10 @@ import urllib.error
 import urllib.request
 
 API_BASE = "https://api.cal.com/v2"
-API_VERSION = "2024-06-14"
+# /confirm y /decline exigen esta version exacta; una version vieja (ej.
+# 2024-06-14) hace que Cal.com responda 404 "Cannot POST" por no tener
+# la ruta registrada en ese snapshot de la API. Confirmado en vivo.
+API_VERSION = "2026-02-25"
 
 
 class CalComError(Exception):

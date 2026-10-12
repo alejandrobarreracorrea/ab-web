@@ -51,7 +51,7 @@ def test_confirmar_reserva_llama_endpoint_correcto(mock_urlopen):
     solicitud = mock_urlopen.call_args[0][0]
     assert solicitud.full_url == "https://api.cal.com/v2/bookings/abc123/confirm"
     assert solicitud.get_header("Authorization") == "Bearer cal_live_x"
-    assert solicitud.get_header("Cal-api-version") == "2024-06-14"
+    assert solicitud.get_header("Cal-api-version") == "2026-02-25"
 
 
 @patch("calcom.urllib.request.urlopen")
