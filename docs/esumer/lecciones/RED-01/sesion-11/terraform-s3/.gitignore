@@ -1,0 +1,24 @@
+# Terraform: lo que se descarga o se genera (no es código)
+.terraform/
+crash.log
+crash.*.log
+*.tfplan
+
+# El state: la memoria de Terraform, con IDs y datos sensibles
+*.tfstate
+*.tfstate.*
+
+# Tus datos personales (IP, key pair)
+*.tfvars
+*.tfvars.json
+
+# Archivos de override locales
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Llaves: NUNCA a GitHub
+*.ppk
+*.pem
+*accessKeys.csv
