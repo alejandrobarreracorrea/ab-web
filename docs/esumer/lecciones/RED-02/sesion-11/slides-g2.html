@@ -267,8 +267,8 @@ ul.clean li:first-child { border-top:0; }
   <img class="cover-bg" src="../../../assets/portada.png" alt="">
   <div class="cover-txt">
     <span class="cover-k">Estud-IA · Ruta TI · 2026-2 · Sesión 11 · clase virtual · RED-02</span>
-    <h1 class="cover-h">¿Quién puede entrar? Ciberseguridad e IAM en AWS</h1>
-    <p class="cover-s">Los 3 pilares de la seguridad, cómo atacan de verdad y quién cuida qué en la nube. IAM a fondo (usuarios, grupos, políticas, roles y MFA), Security Groups vs. NACL y el blindaje de tu EC2.<br>Alejandro Barrera · Cloud Architect</p>
+    <h1 class="cover-h">Defiende tu nube: seguridad en AWS por capas</h1>
+    <p class="cover-s">Identidad, cifrado en tránsito y en reposo, secretos, WAF, DDoS y detección. Y al final, rojo vs. azul: atacas tu propia tienda y la defiendes con un WAF.<br>Alejandro Barrera · Cloud Architect</p>
   </div>
   <img class="cover-logo" src="../../../assets/estudia-blanco.png" alt="Estud-IA">
 </section>
@@ -276,12 +276,13 @@ ul.clean li:first-child { border-top:0; }
 <!-- 2 · PLAN -->
 <section class="slide">
   <span class="k">El plan de hoy · clase 11</span>
-  <h2>Objetivo de hoy: <span class="grad">que solo entre quien debe</span>.</h2>
+  <h2>Objetivo de hoy: <span class="grad">defender la tienda por capas</span>.</h2>
   <ul class="rows">
-    <li><span class="t">Parte 1 · ¿Qué es la ciberseguridad?<small>la tríada CIA · cómo atacan · responsabilidad compartida</small></span><span class="m">concepto</span></li>
-    <li><span class="t">Parte 2 · IAM: quién eres y qué puedes hacer<small>autenticación vs. autorización · usuarios, grupos, políticas y roles · mínimo privilegio · root, MFA y llaves</small></span><span class="m">concepto</span></li>
-    <li><span class="t">Parte 3 · Red y servidor blindados<small>Security Group vs. NACL · hardening de la EC2 · permisos rwx</small></span><span class="m">concepto</span></li>
-    <li><span class="t">Parte 4 · Laboratorios<small>LAB 1: usuario de solo lectura · LAB 2: blinda tu EC2 · LAB 3: rol IAM sin llaves</small></span><span class="m">lab</span></li>
+    <li><span class="t">Parte 1 · Fundamentos<small>la tríada CIA · cómo atacan · responsabilidad compartida · defensa en profundidad</small></span><span class="m">concepto</span></li>
+    <li><span class="t">Parte 2 · Identidad<small>autenticación vs. autorización · mínimo privilegio y roles · root, MFA y llaves filtradas</small></span><span class="m">concepto</span></li>
+    <li><span class="t">Parte 3 · Datos<small>HTTPS/TLS y ACM · cifrado en reposo con KMS · Secrets Manager</small></span><span class="m">concepto</span></li>
+    <li><span class="t">Parte 4 · Red, aplicación y detección<small>SG vs. NACL · WAF · Shield y DDoS · CloudTrail, GuardDuty y Security Hub</small></span><span class="m">concepto</span></li>
+    <li><span class="t">Parte 5 · Rojo vs. azul<small>tu tienda con WAF: el equipo rojo ataca, el equipo azul bloquea</small></span><span class="m">lab</span></li>
   </ul>
 </section>
 
@@ -585,8 +586,8 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 <section class="slide mu dark sep">
   <div>
     <div class="mtag" style="color:#7f9bb5"><b>Parte 1</b>de 4</div>
-    <h2 style="max-width:15ch">¿Qué es la <span class="g">ciberseguridad</span>?</h2>
-    <p class="msub">Proteger la información de la tienda: que nadie la vea, la cambie o la tumbe. Y quién se encarga de qué en la nube.</p>
+    <h2 style="max-width:15ch">Fundamentos de la <span class="g">ciberseguridad</span></h2>
+    <p class="msub">Qué protegemos, cómo atacan de verdad, quién cuida qué en la nube y cómo se defiende un castillo por capas.</p>
   </div>
   <div class="mviz"><canvas data-mu="ruta" data-part="1" aria-label="Ruta de la clase: parte 1 de 4"></canvas></div>
 </section>
@@ -606,7 +607,7 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
     <div class="mtag"><b>1.2</b>parte 1 · cómo atacan</div>
     <h2>Así se <span class="g">meten</span></h2>
     <div class="mnote"><span>// como</span> las ventanas que uno mismo deja abiertas</div>
-    <p class="msub">Casi ningún ataque es de película: la mayoría aprovecha <b>descuidos</b>. Un correo falso, una clave repetida, una llave subida a GitHub, un puerto abierto a todo internet, un bucket público o un sistema sin actualizar.</p><p class="muse">Lo bueno: casi todas se evitan con <b>buenos hábitos</b></p>
+    <p class="msub">La mayoría de ataques aprovecha <b>descuidos</b>: un correo falso, una clave repetida, una llave subida a GitHub, un puerto abierto a todo internet, un bucket público o un sistema sin actualizar.</p><p class="muse">Lo bueno: casi todas se evitan con <b>buenos hábitos</b> y los servicios correctos</p>
   </div>
   <div class="mviz"><canvas data-mu="amenazas" aria-label="Seis amenazas comunes y cómo evitar cada una"></canvas></div>
 </section>
@@ -616,16 +617,26 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
     <div class="mtag"><b>1.3</b>parte 1 · ¿quién cuida qué?</div>
     <h2>Responsabilidad <span class="g">compartida</span></h2>
     <div class="mnote"><span>// como</span> el edificio y tu apartamento</div>
-    <p class="msub"><b>AWS</b> cuida la seguridad <b>DE</b> la nube: edificios, servidores, red física. <b>Tú</b> cuidas la seguridad <b>EN</b> la nube: tus datos, tus usuarios y permisos, tus puertos y, si usas EC2, el sistema operativo.</p><p class="muse">Si dejas la puerta abierta, AWS no la cierra por ti</p>
+    <p class="msub"><b>AWS</b> cuida la seguridad <b>DE</b> la nube: edificios, servidores, red física. <b>Tú</b> cuidas la seguridad <b>EN</b> la nube: tus datos, tus usuarios, tus puertos y, si usas EC2, el sistema operativo.</p>
   </div>
   <div class="mviz"><canvas data-mu="compartida" aria-label="AWS cuida la infraestructura; tú cuidas datos, IAM, puertos y el sistema operativo"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>1.4</b>parte 1 · defensa en profundidad</div>
+    <h2>Un castillo <span class="g">por capas</span></h2>
+    <div class="mnote"><span>// como</span> murallas, fosos y guardias: si una falla, queda la siguiente</div>
+    <p class="msub">Nunca se confía en una sola protección. En AWS cada capa tiene sus servicios: <b>detección</b>, <b>red</b>, <b>aplicación</b>, <b>identidad</b> y, en el centro, <b>tus datos</b>. Hoy recorremos el castillo de afuera hacia adentro… y lo atacamos.</p><div class="mfacts"><span><i>hoy</i>IAM · ACM · KMS · Secrets Manager · WAF · Shield · CloudTrail · GuardDuty · Security Hub</span></div>
+  </div>
+  <div class="mviz"><canvas data-mu="capas" aria-label="Anillos de defensa en profundidad con los servicios de AWS de cada capa"></canvas></div>
 </section>
 
 <section class="slide mu dark sep">
   <div>
     <div class="mtag" style="color:#7f9bb5"><b>Parte 2</b>de 4</div>
-    <h2 style="max-width:15ch">IAM: <span class="g">quién eres</span> y qué puedes hacer</h2>
-    <p class="msub">El servicio que decide quién entra a tu cuenta de AWS y qué puede tocar. Es gratis y es lo primero que se configura.</p>
+    <h2 style="max-width:15ch">Identidad: <span class="g">quién entra</span></h2>
+    <p class="msub">IAM decide quién entra a tu cuenta y qué puede tocar. Lo esencial en tres ideas.</p>
   </div>
   <div class="mviz"><canvas data-mu="ruta" data-part="2" aria-label="Ruta de la clase: parte 2 de 4"></canvas></div>
 </section>
@@ -635,233 +646,477 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
     <div class="mtag"><b>2.1</b>parte 2 · IAM</div>
     <h2>Dos preguntas <span class="g">en la puerta</span></h2>
     <div class="mnote"><span>// como</span> el vigilante: primero tu cédula, después tu lista de permisos</div>
-    <p class="msub"><b>Autenticación</b>: ¿quién eres? (usuario, contraseña y MFA). <b>Autorización</b>: ¿qué puedes hacer? (las políticas). Pasar la primera no te da permiso para todo.</p>
+    <p class="msub"><b>Autenticación</b>: ¿quién eres? (usuario, contraseña y MFA). <b>Autorización</b>: ¿qué puedes hacer? (las políticas de IAM). Pasar la primera no te da permiso para todo.</p>
   </div>
-  <div class="mviz"><canvas data-mu="authn" aria-label="Ana se autentica con usuario, contraseña y MFA; después IAM le permite unas acciones y le niega otras"></canvas></div>
+  <div class="mviz"><canvas data-mu="authn" aria-label="Ana se autentica con usuario, clave y MFA; después IAM le permite unas acciones y le niega otras"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
     <div class="mtag"><b>2.2</b>parte 2 · IAM</div>
-    <h2>Usuarios, grupos, <span class="g">políticas y roles</span></h2>
-    <div class="mnote"><span>// como</span> empleados, áreas, reglamentos y uniformes</div>
-    <p class="msub">Un <b>usuario</b> es una persona (o programa). Un <b>grupo</b> reúne usuarios con el mismo trabajo. Una <b>política</b> (JSON) dice qué se puede hacer. Un <b>rol</b> es un permiso que se “pone” un servicio, como tu EC2, por un rato.</p><div class="mfacts"><span><i>buena práctica</i>permisos al grupo, no al usuario</span></div>
-  </div>
-  <div class="mviz"><canvas data-mu="iamparts" aria-label="Usuarios en un grupo con una política adjunta, y un rol que usa la EC2"></canvas></div>
-</section>
-
-<section class="slide mu">
-  <div>
-    <div class="mtag"><b>2.3</b>parte 2 · IAM</div>
-    <h2>Así se lee <span class="g">una política</span></h2>
-    <div class="mnote"><span>// como</span> un permiso escrito: quién, qué y sobre qué</div>
-    <p class="msub">Cada política dice <b>Effect</b> (permitir o negar), <b>Action</b> (qué operaciones) y <b>Resource</b> (sobre qué). AWS revisa cada petición: si ninguna política la permite, queda <b>negada</b>. Y si alguna la niega explícitamente, <b>gana el no</b>.</p>
-  </div>
-  <div class="mviz"><canvas data-mu="policy" aria-label="Política JSON con Effect, Action y Resource; tres peticiones evaluadas: una permitida y dos negadas"></canvas></div>
-</section>
-
-<section class="slide mu">
-  <div>
-    <div class="mtag"><b>2.4</b>parte 2 · IAM</div>
     <h2>Mínimo <span class="g">privilegio</span></h2>
     <div class="mnote"><span>// como</span> no le das al mensajero la llave de toda la casa</div>
-    <p class="msub">Cada usuario, grupo o rol debe tener <b>solo lo que necesita</b> para su trabajo. Si le roban la llave a alguien con permisos de administrador, el atacante puede todo; si solo podía leer un bucket, el daño queda <b>encerrado</b>.</p><p class="muse">En el LAB 1 creas un usuario que <b>solo</b> puede leer un bucket</p>
+    <p class="msub">Cada usuario, grupo o rol con <b>solo lo que necesita</b>. Si roban la llave de un administrador, el atacante puede todo; si solo podía leer un bucket, el daño queda <b>encerrado</b>. A los servicios se les dan <b>roles</b> con credenciales temporales, no llaves.</p>
   </div>
   <div class="mviz"><canvas data-mu="minpriv" aria-label="Llave maestra robada abre todo; llave de mínimo privilegio abre solo una puerta"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>2.5</b>parte 2 · IAM</div>
-    <h2>Root, MFA <span class="g">y llaves de acceso</span></h2>
+    <div class="mtag"><b>2.3</b>parte 2 · IAM</div>
+    <h2>Root, MFA <span class="g">y llaves filtradas</span></h2>
     <div class="mnote"><span>// como</span> la llave del edificio, el código del celular y las copias que no se prestan</div>
-    <p class="msub">La <b>root</b> puede todo: úsala casi nunca y con <b>MFA</b>. El MFA pide un código que cambia cada 30 s. Las <b>llaves de acceso</b> (AKIA…) son para la CLI: si llegan a GitHub, un bot las encuentra en minutos.</p>
+    <p class="msub">La <b>root</b> puede todo: úsala casi nunca y con <b>MFA</b>. El MFA pide un código que cambia cada 30 s. Las <b>llaves de acceso</b> (AKIA…) son para la CLI: si llegan a GitHub, un bot las encuentra en minutos y la factura se dispara.</p>
   </div>
   <div class="mviz"><canvas data-mu="root" aria-label="Cuenta root, código MFA que cambia y la historia de una llave filtrada en GitHub"></canvas></div>
-</section>
-
-<section class="slide mu">
-  <div>
-    <div class="mtag"><b>2.6</b>parte 2 · IAM</div>
-    <h2>Roles: <span class="g">sin llaves pegadas</span></h2>
-    <div class="mnote"><span>// como</span> un carnet temporal en vez de copiarle la llave al servidor</div>
-    <p class="msub">Si guardas llaves en un servidor y lo hackean, se las llevan y sirven hasta que las borres. Con un <b>rol</b>, AWS le entrega a la EC2 credenciales <b>temporales</b> que vencen y se renuevan solas.</p><p class="muse">Regla: <b>servicios con roles</b>, personas con usuario + MFA</p>
-  </div>
-  <div class="mviz"><canvas data-mu="roles" aria-label="Llaves pegadas en el servidor vs. rol IAM con credenciales temporales"></canvas></div>
 </section>
 
 <section class="slide mu dark sep">
   <div>
     <div class="mtag" style="color:#7f9bb5"><b>Parte 3</b>de 4</div>
-    <h2 style="max-width:15ch">Red y servidor <span class="g">blindados</span></h2>
-    <p class="msub">Las rejas de la red (Security Groups y NACL) y el blindaje del servidor Linux por dentro.</p>
+    <h2 style="max-width:15ch">Datos: <span class="g">cifrado y secretos</span></h2>
+    <p class="msub">Aunque alguien vea tus datos, que no pueda leerlos: en el camino, guardados y en el código.</p>
   </div>
   <div class="mviz"><canvas data-mu="ruta" data-part="3" aria-label="Ruta de la clase: parte 3 de 4"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>3.1</b>parte 3 · la red</div>
-    <h2>Security Group <span class="g">vs. NACL</span></h2>
-    <div class="mnote"><span>// como</span> el portero de tu puerta y la reja de la calle</div>
-    <p class="msub">El <b>Security Group</b> protege cada instancia, solo permite y recuerda la conversación (<b>stateful</b>): la respuesta sale sola. La <b>NACL</b> protege toda la subred, permite <b>y niega</b>, va por reglas numeradas y no recuerda nada (<b>stateless</b>).</p><div class="mfacts"><span><i>SG</i>instancia · solo permitir</span><span><i>NACL</i>subred · permitir y negar</span></div>
+    <div class="mtag"><b>3.1</b>parte 3 · cifrado en tránsito</div>
+    <h2>El candado: <span class="g">HTTPS y TLS</span></h2>
+    <div class="mnote"><span>// como</span> un sobre sellado en vez de una postal</div>
+    <p class="msub">Con <b>HTTP</b> cualquiera en el wifi lee lo que envías. Con <b>HTTPS</b>, navegador y servidor se saludan, el servidor muestra su <b>certificado</b> y acuerdan una llave secreta: lo demás viaja cifrado. <b>ACM</b> te da esos certificados gratis.</p><div class="mfacts"><span><i>servicio</i>AWS Certificate Manager (ACM)</span><span><i>precio</i>gratis en CloudFront y ALB</span></div>
   </div>
-  <div class="mviz"><canvas data-mu="sgnacl" aria-label="Una petición pasa la NACL y el SG y la respuesta vuelve; un bot es bloqueado por la NACL"></canvas></div>
+  <div class="mviz"><canvas data-mu="tls" aria-label="Saludo TLS con certificado y comparación de una clave enviada por HTTP y por HTTPS"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>3.2</b>parte 3 · el servidor</div>
-    <h2>Blindar <span class="g">tu EC2</span></h2>
-    <div class="mnote"><span>// como</span> cambiar las chapas y no dejar la llave debajo del tapete</div>
-    <p class="msub"><b>Hardening</b> es quitarle puertas al atacante: actualizar, SSH solo con llave y sin root, un usuario por persona, el puerto 22 solo para tu IP, permisos cerrados en lo secreto y revisar quién intenta entrar.</p><p class="muse">Una EC2 con el 22 abierto recibe intentos en <b>minutos</b></p>
+    <div class="mtag"><b>3.2</b>parte 3 · cifrado en reposo</div>
+    <h2>Llaves que <span class="g">nunca salen</span>: KMS</h2>
+    <div class="mnote"><span>// como</span> una caja fuerte que guarda la llave de las otras llaves</div>
+    <p class="msub"><b>KMS</b> guarda tu llave maestra en hardware especial. Para cifrar un archivo crea una <b>llave de datos</b>, cifra con ella y la guarda cifrada al lado (cifrado de sobre). Para leer, KMS revisa IAM y <b>anota</b> quién lo pidió.</p><div class="mfacts"><span><i>con un clic</i>EBS · S3 · RDS · DynamoDB</span><span><i>auditoría</i>cada uso queda en CloudTrail</span></div>
   </div>
-  <div class="mviz"><canvas data-mu="hardening" aria-label="Checklist de blindaje de la EC2 mientras bots de internet intentan entrar por SSH"></canvas></div>
+  <div class="mviz"><canvas data-mu="kms" aria-label="KMS crea una llave de datos, cifra el archivo y registra en CloudTrail quién lo descifra"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>3.3</b>parte 3 · el servidor</div>
-    <h2>Permisos de archivos: <span class="g">rwx</span></h2>
-    <div class="mnote"><span>// como</span> qué puede hacer cada quien con cada cajón</div>
-    <p class="msub">Cada archivo dice qué pueden hacer el <b>dueño</b>, el <b>grupo</b> y <b>los demás</b>: leer (r=4), escribir (w=2) o ejecutar (x=1). <code>chmod 600</code> = solo el dueño lee y escribe. Así se guardan llaves y claves.</p>
+    <div class="mtag"><b>3.3</b>parte 3 · secretos</div>
+    <h2>Las claves no van <span class="g">en el código</span></h2>
+    <div class="mnote"><span>// como</span> no pegues la clave del cajero en la pared</div>
+    <p class="msub">Una contraseña escrita en el código termina en GitHub. <b>Secrets Manager</b> la guarda cifrada con KMS, la entrega solo a quien IAM permite y la puede <b>cambiar sola</b> cada cierto tiempo, sin tocar tu aplicación.</p><p class="muse">Así se debería conectar una app a la base <b>RDS</b> de la clase pasada</p>
   </div>
-  <div class="mviz"><canvas data-mu="rwx" aria-label="Permisos rwx de dueño, grupo y otros, y el cambio de 640 a 600"></canvas></div>
+  <div class="mviz"><canvas data-mu="secretos" aria-label="La clave dentro del código vs. Secrets Manager que la entrega y la rota sola"></canvas></div>
 </section>
 
 <section class="slide mu dark sep">
   <div>
     <div class="mtag" style="color:#7f9bb5"><b>Parte 4</b>de 4</div>
-    <h2 style="max-width:15ch">Manos a la obra: <span class="g">IAM y blindaje</span></h2>
-    <p class="msub">LAB 1: un usuario que solo puede leer. LAB 2: blindas tu EC2. LAB 3: tu EC2 lee S3 con un rol, sin llaves.</p>
+    <h2 style="max-width:15ch">Red, aplicación <span class="g">y detección</span></h2>
+    <p class="msub">Las rejas de la red, el filtro delante de tu web, el escudo contra avalanchas y las cámaras que lo graban todo.</p>
   </div>
   <div class="mviz"><canvas data-mu="ruta" data-part="4" aria-label="Ruta de la clase: parte 4 de 4"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>4.1</b>parte 4 · LAB 1 · el diagrama</div>
-    <h2>LAB 1: un usuario que <span class="g">solo puede leer</span></h2>
-    
-    <ol class="msteps"><li><span>1</span><p>Con <b>terraform-lab</b> creas un bucket y subes <b>nota.txt</b>.</p></li><li><span>2</span><p>En la consola creas el usuario <b>lectora</b> con una política que <b>solo</b> lee ese bucket.</p></li><li><span>3</span><p>Con <b>--profile lectora</b>: listar y leer el bucket ✓.</p></li><li><span>4</span><p>Subir archivos o ver EC2: <b>AccessDenied</b> ✕. Mínimo privilegio en vivo.</p></li></ol>
+    <div class="mtag"><b>4.1</b>parte 4 · la red</div>
+    <h2>Security Group <span class="g">vs. NACL</span></h2>
+    <div class="mnote"><span>// como</span> el portero de tu puerta y la reja de la calle</div>
+    <p class="msub">El <b>Security Group</b> protege cada instancia, solo permite y recuerda la conversación (<b>stateful</b>). La <b>NACL</b> protege toda la subred, permite <b>y niega</b> y no recuerda nada (<b>stateless</b>): útil para bloquear una IP.</p>
   </div>
-  <div class="mviz"><canvas data-mu="dlab1" aria-label="Diagrama del LAB 1: usuario lectora con política de solo leer un bucket; ls permitido, cp y EC2 negados"></canvas></div>
+  <div class="mviz"><canvas data-mu="sgnacl" aria-label="Una petición pasa la NACL y el SG y la respuesta vuelve; un bot es bloqueado por la NACL"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>4.2</b>parte 4 · la aplicación</div>
+    <h2>AWS WAF: el filtro <span class="g">delante de tu web</span></h2>
+    <div class="mnote"><span>// como</span> el detector de metales a la entrada del centro comercial</div>
+    <p class="msub">El <b>WAF</b> revisa cada petición <b>antes</b> de que llegue a tu web: frena patrones de ataque conocidos con <b>reglas que AWS mantiene al día</b>, limita a quien pide demasiado y bloquea IPs de una lista negra. Va delante de CloudFront, un balanceador o una API.</p><div class="mfacts"><span><i>reglas</i>administradas · límite por IP · lista negra</span><span><i>modo</i>contar o bloquear</span></div>
+  </div>
+  <div class="mviz"><canvas data-mu="waf" aria-label="Peticiones normales pasan y peticiones maliciosas, bots y una IP bloqueada reciben 403 en el WAF"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>4.3</b>parte 4 · disponibilidad</div>
+    <h2>DDoS: <span class="g">la avalancha</span></h2>
+    <div class="mnote"><span>// como</span> mil personas fingiendo hacer fila para que tus clientes no entren</div>
+    <p class="msub">Un <b>DDoS</b> busca tumbar tu web con millones de peticiones. <b>CloudFront</b> reparte el golpe entre cientos de ubicaciones y <b>AWS Shield Standard</b> (gratis) filtra los ataques de red más comunes. Shield Advanced suma un equipo 24/7.</p>
+  </div>
+  <div class="mviz"><canvas data-mu="shield" aria-label="Tráfico de un ataque DDoS repartido entre ubicaciones de CloudFront protegidas por Shield"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>4.4</b>parte 4 · detección</div>
+    <h2>Las cámaras: <span class="g">detectar a tiempo</span></h2>
+    <div class="mnote"><span>// como</span> cámaras, alarma y el informe del vigilante</div>
+    <p class="msub"><b>CloudTrail</b> anota cada acción en tu cuenta (quién, qué, cuándo, desde dónde). <b>GuardDuty</b> aprende lo normal y te avisa lo raro. <b>Security Hub</b> te da una nota de seguridad y la lista de lo que debes corregir.</p><div class="mfacts"><span><i>también</i>Inspector (vulnerabilidades) · Macie (datos sensibles en S3)</span></div>
+  </div>
+  <div class="mviz"><canvas data-mu="detect" aria-label="Registro de CloudTrail, hallazgo de GuardDuty y puntaje de Security Hub que sube al corregir fallas"></canvas></div>
+</section>
+
+<section class="slide mu dark sep">
+  <div>
+    <div class="mtag" style="color:#7f9bb5"><b>Parte 5</b>de 4</div>
+    <h2 style="max-width:15ch">Rojo vs. azul: <span class="g">ataca tu propia web</span></h2>
+    <p class="msub">Despliegas tu tienda detrás de un WAF. El equipo rojo la golpea, el equipo azul activa el escudo. Todo en tu propia cuenta.</p>
+  </div>
+  <div class="mviz"><canvas data-mu="ruta" data-part="5" aria-label="Ruta de la clase: parte 5 de 4"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>5.1</b>parte 5 · el diagrama</div>
+    <h2>El campo de <span class="g">batalla</span></h2>
+    
+    <ol class="msteps"><li><span>1</span><p><b>terraform apply</b>: tu tienda en S3 privado + CloudFront + <b>WAF en modo observar</b>.</p></li><li><span>2</span><p><b>Equipo rojo</b>: una ráfaga de peticiones desde tu PC. Pasan (200), pero el WAF las <b>cuenta</b>.</p></li><li><span>3</span><p><b>Equipo azul</b>: <code>modo=bloquear</code> y tu IP a la <b>lista negra</b>.</p></li><li><span>4</span><p>Rojo otra vez: <b>403</b>. El cliente normal sigue entrando.</p></li></ol><p class="muse">Regla de oro: solo se prueba contra <b>lo tuyo</b>, en <b>tu</b> cuenta</p>
+  </div>
+  <div class="mviz"><canvas data-mu="dwaf" aria-label="Diagrama del laboratorio: equipo rojo y cliente normal contra la tienda con WAF, CloudFront y S3 privado"></canvas></div>
 </section>
 
 <style>.term.lab{max-height:52vh;overflow:auto;font-size:clamp(.7rem,1vw,.88rem)}.term.lab p{white-space:pre-wrap;word-break:break-all;min-height:1.35em}.term.lab p.hl b{color:#FFC928;font-weight:600;background:rgba(255,201,40,.14);border-radius:4px;padding:0 3px}.term.lab p.note{color:#9fb3c8;font-size:.85em}.term.lab .cur{display:inline-block;width:.6em;background:#39c8e8;animation:blk 1s steps(1) infinite}@keyframes blk{50%{opacity:0}}
   .cmdlist{list-style:none;display:flex;flex-direction:column;gap:6px;font-size:clamp(.78rem,1.1vw,.95rem)}.cmdlist li{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:10px;padding:6px 0;border-bottom:1px solid var(--line)}.cmdlist code{font-family:var(--mono);color:var(--a1);font-weight:600;font-size:.92em}</style>
-<section class="slide" id="labI0">
-  <span class="k"><span class="act-chip">🧪 LAB 1 · PASO 0</span> El bucket y el usuario lectora</span>
-  <h2 style="font-size:clamp(1.15rem,2.3vw,1.6rem)">Crea el bucket y el usuario <span class="grad">lectora</span></h2>
+<section class="slide" id="labW0">
+  <span class="k"><span class="act-chip">🧪 LAB · PASO 0</span> La tienda con escudo, desde Terraform</span>
+  <h2 style="font-size:clamp(1.15rem,2.3vw,1.6rem)">Copia, guarda y <span class="grad">terraform apply</span></h2>
+  <div class="grid2" style="align-items:start;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)">
+    <ul class="cmdlist">
+      <li><span>IAM → <b>terraform-lab</b> → Agregar permisos → <code>AWSWAFFullAccess</code></span><span>(S3 y CloudFront ya los tiene de clases pasadas)</span></li>
+      <li><span><code>mkdir $HOME\tienda-waf</code><br><code>code $HOME\tienda-waf</code></span><span>carpeta nueva, abierta en VS Code</span></li>
+      <li><span>Crea <b>main.tf</b> e <b>index.html</b></span><span>pon tu nombre en index.html · <b>Ctrl+S</b></span></li>
+      <li><span><code>terraform init</code> · <code>terraform apply</code></span><span>Plan: <b>8 to add</b> → yes · CloudFront tarda <b>3–5 min</b></span></li>
+      <li><span>Abre <b>tu_web_https</b></span><span>tu tienda con 🛡️ · el WAF está en <b>observar</b></span></li>
+    </ul>
+    <div class="snips"><div class="snip"><div class="top"><span>main.tf  (S3 privado + CloudFront + WAF)</span><button type="button">📋 Copiar</button></div><pre># =====================================================================
+#  Rojo vs. azul: tu web protegida con WAF · Esumer · Cloud Computing, Redes y Ciberseguridad
+#  Bucket S3 PRIVADO + CloudFront (HTTPS) + AWS WAF con reglas administradas por AWS.
+#  Solo se prueba contra TU propia web, en TU propia cuenta.
+#
+#  Uso (terminal de VS Code, carpeta con main.tf e index.html):
+#    terraform init
+#    terraform apply                         (modo &quot;observar&quot;: el WAF cuenta, no bloquea)
+#    terraform apply -var=&quot;modo=bloquear&quot;    (ahora el WAF bloquea con 403)
+#    terraform apply -var-file=&quot;bloqueo.tfvars&quot;   (lista negra: te bloqueas a ti)
+#    terraform destroy                       (al final: el WAF cobra por hora)
+# =====================================================================
+
+terraform {
+  required_providers {
+    aws = { source = &quot;hashicorp/aws&quot;, version = &quot;~&gt; 6.0&quot; }
+  }
+}
+
+provider &quot;aws&quot; {
+  region = &quot;us-east-1&quot; # el WAF de CloudFront siempre vive en us-east-1
+}
+
+# ---------- 0 · El interruptor del equipo azul
+variable &quot;modo&quot; {
+  type        = string
+  default     = &quot;observar&quot;
+  description = &quot;observar = el WAF solo cuenta los ataques · bloquear = los frena con 403&quot;
+  validation {
+    condition     = contains([&quot;observar&quot;, &quot;bloquear&quot;], var.modo)
+    error_message = &quot;modo debe ser observar o bloquear.&quot;
+  }
+}
+
+# ---------- 1 · El bucket: la bodega de objetos (nombre único en el mundo)
+resource &quot;aws_s3_bucket&quot; &quot;web&quot; {
+  bucket_prefix = &quot;tienda-waf-&quot; # AWS le agrega un sufijo para que sea único
+  force_destroy = true      # permite borrarlo aunque tenga archivos (solo para el lab)
+  tags          = { Name = &quot;tienda-waf&quot; }
+}
+
+# ---------- 2 · Candado: bloqueo de acceso público (el bucket queda privado)
+resource &quot;aws_s3_bucket_public_access_block&quot; &quot;web&quot; {
+  bucket                  = aws_s3_bucket.web.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+# ---------- 3 · El objeto: tu página (sale del archivo index.html de esta carpeta)
+resource &quot;aws_s3_object&quot; &quot;index&quot; {
+  bucket       = aws_s3_bucket.web.id
+  key          = &quot;index.html&quot;
+  source       = &quot;index.html&quot;
+  etag         = filemd5(&quot;index.html&quot;) # si cambias el archivo, Terraform lo vuelve a subir
+  content_type = &quot;text/html; charset=utf-8&quot;
+}
+
+# ---------- 4 · La credencial de CloudFront para leer el bucket (OAC)
+resource &quot;aws_cloudfront_origin_access_control&quot; &quot;oac&quot; {
+  name                              = &quot;oac-${aws_s3_bucket.web.id}&quot;
+  origin_access_control_origin_type = &quot;s3&quot;
+  signing_behavior                  = &quot;always&quot;
+  signing_protocol                  = &quot;sigv4&quot;
+}
+
+
+# ---------- La lista negra: IPs que el equipo azul decide bloquear
+variable &quot;ips_bloqueadas&quot; {
+  type        = list(string)
+  default     = []
+  description = &quot;IPs con /32, por ejemplo [\&quot;181.50.10.20/32\&quot;]&quot;
+}
+
+resource &quot;aws_wafv2_ip_set&quot; &quot;lista_negra&quot; {
+  name               = &quot;lista-negra&quot;
+  scope              = &quot;CLOUDFRONT&quot;
+  ip_address_version = &quot;IPV4&quot;
+  addresses          = var.ips_bloqueadas
+}
+
+# ---------- 5 · El escudo: AWS WAF con reglas que AWS mantiene al día
+resource &quot;aws_wafv2_web_acl&quot; &quot;escudo&quot; {
+  name  = &quot;escudo-tienda&quot;
+  scope = &quot;CLOUDFRONT&quot;
+  default_action {
+    allow {}
+  }
+
+  # Regla 0: la lista negra de IPs (siempre bloquea)
+  rule {
+    name     = &quot;lista-negra&quot;
+    priority = 0
+    action {
+      block {}
+    }
+    statement {
+      ip_set_reference_statement {
+        arn = aws_wafv2_ip_set.lista_negra.arn
+      }
+    }
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = &quot;lista-negra&quot;
+      sampled_requests_enabled   = true
+    }
+  }
+
+  # Regla 1: ataques comunes (XSS, rutas raras, tamaños sospechosos)
+  rule {
+    name     = &quot;ataques-comunes&quot;
+    priority = 1
+    override_action {
+      dynamic &quot;count&quot; {
+        for_each = var.modo == &quot;observar&quot; ? [1] : []
+        content {}
+      }
+      dynamic &quot;none&quot; {
+        for_each = var.modo == &quot;bloquear&quot; ? [1] : []
+        content {}
+      }
+    }
+    statement {
+      managed_rule_group_statement {
+        vendor_name = &quot;AWS&quot;
+        name        = &quot;AWSManagedRulesCommonRuleSet&quot;
+      }
+    }
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = &quot;ataques-comunes&quot;
+      sampled_requests_enabled   = true
+    }
+  }
+
+  # Regla 2: inyección SQL
+  rule {
+    name     = &quot;inyeccion-sql&quot;
+    priority = 2
+    override_action {
+      dynamic &quot;count&quot; {
+        for_each = var.modo == &quot;observar&quot; ? [1] : []
+        content {}
+      }
+      dynamic &quot;none&quot; {
+        for_each = var.modo == &quot;bloquear&quot; ? [1] : []
+        content {}
+      }
+    }
+    statement {
+      managed_rule_group_statement {
+        vendor_name = &quot;AWS&quot;
+        name        = &quot;AWSManagedRulesSQLiRuleSet&quot;
+      }
+    }
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = &quot;inyeccion-sql&quot;
+      sampled_requests_enabled   = true
+    }
+  }
+
+  # Regla 3: demasiadas peticiones desde una misma IP (frena bots y fuerza bruta)
+  rule {
+    name     = &quot;limite-por-ip&quot;
+    priority = 3
+    action {
+      dynamic &quot;count&quot; {
+        for_each = var.modo == &quot;observar&quot; ? [1] : []
+        content {}
+      }
+      dynamic &quot;block&quot; {
+        for_each = var.modo == &quot;bloquear&quot; ? [1] : []
+        content {}
+      }
+    }
+    statement {
+      rate_based_statement {
+        limit                 = 100 # peticiones por IP
+        evaluation_window_sec = 60  # en 1 minuto
+        aggregate_key_type    = &quot;IP&quot;
+      }
+    }
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = &quot;limite-por-ip&quot;
+      sampled_requests_enabled   = true
+    }
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = &quot;escudo-tienda&quot;
+    sampled_requests_enabled   = true
+  }
+}
+
+# ---------- 6 · CloudFront: la vitrina con candado (HTTPS + certificado) y el escudo puesto
+resource &quot;aws_cloudfront_distribution&quot; &quot;cdn&quot; {
+  enabled             = true
+  default_root_object = &quot;index.html&quot;
+  price_class         = &quot;PriceClass_100&quot;
+  comment             = &quot;Mi web en S3 con HTTPS y WAF&quot;
+  web_acl_id          = aws_wafv2_web_acl.escudo.arn # el escudo va delante de la web
+
+  origin {
+    domain_name              = aws_s3_bucket.web.bucket_regional_domain_name
+    origin_id                = &quot;s3-mi-web&quot;
+    origin_access_control_id = aws_cloudfront_origin_access_control.oac.id
+  }
+
+  default_cache_behavior {
+    target_origin_id       = &quot;s3-mi-web&quot;
+    viewer_protocol_policy = &quot;redirect-to-https&quot; # http -&gt; https siempre
+    allowed_methods        = [&quot;GET&quot;, &quot;HEAD&quot;]
+    cached_methods         = [&quot;GET&quot;, &quot;HEAD&quot;]
+    cache_policy_id        = &quot;4135ea2d-6df8-44a3-9df3-4b5a84be39ad&quot; # CachingDisabled: ves tus cambios al instante (en producción se usa caché)
+  }
+
+  restrictions {
+    geo_restriction { restriction_type = &quot;none&quot; }
+  }
+
+  viewer_certificate {
+    cloudfront_default_certificate = true # certificado HTTPS de *.cloudfront.net
+  }
+}
+
+# ---------- 7 · Permiso: SOLO esta distribución de CloudFront puede leer el bucket
+data &quot;aws_iam_policy_document&quot; &quot;solo_cloudfront&quot; {
+  statement {
+    actions   = [&quot;s3:GetObject&quot;]
+    resources = [&quot;${aws_s3_bucket.web.arn}/*&quot;]
+    principals {
+      type        = &quot;Service&quot;
+      identifiers = [&quot;cloudfront.amazonaws.com&quot;]
+    }
+    condition {
+      test     = &quot;StringEquals&quot;
+      variable = &quot;AWS:SourceArn&quot;
+      values   = [aws_cloudfront_distribution.cdn.arn]
+    }
+  }
+}
+
+resource &quot;aws_s3_bucket_policy&quot; &quot;web&quot; {
+  bucket     = aws_s3_bucket.web.id
+  policy     = data.aws_iam_policy_document.solo_cloudfront.json
+  depends_on = [aws_s3_bucket_public_access_block.web]
+}
+
+# ---------- 8 · Lo que Terraform te muestra al terminar
+output &quot;tu_web_https&quot; {
+  value = &quot;https://${aws_cloudfront_distribution.cdn.domain_name}&quot;
+}
+
+output &quot;directo_al_bucket&quot; {
+  value       = &quot;https://${aws_s3_bucket.web.bucket_regional_domain_name}/index.html&quot;
+  description = &quot;Ábrelo: debe dar AccessDenied (403). El bucket es privado.&quot;
+}
+
+output &quot;modo_waf&quot; {
+  value = var.modo
+}</pre></div><div class="snip"><div class="top"><span>index.html</span><button type="button">📋 Copiar</button></div><pre>&lt;!doctype html&gt;
+&lt;html lang=&quot;es&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;title&gt;Tienda de Laura · protegida con WAF&lt;/title&gt;
+&lt;style&gt;
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; font-family: system-ui, sans-serif; background: #0E2841; color: #fff; text-align: center; }
+  .caja { max-width: 560px; padding: 32px; }
+  h1 { font-size: 2.2rem; margin: 0 0 8px; }
+  p { color: #b4c8da; line-height: 1.5; }
+  .escudo { font-size: 4rem; }
+  code { background: #15304d; padding: 2px 8px; border-radius: 6px; color: #7cc4ff; }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class=&quot;caja&quot;&gt;
+    &lt;div class=&quot;escudo&quot;&gt;🛡️&lt;/div&gt;
+    &lt;h1&gt;Tienda de Laura&lt;/h1&gt;
+    &lt;p&gt;Esta página vive en un bucket &lt;b&gt;S3 privado&lt;/b&gt;, sale por &lt;b&gt;CloudFront&lt;/b&gt; con HTTPS y la cuida un &lt;b&gt;WAF&lt;/b&gt;.&lt;/p&gt;
+    &lt;p&gt;Hecha por: &lt;b&gt;TU NOMBRE&lt;/b&gt;&lt;/p&gt;
+    &lt;p&gt;Prueba: &lt;code&gt;?buscar=camiseta&lt;/code&gt; pasa · un ataque recibe &lt;code&gt;403&lt;/code&gt;&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class="snip"><div class="top"><span>en la terminal de VS Code</span><button type="button">📋 Copiar</button></div><pre>terraform init
+terraform apply</pre></div></div>
+  </div>
+</section>
+
+<section class="slide" id="labW1">
+  <span class="k"><span class="act-chip">🔴 EQUIPO ROJO</span> La ráfaga contra tu propia tienda</span>
+  <h2 style="font-size:clamp(1.15rem,2.3vw,1.6rem)">Golpea tu tienda… <span class="grad">y mira al WAF contar</span></h2>
   <div class="grid2" style="align-items:start;grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
-    <ul class="cmdlist"><li><span>Terminal de VS Code (PowerShell) → comandos de la derecha</span><span><b>$B</b> = tu bucket (único: tu nombre + número)</span></li><li><span>Consola → <b>IAM</b> → Usuarios → <b>Crear usuario</b> → <code>lectora</code></span><span><b>sin</b> acceso a la consola</span></li><li><span>Permisos → <b>Adjuntar políticas directamente</b> → <b>Crear política</b> → pestaña <b>JSON</b></span><span>pega la política y cambia el nombre del bucket</span></li><li><span>Nombre de la política: <code>solo-leer-mi-bucket</code> → Crear</span><span>vuelve, refresca, márcala → <b>Crear usuario</b></span></li><li><span>lectora → <b>Credenciales de seguridad</b> → <b>Crear clave de acceso</b> → CLI</span><span>copia el ID y la clave secreta (solo se ven una vez)</span></li></ul>
-    <div class="snips"><div class="snip"><div class="top"><span>1 · bucket + nota (con terraform-lab)</span><button type="button">📋 Copiar</button></div><pre>$B = &quot;seguridad-tunombre-123&quot;
-aws s3 mb &quot;s3://$B&quot;
-&quot;hola Laura&quot; &gt; nota.txt
-aws s3 cp nota.txt &quot;s3://$B/&quot;</pre></div><div class="snip"><div class="top"><span>2 · la política (pégala en IAM → JSON)</span><button type="button">📋 Copiar</button></div><pre>{
-  &quot;Version&quot;: &quot;2012-10-17&quot;,
-  &quot;Statement&quot;: [{
-    &quot;Effect&quot;: &quot;Allow&quot;,
-    &quot;Action&quot;: [&quot;s3:ListBucket&quot;, &quot;s3:GetObject&quot;],
-    &quot;Resource&quot;: [
-      &quot;arn:aws:s3:::seguridad-tunombre-123&quot;,
-      &quot;arn:aws:s3:::seguridad-tunombre-123/*&quot;
-    ]
-  }]
-}</pre></div></div>
+    <ul class="cmdlist"><li><span><b>$W</b> = tu <b>tu_web_https</b></span><span>cópialo de la salida de terraform apply</span></li><li><span>Una petición normal</span><span><b>200</b> ✓</span></li><li><span>La ráfaga: 150 peticiones seguidas</span><span>todas <b>200</b>: el WAF está en <b>observar</b></span></li><li><span>Consola → <b>WAF &amp; Shield</b> → Web ACLs → región <b>Global (CloudFront)</b> → <b>escudo-tienda</b></span><span>pestaña de tráfico: ves <b>limite-por-ip</b> en <b>COUNT</b> 📸</span></li><li><span>El WAF ya vio el ataque</span><span>pero todavía no lo frena</span></li></ul>
+    <div class="snips"><div class="snip"><div class="top"><span>en la terminal de VS Code (PowerShell)</span><button type="button">📋 Copiar</button></div><pre>$W = &quot;https://dxxxxxxxxxx.cloudfront.net&quot;
+curl.exe -s -o NUL -w &quot;%{http_code}`n&quot; &quot;$W/?buscar=camiseta&quot;
+1..150 | ForEach-Object { curl.exe -s -o NUL -w &quot;%{http_code} &quot; &quot;$W/&quot; }</pre></div></div>
   </div>
 </section>
 
-<section class="slide" id="labI1">
-  <span class="k"><span class="act-chip">🧪 LAB 1 · PASO 1</span> Prueba el mínimo privilegio</span>
-  <h2 style="font-size:clamp(1.15rem,2.3vw,1.6rem)">¿Qué puede hacer <span class="grad">lectora</span>?</h2>
+<section class="slide" id="labW2">
+  <span class="k"><span class="act-chip">🔵 EQUIPO AZUL</span> Activa el escudo</span>
+  <h2 style="font-size:clamp(1.15rem,2.3vw,1.6rem)"><span class="grad">modo=bloquear</span> y lista negra</h2>
   <div class="grid2" style="align-items:start;grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
-    <ul class="cmdlist"><li><span><code>aws configure --profile lectora</code></span><span>pega sus llaves · región <b>us-east-1</b> · formato json</span></li><li><span><code>sts get-caller-identity</code></span><span>debe decir <b>user/lectora</b></span></li><li><span><code>ls</code> y <code>cp</code> desde el bucket</span><span>✓ permitido: listar y leer</span></li><li><span>subir <code>otra.txt</code></span><span>✕ <b>AccessDenied</b>: no tiene PutObject</span></li><li><span><code>ec2 describe-instances</code></span><span>✕ <b>UnauthorizedOperation</b> 📸</span></li></ul>
-    <div class="snips"><div class="snip"><div class="top"><span>pruebas con el perfil lectora</span><button type="button">📋 Copiar</button></div><pre>aws configure --profile lectora
-aws sts get-caller-identity --profile lectora
-aws s3 ls &quot;s3://$B&quot; --profile lectora
-aws s3 cp &quot;s3://$B/nota.txt&quot; leida.txt --profile lectora
-aws s3 cp nota.txt &quot;s3://$B/otra.txt&quot; --profile lectora
-aws ec2 describe-instances --profile lectora --region us-east-1</pre></div><div class="snip"><div class="top"><span>limpieza (al final del LAB 1)</span><button type="button">📋 Copiar</button></div><pre>aws s3 rb &quot;s3://$B&quot; --force
-# consola: lectora → claves → Desactivar y Eliminar
-# luego Eliminar el usuario y la política solo-leer-mi-bucket</pre></div></div>
+    <ul class="cmdlist"><li><span><code>terraform apply -var="modo=bloquear"</code></span><span>tarda segundos: no toca CloudFront</span></li><li><span>Rojo repite la ráfaga</span><span>después de ~100: <b>403</b> ✕ (puede tardar hasta 1 min en reaccionar) 📸</span></li><li><span><code>checkip</code> te dice tu IP pública</span><span>ponla en <b>bloqueo.tfvars</b> con /32</span></li><li><span><code>apply -var-file</code> y abre tu tienda</span><span><b>403 Request blocked</b>: te bloqueaste a ti 😄</span></li><li><span>Al terminar</span><span><b>terraform destroy</b>: el WAF cobra por hora</span></li></ul>
+    <div class="snips"><div class="snip"><div class="top"><span>1 · bloquear</span><button type="button">📋 Copiar</button></div><pre>terraform apply -var=&quot;modo=bloquear&quot;
+1..150 | ForEach-Object { curl.exe -s -o NUL -w &quot;%{http_code} &quot; &quot;$W/&quot; }</pre></div><div class="snip"><div class="top"><span>2 · lista negra (crea bloqueo.tfvars)</span><button type="button">📋 Copiar</button></div><pre>curl.exe -s https://checkip.amazonaws.com</pre></div><div class="snip"><div class="top"><span>bloqueo.tfvars</span><button type="button">📋 Copiar</button></div><pre>modo           = &quot;bloquear&quot;
+ips_bloqueadas = [&quot;TU.IP.PUBLICA/32&quot;]</pre></div><div class="snip"><div class="top"><span>3 · aplicar y limpiar</span><button type="button">📋 Copiar</button></div><pre>terraform apply -var-file=&quot;bloqueo.tfvars&quot;
+terraform destroy</pre></div></div>
   </div>
 </section>
 
-<section class="slide mu">
-  <div>
-    <div class="mtag"><b>4.2</b>parte 4 · LAB 2 · el diagrama</div>
-    <h2>LAB 2: <span class="g">blinda tu EC2</span></h2>
-    
-    <ol class="msteps"><li><span>1</span><p>Miras <b>quién intenta entrar</b> por SSH (los bots).</p></li><li><span>2</span><p>Instalas los <b>parches de seguridad</b>.</p></li><li><span>3</span><p>Creas el usuario <b>laura</b> y proteges un archivo con <b>chmod 600</b>.</p></li><li><span>4</span><p>Cierras el puerto <b>22</b> a <b>solo tu IP</b> en el Security Group.</p></li></ol>
-  </div>
-  <div class="mviz"><canvas data-mu="dlab2" aria-label="Diagrama del LAB 2: tu EC2 recibe intentos de bots por SSH; checklist y cierre del puerto 22 a tu IP"></canvas></div>
-</section>
-
-<section class="slide" id="labH0">
-  <span class="k"><span class="act-chip">🧪 LAB 2 · PASO 0</span> Entra a tu EC2 y mira</span>
-  <h2 style="font-size:clamp(1.15rem,2.3vw,1.6rem)">¿Quién está tocando <span class="grad">tu puerta</span>?</h2>
-  <div class="grid2" style="align-items:start;grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
-    <ul class="cmdlist"><li><span>MobaXterm → SSH a tu EC2 de siempre</span><span><code>ec2-user</code> · tu <b>.ppk</b> · si está detenida: Iniciar</span></li><li><span><code>grep -ci</code> cuenta los intentos fallidos</span><span>¿cuántos bots intentaron hoy? 😱</span></li><li><span><code>tail -5</code> muestra usuarios e IPs</span><span>admin, root, test… desde todo el mundo</span></li><li><span><code>dnf upgrade --security</code></span><span>instala solo los parches de seguridad</span></li><li><span><code>sshd -T</code> muestra cómo está SSH</span><span><b>passwordauthentication no</b> ✓ · root sin contraseña ✓</span></li></ul>
-    <div class="snips"><div class="snip"><div class="top"><span>1 · los intentos de entrar</span><button type="button">📋 Copiar</button></div><pre>sudo journalctl -u sshd --since &quot;24 hours ago&quot; | grep -ciE &quot;invalid user|failed password&quot;
-sudo journalctl -u sshd --since &quot;24 hours ago&quot; | grep -iE &quot;invalid user&quot; | tail -5</pre></div><div class="snip"><div class="top"><span>2 · parches y configuración de SSH</span><button type="button">📋 Copiar</button></div><pre>sudo dnf check-update --security
-sudo dnf upgrade -y --security
-sudo sshd -T | grep -E &quot;^(permitrootlogin|passwordauthentication|pubkeyauthentication)&quot;</pre></div></div>
-  </div>
-</section>
-
-<section class="slide" id="labH1">
-  <span class="k"><span class="act-chip">🧪 LAB 2 · PASO 1</span> Usuarios, permisos y el puerto 22</span>
-  <h2 style="font-size:clamp(1.15rem,2.3vw,1.6rem)"><span class="grad">chmod 600</span> y el 22 solo para ti</h2>
-  <div class="grid2" style="align-items:start;grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
-    <ul class="cmdlist"><li><span><code>useradd laura</code></span><span>otra persona en el servidor, sin sudo</span></li><li><span>archivo con <b>644</b>: laura lo lee 😱</span><span><b>600</b>: <b>Permission denied</b> ✓ 📸</span></li><li><span>Consola → EC2 → tu instancia → <b>Seguridad</b> → tu Security Group</span><span><b>Editar reglas de entrada</b></span></li><li><span>Regla <b>SSH (22)</b>: origen <b>Mi IP</b> → Guardar</span><span>MobaXterm sigue entrando; los bots ya no</span></li><li><span>Si mañana cambia tu IP de casa</span><span>vuelve a poner <b>Mi IP</b> en la regla</span></li></ul>
-    <div class="snips"><div class="snip"><div class="top"><span>usuario y permisos</span><button type="button">📋 Copiar</button></div><pre>sudo useradd laura
-id laura
-echo &quot;clave-de-la-caja: 1234&quot; &gt; /tmp/secreto.txt
-chmod 644 /tmp/secreto.txt
-sudo -u laura cat /tmp/secreto.txt
-chmod 600 /tmp/secreto.txt
-sudo -u laura cat /tmp/secreto.txt
-ls -l /tmp/secreto.txt</pre></div><div class="snip"><div class="top"><span>limpieza (al final del LAB 2)</span><button type="button">📋 Copiar</button></div><pre>sudo userdel -r laura
-rm /tmp/secreto.txt</pre></div></div>
-  </div>
-</section>
-
-<section class="slide mu">
-  <div>
-    <div class="mtag"><b>4.3</b>parte 4 · LAB 3 · el diagrama</div>
-    <h2>LAB 3: tu EC2 lee S3 <span class="g">con un rol</span></h2>
-    
-    <ol class="msteps"><li><span>1</span><p>Sin rol, la EC2 <b>no tiene credenciales</b>.</p></li><li><span>2</span><p>En la consola creas el rol <b>ec2-lee-s3</b> y se lo pones a tu EC2.</p></li><li><span>3</span><p>Ahora <b>aws s3 ls</b> funciona: sin una sola llave guardada.</p></li><li><span>4</span><p>Pero <b>crear</b> un bucket falla: el rol es solo de lectura.</p></li></ol>
-  </div>
-  <div class="mviz"><canvas data-mu="dlab3" aria-label="Diagrama del LAB 3: la EC2 sin credenciales, se le adjunta el rol ec2-lee-s3, lee S3 pero no puede crear"></canvas></div>
-</section>
-
-<section class="slide" id="labR0">
-  <span class="k"><span class="act-chip">🧪 LAB 3 · PASO 0</span> El rol y la prueba</span>
-  <h2 style="font-size:clamp(1.15rem,2.3vw,1.6rem)">Credenciales <span class="grad">sin llaves</span></h2>
-  <div class="grid2" style="align-items:start;grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
-    <ul class="cmdlist"><li><span>En la EC2: <code>aws sts get-caller-identity</code></span><span><b>Unable to locate credentials</b> ✓ (aún sin rol)</span></li><li><span>Consola → <b>IAM</b> → Roles → <b>Crear rol</b> → Servicio de AWS → <b>EC2</b></span><span>política <code>AmazonS3ReadOnlyAccess</code> · nombre <code>ec2-lee-s3</code></span></li><li><span>EC2 → tu instancia → <b>Acciones</b> → Seguridad → <b>Modificar el rol de IAM</b></span><span>escoge <b>ec2-lee-s3</b> → Actualizar</span></li><li><span>Repite los comandos</span><span><b>assumed-role/ec2-lee-s3</b> · s3 ls ✓ · mb ✕ 📸</span></li><li><span>El último comando muestra cuándo vencen</span><span><b>Expiration</b>: credenciales temporales</span></li></ul>
-    <div class="snips"><div class="snip"><div class="top"><span>1 · antes y después del rol (en la EC2)</span><button type="button">📋 Copiar</button></div><pre>export AWS_DEFAULT_REGION=us-east-1
-aws sts get-caller-identity
-aws s3 ls
-aws s3 mb s3://prueba-rol-tunombre-123</pre></div><div class="snip"><div class="top"><span>2 · ¿cuándo vencen las credenciales?</span><button type="button">📋 Copiar</button></div><pre>TOKEN=$(curl -s -X PUT http://169.254.169.254/latest/api/token -H &quot;X-aws-ec2-metadata-token-ttl-seconds: 60&quot;)
-curl -s -H &quot;X-aws-ec2-metadata-token: $TOKEN&quot; http://169.254.169.254/latest/meta-data/iam/security-credentials/ec2-lee-s3 | grep -E &quot;Type|Expiration&quot;</pre></div></div>
-  </div>
-  <p class="sub" style="margin-top:12px">Limpieza: EC2 → Acciones → Seguridad → Modificar el rol de IAM → <b>Sin rol de IAM</b>.</p>
-</section>
-
-<script>['labI0','labI1','labH0','labH1','labR0'].forEach(function(id){wireSnips(document.getElementById(id))});</script>
+<script>['labW0','labW1','labW2'].forEach(function(id){wireSnips(document.getElementById(id))});</script>
 
 <!-- 15 · CIERRE -->
 <section class="slide">
   <span class="k"><span class="act-chip">✅ CIERRE</span> Deja la casa en orden</span>
-  <h2>Antes de irte: <span class="grad">nada abierto, nada suelto</span></h2>
+  <h2>Antes de irte: <span class="grad">terraform destroy</span></h2>
   <ul class="clean">
-    <li>LAB 1: borra la <b>clave de acceso</b> y el usuario <b>lectora</b>, la política y el bucket (<code>aws s3 rb --force</code>)</li>
-    <li>LAB 2: deja el <b>22 solo para tu IP</b> y borra el usuario <b>laura</b></li>
-    <li>LAB 3: quítale el <b>rol</b> a tu EC2 (o déjalo: no tiene llaves que robar)</li>
-    <li>Y siempre: <b>MFA en la root</b> y ninguna llave en GitHub 🔒</li>
+    <li><b>terraform destroy</b> en tienda-waf → <b>8 destroyed</b> (el WAF cobra por hora)</li>
+    <li>Revisa que tu <b>root</b> tenga MFA y que ninguna llave esté en GitHub 🔒</li>
+    <li>Las capas de hoy: identidad · datos (TLS, KMS, secretos) · red · aplicación (WAF) · detección</li>
   </ul>
 </section>
 
@@ -869,11 +1124,11 @@ curl -s -H &quot;X-aws-ec2-metadata-token: $TOKEN&quot; http://169.254.169.254/l
   <span class="k">Para la próxima clase</span>
   <h2>Su misión</h2>
   <ul class="clean">
-    <li>1 · Pantallazo del <b>AccessDenied</b> de lectora y del <b>Permission denied</b> de laura</li>
-    <li>2 · Pantallazo del <b>assumed-role/ec2-lee-s3</b> en tu EC2</li>
-    <li>3 · En tu bitácora: ¿qué es <b>mínimo privilegio</b>?, ¿<b>SG vs. NACL</b>? y ¿por qué <b>roles</b> en vez de llaves? (una frase cada uno)</li>
+    <li>1 · Pantallazo del WAF en <b>COUNT</b> y de la ráfaga con <b>403</b></li>
+    <li>2 · Pantallazo de tu tienda con <b>403 Request blocked</b> (tu IP en la lista negra)</li>
+    <li>3 · En tu bitácora: ¿qué es <b>cifrado en tránsito vs. en reposo</b>?, ¿para qué sirve <b>KMS</b>? y ¿qué hace un <b>WAF</b>? (una frase cada uno)</li>
   </ul>
-  <p class="sub" style="margin-top:24px">Hoy la tienda de Laura quedó con portero, rejas y llaves temporales. 🔐</p>
+  <p class="sub" style="margin-top:24px">Hoy la tienda de Laura quedó con murallas, candados y cámaras. 🏰🔐</p>
   <div class="qrs">
     <div class="qr qr-ticket"><svg xmlns="http://www.w3.org/2000/svg" width="228" height="228" class="segno"><g transform="scale(4)"><path fill="#fff" d="M0 0h57v57h-57z"/><path class="qrline" stroke="#0e2841" d="M2 2.5h7m3 0h2m1 0h2m1 0h1m1 0h1m1 0h1m3 0h1m3 0h3m2 0h1m1 0h3m1 0h2m1 0h1m3 0h7m-53 1h1m5 0h1m2 0h2m2 0h8m2 0h2m2 0h1m5 0h7m1 0h3m2 0h1m5 0h1m-53 1h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m10 0h1m4 0h2m1 0h1m1 0h2m1 0h1m2 0h1m2 0h1m2 0h1m1 0h3m1 0h1m-53 1h1m1 0h3m1 0h1m1 0h3m1 0h3m2 0h2m2 0h1m9 0h1m2 0h1m1 0h4m2 0h1m1 0h1m1 0h1m1 0h3m1 0h1m-53 1h1m1 0h3m1 0h1m1 0h1m2 0h2m1 0h1m1 0h3m2 0h2m1 0h9m3 0h2m2 0h3m3 0h1m1 0h3m1 0h1m-53 1h1m5 0h1m1 0h2m2 0h1m2 0h1m1 0h1m3 0h1m2 0h1m3 0h1m2 0h3m1 0h2m1 0h2m2 0h1m3 0h1m5 0h1m-53 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-45 1h1m3 0h4m2 0h1m4 0h2m3 0h1m1 0h3m1 0h3m1 0h1m1 0h3m1 0h1m-45 1h1m1 0h5m2 0h1m1 0h1m6 0h1m1 0h1m3 0h5m5 0h4m1 0h1m2 0h1m1 0h1m1 0h5m-51 1h1m1 0h2m3 0h2m1 0h1m1 0h1m1 0h1m1 0h6m6 0h1m1 0h2m3 0h3m3 0h2m2 0h1m1 0h1m4 0h1m-53 1h2m4 0h3m2 0h1m3 0h1m2 0h1m2 0h1m1 0h1m1 0h2m5 0h1m1 0h2m2 0h3m2 0h1m2 0h1m1 0h2m-50 1h1m1 0h1m2 0h1m1 0h1m4 0h1m1 0h2m2 0h1m1 0h2m1 0h2m3 0h6m3 0h1m2 0h1m3 0h1m1 0h1m2 0h1m1 0h1m-51 1h1m4 0h1m1 0h5m5 0h1m1 0h1m2 0h2m1 0h1m1 0h1m1 0h1m2 0h2m1 0h1m5 0h1m2 0h1m1 0h2m2 0h2m-53 1h2m2 0h1m3 0h1m1 0h2m2 0h1m1 0h2m2 0h1m1 0h2m1 0h1m2 0h1m1 0h1m4 0h1m1 0h1m2 0h1m1 0h2m3 0h2m3 0h1m-53 1h3m3 0h2m1 0h2m1 0h1m1 0h2m1 0h1m2 0h1m4 0h1m1 0h1m1 0h1m3 0h1m1 0h5m1 0h1m7 0h3m-52 1h5m3 0h1m1 0h1m1 0h9m2 0h3m1 0h4m1 0h2m4 0h3m1 0h1m1 0h3m2 0h1m-48 1h3m1 0h2m9 0h1m1 0h2m2 0h2m1 0h3m2 0h1m1 0h4m6 0h1m2 0h6m-52 1h1m1 0h1m1 0h2m3 0h2m3 0h2m3 0h3m3 0h1m2 0h6m1 0h1m3 0h5m3 0h2m3 0h1m-53 1h1m2 0h2m1 0h3m4 0h2m3 0h1m3 0h1m2 0h1m5 0h1m2 0h1m1 0h3m1 0h2m2 0h1m1 0h3m1 0h1m-51 1h1m1 0h1m4 0h3m1 0h1m2 0h1m3 0h1m1 0h6m3 0h1m1 0h2m1 0h1m3 0h1m1 0h2m1 0h1m2 0h1m1 0h2m-50 1h3m1 0h3m2 0h1m1 0h2m1 0h1m1 0h2m4 0h2m1 0h2m1 0h4m1 0h5m6 0h5m1 0h1m-49 1h2m3 0h1m1 0h2m4 0h4m1 0h2m1 0h1m3 0h1m1 0h3m4 0h1m2 0h1m2 0h2m3 0h2m1 0h1m1 0h1m-53 1h1m3 0h3m1 0h1m2 0h1m4 0h1m2 0h2m1 0h1m1 0h1m1 0h2m1 0h1m1 0h5m2 0h1m2 0h1m1 0h2m1 0h4m-50 1h1m1 0h1m1 0h1m2 0h1m1 0h2m2 0h5m1 0h2m1 0h2m5 0h1m2 0h1m2 0h1m1 0h2m1 0h5m3 0h1m3 0h1m-51 1h1m1 0h5m1 0h1m1 0h2m2 0h2m1 0h1m1 0h1m2 0h6m4 0h1m1 0h4m3 0h6m1 0h2m-52 1h2m2 0h1m3 0h1m2 0h2m1 0h2m6 0h3m3 0h4m3 0h3m3 0h4m3 0h2m1 0h1m-50 1h1m1 0h1m1 0h1m1 0h1m1 0h2m1 0h1m5 0h1m1 0h4m1 0h1m1 0h2m1 0h4m1 0h1m1 0h3m3 0h1m1 0h1m1 0h1m-49 1h3m1 0h1m3 0h5m2 0h1m1 0h1m1 0h1m3 0h2m3 0h5m2 0h1m2 0h4m2 0h1m3 0h2m1 0h2m-53 1h10m2 0h3m1 0h2m6 0h7m2 0h2m1 0h1m4 0h1m2 0h7m-51 1h2m1 0h2m5 0h1m2 0h1m2 0h1m1 0h1m1 0h4m1 0h3m2 0h3m2 0h3m1 0h1m1 0h3m3 0h2m1 0h3m-53 1h1m1 0h9m2 0h1m2 0h3m2 0h1m3 0h5m1 0h1m1 0h2m1 0h1m1 0h1m5 0h2m1 0h3m-50 1h1m2 0h2m3 0h1m4 0h4m1 0h2m1 0h1m4 0h2m1 0h1m1 0h2m7 0h7m1 0h2m1 0h1m-48 1h1m1 0h1m2 0h4m1 0h1m1 0h1m1 0h1m4 0h1m1 0h3m1 0h2m4 0h5m1 0h2m2 0h3m1 0h2m1 0h1m-53 1h1m1 0h4m2 0h1m6 0h1m1 0h2m4 0h2m2 0h1m2 0h2m3 0h2m4 0h3m1 0h5m1 0h1m-52 1h4m1 0h2m2 0h1m1 0h3m2 0h1m4 0h1m2 0h3m1 0h2m1 0h3m1 0h6m4 0h1m2 0h3m-51 1h1m3 0h2m1 0h5m6 0h3m1 0h1m1 0h4m1 0h1m1 0h2m2 0h1m2 0h3m3 0h3m1 0h2m-47 1h2m1 0h1m5 0h1m3 0h1m2 0h3m3 0h1m3 0h1m1 0h1m1 0h1m1 0h2m2 0h1m1 0h2m2 0h1m-42 1h1m2 0h1m3 0h2m1 0h3m1 0h1m1 0h1m1 0h1m3 0h1m1 0h4m1 0h1m2 0h1m3 0h3m3 0h5m1 0h1m-52 1h1m3 0h2m1 0h1m4 0h2m2 0h5m2 0h1m1 0h2m1 0h1m1 0h1m2 0h1m2 0h3m2 0h3m-45 1h2m1 0h2m3 0h1m6 0h1m2 0h1m5 0h1m4 0h2m1 0h2m3 0h2m1 0h9m3 0h1m-52 1h1m1 0h1m1 0h2m4 0h2m1 0h1m1 0h2m3 0h1m1 0h3m3 0h2m3 0h3m1 0h1m6 0h2m3 0h1m1 0h1m-53 1h6m1 0h1m1 0h9m1 0h1m3 0h3m3 0h3m3 0h1m3 0h2m1 0h9m-51 1h2m1 0h5m3 0h2m1 0h3m1 0h4m2 0h1m2 0h2m1 0h1m1 0h7m1 0h2m7 0h2m-50 1h2m4 0h1m3 0h2m1 0h1m2 0h1m1 0h2m1 0h1m2 0h2m3 0h1m1 0h4m1 0h2m1 0h4m1 0h5m-47 1h1m2 0h1m1 0h1m1 0h1m1 0h2m2 0h1m1 0h1m1 0h2m2 0h5m2 0h1m1 0h1m2 0h4m1 0h2m1 0h6m-42 1h1m1 0h4m1 0h1m1 0h1m1 0h6m3 0h5m2 0h3m1 0h6m3 0h2m1 0h1m-52 1h7m3 0h1m4 0h3m1 0h2m1 0h1m1 0h1m1 0h1m1 0h1m2 0h6m1 0h1m4 0h2m1 0h1m1 0h1m-49 1h1m5 0h1m1 0h2m2 0h7m2 0h2m1 0h1m3 0h1m1 0h6m1 0h1m4 0h3m3 0h2m-50 1h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m2 0h1m2 0h1m1 0h5m7 0h3m2 0h1m1 0h9m-52 1h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m3 0h1m2 0h1m1 0h3m1 0h2m1 0h1m5 0h2m1 0h1m1 0h4m2 0h1m3 0h2m-53 1h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h1m2 0h1m2 0h3m2 0h4m1 0h1m3 0h2m2 0h5m3 0h1m2 0h1m2 0h2m-53 1h1m5 0h1m2 0h1m2 0h7m1 0h2m2 0h1m1 0h1m1 0h1m1 0h1m1 0h1m3 0h2m2 0h2m1 0h1m3 0h3m1 0h1m-52 1h7m1 0h1m1 0h2m5 0h2m2 0h4m2 0h1m1 0h2m2 0h1m1 0h2m1 0h1m3 0h2m2 0h4"/></g></svg>
 
@@ -904,7 +1159,7 @@ function box(c,x,y,w,h,o){o=o||{};c.save();c.globalAlpha*=(o.al==null?1:o.al);if
 function dot(c,x,y,r,col,a,gl){c.save();c.globalAlpha*=(a==null?1:a);if(gl){c.shadowColor=col;c.shadowBlur=gl}c.fillStyle=col;c.beginPath();c.arc(x,y,r,0,7);c.fill();c.restore()}
 function qp(a,b,k,cp){var u=1-k;return[u*u*a[0]+2*u*k*cp[0]+k*k*b[0],u*u*a[1]+2*u*k*cp[1]+k*k*b[1]]}
 function curve(c,a,b,cp,k,col,lw,a2){if(k<=0)return;c.save();c.globalAlpha*=(a2==null?1:a2);c.strokeStyle=col;c.lineWidth=lw||2;c.lineCap='round';c.beginPath();c.moveTo(a[0],a[1]);for(var i=1;i<=40*k;i++){var p=qp(a,b,i/40,cp);c.lineTo(p[0],p[1])}c.stroke();c.restore()}
-var IM={};['EC2','RDS','Aurora','DynamoDB','ElastiCache','MemoryDB','DocumentDB','Neptune','Timestream','Redshift','OpenSearchService','Keyspaces','AWSCommandLineInterface','AWSIdentityandAccessManagement','G_AWSCloudlogo','G_Region','G_VirtualprivatecloudVPC','G_Publicsubnet','G_Privatesubnet','R_AmazonVPCInternetGateway','R_AmazonEC2Instance','R_AmazonDynamoDBTable','R_Client','R_AWSIdentityAccessManagementLongTermSecurityCredential','SimpleStorageService'].forEach(function(n){var i=new Image();i.src='aws/'+(/^(AWS|Res|G_|R_)/.test(n)?n:'Amazon'+n)+'.svg';IM[n]=i});
+var IM={};['EC2','RDS','Aurora','DynamoDB','ElastiCache','MemoryDB','DocumentDB','Neptune','Timestream','Redshift','OpenSearchService','Keyspaces','AWSCommandLineInterface','AWSIdentityandAccessManagement','G_AWSCloudlogo','G_Region','G_VirtualprivatecloudVPC','G_Publicsubnet','G_Privatesubnet','R_AmazonVPCInternetGateway','R_AmazonEC2Instance','R_AmazonDynamoDBTable','R_Client','R_AWSIdentityAccessManagementLongTermSecurityCredential','SimpleStorageService','AWSCloudTrail','GuardDuty','AWSSecurityHub','AWSShield','AWSWAF','AWSCertificateManager','AWSKeyManagementService','AWSSecretsManager','CloudFront'].forEach(function(n){var i=new Image();i.src='aws/'+(/^(AWS|Res|G_|R_)/.test(n)?n:'Amazon'+n)+'.svg';IM[n]=i});
 function icon(c,n,x,y,s,a){var im=IM[n];if(!im||!im.complete||!im.naturalWidth)return;c.save();c.globalAlpha*=(a==null?1:a);rr(c,x-s/2,y-s/2,s,s,s*.2);c.clip();c.drawImage(im,x-s/2,y-s/2,s,s);c.restore()}
 function nf(n){return Math.round(n).toLocaleString('es-CO')}
 var S={};
@@ -1602,7 +1857,7 @@ S.iamparts=function(c,t){var A=E.out(P(t,.1,.5)),IAMc='#dd344c';
   var pA=E.out(P(t,2.4,.5));box(c,320,96,226,210,{r:16,f:'#fdf6f3',s:rgba(IAMc,.5),lw:1.6,al:pA});tx(c,'política (JSON)',433,118,{s:10.5,w:700,a:'center',f:FM,c:C.mut,al:pA});tx(c,'VerPedidos',433,138,{s:14,w:800,a:'center',f:FD,c:IAMc,al:pA});
   ['"Effect": "Allow"','"Action": "s3:GetObject"','"Resource": "pedidos/*"'].forEach(function(l,i){tx(c,l,338,172+i*22,{s:10,w:600,f:FM,al:pA})});
   if(pA>0){poly(c,[[280,200],[320,200]],IAMc,2.5,null,pA);arrowhead(c,[300,200],[280,200],IAMc,pA);tx(c,'se adjunta',300,190,{s:9,w:700,a:'center',f:FM,c:IAMc,al:pA})}
-  tx(c,'sin grupo:',52,310,{s:9.5,w:700,a:'center',f:FM,c:C.red,al:E.out(P(t,3.2,.4))});tx(c,'no puede nada',52,324,{s:9.5,w:700,a:'center',f:FM,c:C.red,al:E.out(P(t,3.2,.4))});
+  tx(c,'Marta no está en el grupo: no puede nada',52,368,{s:10,w:700,f:FM,c:C.red,al:E.out(P(t,3.2,.4))});
   /* rol */
   var rA=E.out(P(t,3.8,.5));box(c,130,330,416,130,{r:16,f:'#f2f6e8',s:rgba('#7aa116',.6),lw:1.6,al:rA});tx(c,'rol',150,352,{s:10.5,w:700,f:FM,c:C.mut,al:rA});tx(c,'ec2-lee-s3',150,372,{s:14,w:800,f:FD,c:'#5c7a10',al:rA});
   tx(c,'no es una persona: lo “se pone”',150,396,{s:10.5,w:600,f:FM,c:C.mut,al:rA});tx(c,'un servicio (tu EC2) por un rato',150,412,{s:10.5,w:600,f:FM,c:C.mut,al:rA});
@@ -1617,7 +1872,7 @@ S.policy=function(c,t){var A=E.out(P(t,.1,.5)),IAMc='#dd344c';
   tx(c,'AWS revisa cada petición:',14,268,{s:12.5,w:800,f:FD,al:E.out(P(t,2.6,.4))});
   var Q=[['s3:GetObject','tienda-laura/catalogo.json','PERMITIDO','la política lo permite',C.g],['s3:DeleteObject','tienda-laura/catalogo.json','NEGADO','ninguna política lo permite',C.red],['ec2:TerminateInstances','i-0abc…','NEGADO','todo está negado por defecto',C.red]];
   Q.forEach(function(q,i){var a=E.out(P(t,3+i*.8,.4));if(a<=0)return;var y=284+i*52,r=E.back(P(t,3.4+i*.8,.4));box(c,10,y,540,44,{r:10,al:a,sh:'rgba(14,40,65,.05)'});tx(c,q[0],24,y+16,{s:11.5,w:800,f:FM,al:a});tx(c,q[1],24,y+33,{s:9.5,w:600,f:FM,c:C.mut,al:a});
-    if(r>0){var al=Math.min(1,r);box(c,252,y+8,96,28,{r:14,f:q[4]===C.g?'#ecfbf3':'#fff0f0',s:q[4],al:al});tx(c,q[2],300,y+22,{s:10.5,w:800,a:'center',f:FD,c:q[4],al:al});tx(c,q[3],538,y+22,{s:9,w:600,a:'right',c:C.mut,al:al})}});
+    if(r>0){var al=Math.min(1,r);box(c,330,y+8,96,28,{r:14,f:q[4]===C.g?'#ecfbf3':'#fff0f0',s:q[4],al:al});tx(c,q[2],378,y+22,{s:10.5,w:800,a:'center',f:FD,c:q[4],al:al});tx(c,q[3],536,y+22,{s:9.5,w:600,a:'right',c:C.mut,al:al})}});
   pill(c,'regla de oro: todo está negado hasta que algo lo permita · un Deny explícito siempre gana',280,450,IAMc,E.out(P(t,5.6,.4)),{s:10,f2:'#fdf6f3'})};
 
 /* 2.4 · mínimo privilegio */
@@ -1743,6 +1998,106 @@ S.dlab3=function(c,t){var A=E.out(P(t,.1,.5)),st=Math.floor(Math.max(0,t-1.2)/2.
   badge(c,1,140,40,on&&st===0,A);badge(c,2,270,124,on&&st===1,A);badge(c,3,264,250,on&&st===2,A);badge(c,4,264,300,on&&st===3,A);
   if(on&&st>=2){var q=along(c,[[228,250],[300,280]],E.io(u));dot(c,q[0],q[1],6,st===2?C.g:C.red,1,12)}
   var T=['1 · sin rol: la EC2 no tiene credenciales','2 · le pones el rol desde la consola','3 · lee S3 sin una sola llave','4 · pero no puede crear: solo lectura'];box(c,30,396,500,52,{r:12,f:'#0E2841',s:false,al:A});tx(c,on?T[st]:'',280,422,{s:13,w:700,a:'center',f:FD,c:'#fff',al:A})};
+/* ruta de 5 partes */
+S.ruta=function(c,t,sec){var cur=+(sec.querySelector('canvas[data-mu]').dataset.part||1),L=[['1','Fundamentos'],['2','Identidad: quién entra'],['3','Datos: cifrado y secretos'],['4','Red, aplicación y detección'],['5','Lab: rojo vs. azul con WAF']],x=70,y0=50,dy=94;
+  var g=c.createLinearGradient(0,y0,0,y0+dy*4);g.addColorStop(0,'#0F9ED5');g.addColorStop(1,'#39c8e8');
+  c.save();c.strokeStyle='rgba(180,200,218,.25)';c.lineWidth=4;c.beginPath();c.moveTo(x,y0);c.lineTo(x,y0+dy*4);c.stroke();var k=E.io(P(t,.2,1));c.strokeStyle=g;c.beginPath();c.moveTo(x,y0);c.lineTo(x,y0+dy*(cur-1)*k);c.stroke();c.restore();
+  L.forEach(function(l,i){var y=y0+i*dy,on=i+1===cur,done=i+1<cur,a=E.out(P(t,.1+i*.1,.5)),pl=on?1+.06*Math.sin(t*3):1;
+    c.save();c.globalAlpha*=a;if(on){c.shadowColor='#0F9ED5';c.shadowBlur=30}c.beginPath();c.arc(x,y,22*pl,0,7);c.fillStyle=on?g:(done?'#1d3d5e':'#15304d');c.fill();c.lineWidth=2;c.strokeStyle=on?'#fff':(done?'#39c8e8':'#2b4f74');c.stroke();c.restore();
+    tx(c,done?'✓':l[0],x,y+1,{s:16,w:800,a:'center',f:FD,c:on?'#fff':(done?'#39c8e8':'#7f9bb5'),al:a});tx(c,'parte '+l[0],x+44,y-11,{s:10.5,w:600,f:FM,c:on?'#39c8e8':'#7f9bb5',al:a});tx(c,l[1],x+44,y+11,{s:on?20:16,w:800,f:FD,c:on?'#fff':(done?'#b4c8da':'#7f9bb5'),al:a})})};
+
+/* 1.4 · defensa en profundidad: el castillo */
+S.capas=function(c,t){var cx=350,cy=236,R=[['detección','CloudTrail · GuardDuty · Security Hub',['AWSCloudTrail','GuardDuty','AWSSecurityHub'],'#7f9bb5',200],['red','Security Groups · NACL · Shield',['AWSShield'],'#8c4fff',160],['aplicación','WAF · HTTPS (ACM)',['AWSWAF','AWSCertificateManager'],C.o,120],['identidad','IAM · MFA · mínimo privilegio',['AWSIdentityandAccessManagement'],'#dd344c',82],['datos','KMS · Secrets Manager',['AWSKeyManagementService','AWSSecretsManager'],C.p,46]],hi=t>4?Math.floor((t-4)/1.8)%5:-1;
+  R.forEach(function(r,i){var a=E.out(P(t,.3+i*.35,.6));if(a<=0)return;var on=i===hi;c.save();c.globalAlpha*=a*(hi>=0&&!on?.55:1);c.beginPath();c.arc(cx,cy,r[4],0,7);c.fillStyle=rgba(r[3],on?.16:.07);c.fill();c.lineWidth=on?3:1.6;c.strokeStyle=r[3];c.stroke();c.restore()});
+  tx(c,'🏰',cx,cy-6,{s:28,a:'center',al:E.out(P(t,1.9,.4))});tx(c,'tus datos',cx,cy+22,{s:11,w:800,a:'center',f:FD,c:C.p,al:E.out(P(t,1.9,.4))});
+  R.slice().reverse().forEach(function(r,j){var i=4-j,a=E.out(P(t,.6+i*.35,.5));if(a<=0)return;var on=i===hi,y=26+j*90;box(c,0,y-4,128,64,{r:12,f:on?rgba(r[3],.12):'#fff',s:on?r[3]:C.line,lw:on?2:1.2,al:a});tx(c,r[0],10,y+12,{s:12.5,w:800,f:FD,c:r[3],al:a});r[2].forEach(function(n,q){icon(c,n,20+q*28,y+40,22,a)})});
+  pill(c,'si una capa falla, la siguiente aguanta',cx,456,C.p,E.out(P(t,2.4,.4)),{s:11.5})};
+
+/* 3.1 · cifrado en tránsito: HTTP vs HTTPS + ACM */
+S.tls=function(c,t){var A=E.out(P(t,.1,.5)),u=t%6;
+  box(c,10,10,540,150,{r:16,f:'#eef6fb',s:rgba(C.t,.35),al:A});icon(c,'AWSCertificateManager',38,38,30,A);tx(c,'el saludo TLS (antes de enviar nada)',62,36,{s:12.5,w:800,f:FD,al:A});
+  av(c,60,108,18,C.t,A,'');tx(c,'tu navegador',60,140,{s:9.5,w:700,a:'center',f:FM,c:C.mut,al:A});gx(c,'server',500,106,28,C.o,A);tx(c,'tienda',500,140,{s:9.5,w:700,a:'center',f:FM,c:C.mut,al:A});
+  var H=[['1 · hola, ¿quién eres?',1],['2 · certificado ✓ de Amazon',-1],['3 · creamos una llave secreta',1]];H.forEach(function(h,i){var a=E.out(P(t,.4+i*.7,.4));if(a<=0)return;var y=72+i*26,k=E.io(P(t,.4+i*.7,.6)),x0=h[1]>0?86:476,x1=h[1]>0?470:92;poly(c,[[x0,y],[x0+(x1-x0)*k,y]],h[1]>0?C.t:'#12a15a',2,null,a);if(k>=1)arrowhead(c,[x0,y],[x1,y],h[1]>0?C.t:'#12a15a',a);tx(c,h[0],280,y-7,{s:10,w:700,a:'center',f:FD,c:h[1]>0?C.t:'#0b6b3a',al:a})});
+  var L=[['HTTP (sin candado)',C.red,'clave: Laura123',false,188],['HTTPS (con candado 🔒)','#12a15a','x9#kQ!2@mZ…',true,330]];
+  L.forEach(function(l,i){var a=E.out(P(t,2.2+i*.4,.4));if(a<=0)return;var y=l[4];box(c,10,y,540,120,{r:16,f:i?'#f2fbf5':'#fff6f4',s:rgba(l[1],.35),al:a});tx(c,l[0],28,y+24,{s:13,w:800,f:FD,c:l[1],al:a});
+    av(c,50,y+74,16,C.t,a,'');gx(c,'server',510,y+74,24,C.o,a);poly(c,[[70,y+74],[490,y+74]],'#dfe5ee',2,[4,4],a);
+    gx(c,'eye',280,y+48,22,C.red,a);tx(c,'espía en el wifi',280,y+30,{s:9,w:700,a:'center',f:FM,c:C.red,al:a});
+    var k=(u/6),px=70+420*k;box(c,px-54,y+62,108,24,{r:12,f:l[3]?'#0E2841':'#fff',s:l[1],al:a});tx(c,(l[3]?'🔒 ':'')+l[2],px,y+74,{s:9.5,w:700,a:'center',f:FM,c:l[3]?'#7ee2a8':C.red,al:a});
+    if(k>.45&&k<.7)tx(c,l[3]?'no entiende nada':'¡la leyó!',280,y+104,{s:10.5,w:800,a:'center',f:FD,c:l[3]?'#0b6b3a':C.red,al:a})});
+  pill(c,'ACM: certificados HTTPS gratis para CloudFront y balanceadores, y se renuevan solos',280,466,'#12a15a',E.out(P(t,3.4,.4)),{s:10.5,f2:'#f2fbf5'})};
+
+/* 3.2 · cifrado en reposo con KMS (cifrado de sobre) */
+S.kms=function(c,t){var A=E.out(P(t,.1,.5)),CY=12,u=t%CY;
+  box(c,10,10,180,200,{r:16,f:'#eef6fb',s:rgba(C.p,.4),al:A});icon(c,'AWSKeyManagementService',100,52,40,A);tx(c,'AWS KMS',100,90,{s:13,w:800,a:'center',f:FD,al:A});
+  gl(c,'key',100,128,34,'#c9a227',A);tx(c,'llave maestra',100,154,{s:10.5,w:800,a:'center',f:FD,al:A});tx(c,'nunca sale de KMS',100,172,{s:9.5,w:600,a:'center',f:FM,c:C.mut,al:A});tx(c,'(hardware especial)',100,188,{s:9,w:600,a:'center',f:FM,c:C.mut,al:A});
+  var S=['1 · KMS crea una llave de datos','2 · esa llave cifra tu archivo','3 · la llave de datos se guarda cifrada','4 · para leer: KMS revisa IAM y lo anota'],st=Math.min(3,Math.floor(u/2.6));
+  S.forEach(function(s,i){var on=i===st,dn=i<st;box(c,206,10+i*50,344,42,{r:10,f:on?'#fff4ec':dn?'#ecfbf3':'#fff',s:on?C.o:dn?rgba(C.g,.4):C.line,lw:on?2:1.2,al:A});tx(c,(dn?'✓ ':'')+s,220,31+i*50,{s:11.5,w:700,f:FD,al:A})});
+  var fx=300,fy=300;box(c,fx-90,fy-50,180,140,{r:14,f:'#fff',s:C.line,al:A});tx(c,'pedidos.csv',fx,fy-30,{s:11,w:800,a:'center',f:FM,al:A});
+  var enc=st>=1&&(st>1||u%2.6>1.2);tx(c,enc?'░░▒▓░▒░▓▒':'camila, L, 45',fx,fy,{s:13,w:700,a:'center',f:FM,c:enc?C.faint:C.ink,al:A});tx(c,enc?'(cifrado)':'(texto claro)',fx,fy+20,{s:9.5,w:600,a:'center',f:FM,c:enc?C.g:C.red,al:A});
+  if(st>=0){var k=E.io(P(u,.3,1.2));gl(c,'key',100+(fx-100-60)*k,128+(fy+60-128)*k,24,C.t,1);tx(c,'llave de datos',100+(fx-100-60)*k,152+(fy+60-128)*k,{s:9,w:700,a:'center',f:FM,c:C.t})}
+  if(st>=2){box(c,fx-70,fy+52,140,26,{r:8,f:'#0E2841',s:false,al:A});tx(c,'🔒 llave cifrada adjunta',fx,fy+65,{s:9.5,w:700,a:'center',f:FM,c:'#7ee2a8',al:A})}
+  if(st===3){box(c,404,230,146,150,{r:12,f:'#f7f9fc',s:C.line,al:A});icon(c,'AWSCloudTrail',428,254,24,A);tx(c,'CloudTrail',446,254,{s:11,w:800,f:FD,al:A});['ana · Decrypt ✓','10:32 · pedidos.csv','luis · Decrypt ✕','sin permiso'].forEach(function(l,i){tx(c,l,414,282+i*20,{s:9.5,w:600,f:FM,c:i===2?C.red:C.ink,al:E.out(P(u,8+i*.3,.3))})})}
+  pill(c,'un clic: cifra EBS, S3, RDS y DynamoDB con KMS',280,456,C.p,E.out(P(t,1,.4)),{s:11.5})};
+
+/* 3.3 · Secrets Manager */
+S.secretos=function(c,t){var A=E.out(P(t,.1,.5)),u=t%10;
+  box(c,10,10,265,456,{r:16,f:'#fff6f4',s:rgba(C.red,.3),al:A});tx(c,'✕ la clave dentro del código',142,38,{s:13,w:800,a:'center',f:FD,c:C.red,al:A});
+  term(c,24,58,238,110,[['app.py','#7f9bb5',9.5],['db = conectar(','#e6edf3',10],['  clave="Laura123")','#ffb86b',10]],A);
+  ['git push → GitHub','la ve cualquiera con acceso','cambiarla = cambiar el código'].forEach(function(s,i){var a=E.out(P(u,.6+i*.8,.3));box(c,24,190+i*62,238,50,{r:10,f:'#fff',s:rgba(C.red,.35),al:a});tx(c,s,143,215+i*62,{s:11.5,w:700,a:'center',f:FD,c:C.red,al:a})});
+  box(c,285,10,265,456,{r:16,f:'#f2fbf5',s:rgba(C.g,.35),al:A});tx(c,'✓ AWS Secrets Manager',418,38,{s:13,w:800,a:'center',f:FD,c:'#0b6b3a',al:A});
+  term(c,299,58,238,110,[['app.py','#7f9bb5',9.5],['clave = secretos(','#e6edf3',10],['  "tienda/bd")','#7ee2a8',10]],A);
+  icon(c,'AWSSecretsManager',418,236,52,A);tx(c,'la caja fuerte de claves',418,282,{s:11,w:800,a:'center',f:FD,al:A});
+  var k=E.io(P(u,1.2,1));if(u>1.2&&u<2.4){var q=along(c,[[418,170],[418,208]],k);dot(c,q[0],q[1],6,C.g,1,12)}
+  var days=Math.max(0,30-Math.floor((t*3)%31));c.save();c.globalAlpha*=A;c.strokeStyle=C.g;c.lineWidth=5;c.beginPath();c.arc(418,354,30,-Math.PI/2,-Math.PI/2+2*Math.PI*days/30);c.stroke();c.restore();tx(c,days+' d',418,354,{s:12,w:800,a:'center',f:FM,c:C.g,al:A});
+  tx(c,'la cambia sola cada 30 días',418,402,{s:11,w:700,a:'center',f:FD,c:'#0b6b3a',al:A});tx(c,'y solo la lee quien IAM permite',418,420,{s:11,w:700,a:'center',f:FD,c:'#0b6b3a',al:A})};
+/* 4.2 · AWS WAF: el filtro delante de tu web */
+var WREQ=[['cliente normal',0],['patrón de ataque conocido',1],['cliente normal',0],['bot: cientos por minuto',2],['IP en lista negra',3],['cliente normal',0]];
+S.waf=function(c,t){var A=E.out(P(t,.1,.5)),RL=['reglas administradas de AWS','límite por IP','lista negra de IPs'],RC=[C.red,'#8c4fff',C.o];
+  box(c,226,20,104,380,{r:14,f:'#fff4ec',s:C.o,lw:2,al:A,sh:'rgba(233,113,50,.2)'});icon(c,'AWSWAF',278,52,34,A);tx(c,'AWS WAF',278,86,{s:12,w:800,a:'center',f:FD,al:A});
+  RL.forEach(function(r,i){box(c,234,112+i*60,88,50,{r:8,f:'#fff',s:rgba(RC[i],.5),al:A});wrap(c,r,242,130+i*60,76,13,{s:9.5,w:700,f:FD,c:RC[i],al:A})});
+  box(c,420,150,130,120,{r:14,f:'#fff',s:C.line,al:A,sh:'rgba(14,40,65,.08)'});icon(c,'CloudFront',485,190,32,A);tx(c,'tu tienda',485,228,{s:12,w:800,a:'center',f:FD,al:A});tx(c,'200 ✓',485,250,{s:11,w:800,a:'center',f:FM,c:C.g,al:A});
+  var per=1.4,n=Math.floor(Math.max(0,t-.8)/per),passed=0,blocked=0;
+  for(var j=0;j<=n;j++){var r=WREQ[j%WREQ.length];if(j<n){if(r[1])blocked++;else passed++}}
+  if(t>.8){var r=WREQ[n%WREQ.length],u=((t-.8)%per)/per,bad=r[1]>0,y=80+(n%4)*80;
+    var x=u<.5?20+206*E.io(u/.5):(bad?226-30*E.out((u-.5)/.5):330+90*E.io((u-.5)/.5));dot(c,x,y+40,8,bad?C.red:C.g,1,14);tx(c,r[0],u<.5?x:x,y+22,{s:10,w:700,a:'center',f:FD,c:bad?C.red:'#0b6b3a'});
+    if(bad&&u>.5){box(c,90,y+56,130,24,{r:12,f:'#fff0f0',s:C.red});tx(c,'403 · '+['','regla AWS','límite por IP','lista negra'][r[1]],155,y+68,{s:9.5,w:800,a:'center',f:FM,c:C.red})}}
+  box(c,10,410,260,56,{r:12,f:'#ecfbf3',s:false,al:A});tx(c,'pasaron',24,428,{s:10.5,w:600,c:C.mut,al:A});tx(c,String(passed),24,452,{s:20,w:800,f:FD,c:C.g,al:A});
+  box(c,290,410,260,56,{r:12,f:'#fff0f0',s:false,al:A});tx(c,'bloqueadas',304,428,{s:10.5,w:600,c:C.mut,al:A});tx(c,String(blocked),304,452,{s:20,w:800,f:FD,c:C.red,al:A})};
+
+/* 4.3 · Shield y CloudFront contra DDoS */
+S.shield=function(c,t){var A=E.out(P(t,.1,.5)),E5=[[90,120],[200,80],[330,96],[450,130],[150,230],[400,230]],sh=t>3;
+  box(c,10,10,540,300,{r:16,f:'#eef6fb',s:rgba(C.t,.3),al:A});tx(c,'ubicaciones de CloudFront en el mundo',280,32,{s:11.5,w:800,a:'center',f:FD,c:C.t,al:A});
+  E5.forEach(function(e,i){icon(c,'CloudFront',e[0],e[1],26,A)});icon(c,'AWSShield',280,180,44,E.out(P(t,3,.5)));if(sh)tx(c,'AWS Shield',280,214,{s:11,w:800,a:'center',f:FD,al:A});
+  for(var d=0;d<70;d++){var k=((t*.5)+d/70)%1,e=E5[d%E5.length],sx=(d*53)%540+10,sy=d%2?300:12;var x=sx+(e[0]-sx)*k,y=sy+(e[1]-sy)*k;dot(c,x,y,2.6,C.red,.75)}
+  box(c,10,326,540,140,{r:16,al:A,sh:'rgba(14,40,65,.07)'});tx(c,'DDoS: millones de peticiones para tumbar tu web',28,352,{s:13,w:800,f:FD,c:C.red,al:A});
+  ['el tráfico se reparte entre cientos de ubicaciones','Shield Standard: gratis y siempre activo','Shield Advanced: equipo de respuesta 24/7 (de pago)'].forEach(function(s,i){tx(c,'✓ '+s,28,384+i*24,{s:11.5,w:700,f:FD,c:'#0b6b3a',al:E.out(P(t,1+i*.6,.4))})});
+  var up=t>3;pill(c,up?'la tienda sigue en línea ✓':'…',470,352,C.g,E.out(P(t,3.6,.4)),{s:10,f2:'#ecfbf3'})};
+
+/* 4.4 · detectar: CloudTrail, GuardDuty y Security Hub */
+S.detect=function(c,t){var A=E.out(P(t,.1,.5));
+  box(c,10,10,265,250,{r:16,f:'#0E2841',s:false,al:A});icon(c,'AWSCloudTrail',36,36,26,A);tx(c,'CloudTrail · ¿quién hizo qué?',56,36,{s:11.5,w:800,f:FD,c:'#fff',al:A});
+  var LOG=[['10:31','ana','PutObject','#7ee2a8'],['10:32','luis','RunInstances','#7ee2a8'],['10:33','root','ConsoleLogin','#ffb86b'],['10:35','luis','DeleteBucket','#ff9b9b'],['10:36','ana','GetObject','#7ee2a8'],['10:38','???','CreateAccessKey','#ff9b9b']],n=Math.min(LOG.length,Math.floor(t/.7));
+  for(var i=0;i<n;i++){var l=LOG[i];tx(c,l[0]+'  '+l[1].padEnd(5,' ')+' '+l[2],24,70+i*28,{s:10,w:600,f:FM,c:l[3],al:A})}
+  box(c,285,10,265,250,{r:16,al:A,sh:'rgba(14,40,65,.07)'});icon(c,'GuardDuty',312,36,26,A);tx(c,'GuardDuty · detecta solo',332,36,{s:11.5,w:800,f:FD,al:A});
+  var fA=E.back(P(t,4.4,.5));if(fA>0){var al=Math.min(1,fA);box(c,299,62,238,100,{r:12,f:'#fff0f0',s:C.red,lw:1.6,al:al});tx(c,'⚠ hallazgo · severidad ALTA',312,82,{s:11,w:800,f:FD,c:C.red,al:al});wrap(c,'Se creó una llave de acceso desde una IP que nunca había usado la cuenta',312,104,214,15,{s:10,w:600,c:C.ink,al:al});tx(c,'→ te avisa por correo',312,150,{s:10,w:700,f:FM,c:C.mut,al:al})}
+  tx(c,'aprende lo normal y avisa lo raro',418,190,{s:10.5,w:700,a:'center',f:FD,c:C.mut,al:A});
+  box(c,10,276,540,190,{r:16,al:A,sh:'rgba(14,40,65,.07)'});icon(c,'AWSSecurityHub',36,302,26,A);tx(c,'Security Hub · tu nota de seguridad',56,302,{s:11.5,w:800,f:FD,al:A});
+  var sc=Math.round(52+30*E.io(P(t,2,3)));c.save();c.globalAlpha*=A;c.strokeStyle=C.line;c.lineWidth=12;c.beginPath();c.arc(110,390,48,0,7);c.stroke();c.strokeStyle=sc>75?C.g:C.o;c.beginPath();c.arc(110,390,48,-Math.PI/2,-Math.PI/2+2*Math.PI*sc/100);c.stroke();c.restore();tx(c,sc+'%',110,390,{s:20,w:800,a:'center',f:FD,al:A});
+  [['root sin MFA',2.4],['bucket público',3],['puerto 22 abierto a todos',3.6],['disco sin cifrar',4.2]].forEach(function(f,i){var fixed=t>f[1]+.4;tx(c,(fixed?'✓ ':'✕ ')+f[0],200,340+i*28,{s:11.5,w:700,f:FD,c:fixed?'#0b6b3a':C.red,al:E.out(P(t,1.2+i*.2,.3))})})};
+
+/* LAB · rojo vs. azul */
+S.dwaf=function(c,t){var A=E.out(P(t,.1,.5)),st=Math.floor(Math.max(0,t-1.2)/2.8)%4,u=(Math.max(0,t-1.2)%2.8)/2.8,on=t>1.2,blk=on&&st>=2;
+  box(c,6,40,118,120,{r:14,f:'#fff6f4',s:rgba(C.red,.45),al:A});icon(c,'R_Client',65,78,36,A);tx(c,'equipo rojo',65,110,{s:11.5,w:800,a:'center',f:FD,c:C.red,al:A});tx(c,'tu PC · curl',65,128,{s:9.5,w:600,a:'center',f:FM,c:C.mut,al:A});
+  box(c,6,300,118,120,{r:14,f:'#f2fbf5',s:rgba(C.g,.45),al:A});av(c,65,340,18,C.t,A,'');tx(c,'cliente normal',65,372,{s:11,w:800,a:'center',f:FD,c:'#0b6b3a',al:A});tx(c,'navegador',65,390,{s:9.5,w:600,a:'center',f:FM,c:C.mut,al:A});
+  grp(c,140,10,410,460,'#242f3e','AWS Cloud','G_AWSCloudlogo',{al:A});
+  box(c,170,150,110,170,{r:14,f:blk?'#fff4ec':'#fff',s:C.o,lw:2,al:A});icon(c,'AWSWAF',225,190,34,A);tx(c,'WAF',225,224,{s:12,w:800,a:'center',f:FD,al:A});tx(c,blk?'modo: bloquear':'modo: observar',225,246,{s:9.5,w:800,a:'center',f:FM,c:blk?C.red:C.t,al:A});
+  box(c,310,150,100,170,{r:14,al:A});icon(c,'CloudFront',360,200,34,A);tx(c,'CloudFront',360,238,{s:10.5,w:800,a:'center',f:FD,al:A});tx(c,'HTTPS',360,256,{s:9.5,w:600,a:'center',f:FM,c:C.mut,al:A});
+  box(c,430,150,100,170,{r:14,f:'#f2f6e8',s:rgba('#7aa116',.6),al:A});icon(c,'SimpleStorageService',480,200,34,A);tx(c,'S3 privado',480,238,{s:10.5,w:800,a:'center',f:FD,al:A});tx(c,'index.html',480,256,{s:9.5,w:600,a:'center',f:FM,c:C.mut,al:A});
+  poly(c,[[280,235],[310,235]],'#8B98A9',2,null,A);poly(c,[[410,235],[430,235]],'#8B98A9',2,null,A);
+  if(on){var red=st===1||st===3,from=red?[124,100]:[124,360],k=E.io(u),x=from[0]+(170-from[0])*Math.min(1,k*1.2),y=from[1]+(235-from[1])*Math.min(1,k*1.2);
+    if(red&&blk&&k>.85){tx(c,'✕ 403',225,128,{s:16,w:800,a:'center',f:FD,c:C.red})}else{var x2=k>.85?170+(480-170)*((k-.85)/.15):x;dot(c,x2,k>.85?235:y,6,red?C.red:C.g,1,12)}}
+  var T=['1 · terraform apply: WAF en modo observar','2 · rojo: ráfaga de peticiones → pasan (200), el WAF las cuenta','3 · azul: terraform apply -var="modo=bloquear"','4 · rojo otra vez: 403 ✕ · el cliente normal sigue entrando ✓'];
+  box(c,150,350,390,100,{r:12,f:'#0E2841',s:false,al:A});wrap(c,on?T[st]:'',166,376,360,18,{s:12.5,w:700,f:FD,c:'#fff',al:A})};
 
 /* motor: corre la escena de la diapositiva visible */
 var raf=0,cur=null,TOFF=parseFloat((location.search.match(/[?&]mt=([\d.]+)/)||[])[1])||0;function tick(){return document.hidden?setTimeout(function(){frame(performance.now())},33):requestAnimationFrame(frame)}

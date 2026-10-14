@@ -1,17 +1,15 @@
 # WhatsApp RED-02 — Recordatorio clase 11 · 2026-10-14
-**Tema:** ciberseguridad e IAM: la tríada CIA, cómo atacan, responsabilidad compartida, IAM (autenticación/autorización, usuarios, grupos, políticas, roles, mínimo privilegio, root/MFA/llaves), Security Group vs. NACL, hardening y permisos rwx. LABs: usuario de solo lectura, blindar la EC2 y rol IAM sin llaves.
+**Tema:** seguridad en AWS por capas: tríada CIA, amenazas, responsabilidad compartida y defensa en profundidad; identidad (IAM, mínimo privilegio, MFA); datos (HTTPS/TLS y ACM, cifrado en reposo con KMS, Secrets Manager); red, aplicación y detección (SG vs. NACL, WAF, Shield/DDoS, CloudTrail, GuardDuty, Security Hub). LAB: rojo vs. azul con WAF sobre su propia tienda.
 
-🔐 *¡Grupo 2! Hoy: ¿quién puede entrar a tu nube?*
+🏰 *¡Grupo 2! Hoy: defiende tu nube… y atácala*
 
-Tu EC2 recibe intentos de entrar de bots de todo el mundo… *¡hoy los vamos a ver con nuestros propios ojos!* 👀
+¿Cómo se protege una tienda en la nube de verdad? Por capas: *candados (HTTPS)*, *cajas fuertes de llaves (KMS)*, *claves que no van en el código*, un *filtro delante de tu web (WAF)*, escudo contra avalanchas (*DDoS*) y cámaras que lo graban todo 🔐
 
-Aprendemos *ciberseguridad e IAM*: cómo atacan de verdad, quién cuida qué en la nube, usuarios, políticas y *roles*, el *mínimo privilegio* y por qué una llave en GitHub puede costar miles de dólares 💸
-
-Y a practicar: un usuario que *solo puede leer*, *blindamos tu EC2* y tu servidor lee S3 *sin una sola llave* 🛡️
+Y el plato fuerte: *rojo vs. azul* ⚔️ Montas tu tienda detrás de un WAF, el equipo rojo la golpea y el equipo azul activa el escudo. ¡Vas a ver los ataques rebotar con un 403! 🛡️
 
 📅 *HOY* · 💻 Virtual
 🔗 https://meet.google.com/dzm-ohyv-wez
 
-✅ *Lleguen con:* la consola de AWS abierta, VS Code con la AWS CLI y *MobaXterm* con su *.ppk* (vamos a entrar a la EC2 de siempre).
+✅ *Lleguen con:* la consola de AWS abierta y VS Code con Terraform y la AWS CLI funcionando.
 
 ¡Los espero! 💪
