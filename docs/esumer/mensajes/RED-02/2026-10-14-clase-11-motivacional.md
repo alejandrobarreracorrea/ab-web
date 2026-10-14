@@ -1,9 +1,9 @@
 # WhatsApp RED-02 — Recordatorio clase 11 · 2026-10-14
-**Tema:** seguridad en AWS por capas: tríada CIA, amenazas, responsabilidad compartida y defensa en profundidad; identidad (IAM, mínimo privilegio, MFA); datos (HTTPS/TLS y ACM, cifrado en reposo con KMS, Secrets Manager); red, aplicación y detección (SG vs. NACL, WAF, Shield/DDoS, CloudTrail, GuardDuty, Security Hub). LAB: rojo vs. azul con WAF sobre su propia tienda.
+**Tema:** "La noche en que atacaron la tienda de Laura": superficie de ataque, CIA, responsabilidad compartida y defensa en profundidad; identidad (phishing y MFA, llave filtrada, mínimo privilegio); cifrado (simétrico/asimétrico, HTTPS/TLS y ACM, hash, KMS, Secrets Manager); la web bajo ataque (SG/NACL, WAF, Shield/DDoS); forense (CloudTrail, GuardDuty, Security Hub). LAB: rojo vs. azul con WAF.
 
-🏰 *¡Grupo 2! Hoy: defiende tu nube… y atácala*
+🏰 *¡Grupo 2! Hoy: la noche en que atacaron la tienda de Laura*
 
-¿Cómo se protege una tienda en la nube de verdad? Por capas: *candados (HTTPS)*, *cajas fuertes de llaves (KMS)*, *claves que no van en el código*, un *filtro delante de tu web (WAF)*, escudo contra avalanchas (*DDoS*) y cámaras que lo graban todo 🔐
+Un correo falso a las 21:12, una llave olvidada en GitHub, un wifi espiado, un disco que se filtró y una avalancha a medianoche 😱 ¿Qué salvó a Laura? *Una capa de seguridad para cada ataque*: MFA, cifrado, KMS, WAF, Shield… y cámaras que lo grabaron todo 🔐
 
 Y el plato fuerte: *rojo vs. azul* ⚔️ Montas tu tienda detrás de un WAF, el equipo rojo la golpea y el equipo azul activa el escudo. ¡Vas a ver los ataques rebotar con un 403! 🛡️
 

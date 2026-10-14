@@ -267,8 +267,8 @@ ul.clean li:first-child { border-top:0; }
   <img class="cover-bg" src="../../../assets/portada.png" alt="">
   <div class="cover-txt">
     <span class="cover-k">Estud-IA · Ruta TI · 2026-2 · Sesión {{SESION}} · clase virtual · {{G_ID}}</span>
-    <h1 class="cover-h">Defiende tu nube: seguridad en AWS por capas</h1>
-    <p class="cover-s">Identidad, cifrado en tránsito y en reposo, secretos, WAF, DDoS y detección. Y al final, rojo vs. azul: atacas tu propia tienda y la defiendes con un WAF.<br>Alejandro Barrera · Cloud Architect</p>
+    <h1 class="cover-h">La noche en que atacaron la tienda de Laura</h1>
+    <p class="cover-s">Un correo falso, una llave en GitHub, un wifi espiado, un disco robado y una avalancha a medianoche. Cada ataque contra una capa de seguridad de AWS… y al final, rojo vs. azul con tu propia tienda.<br>Alejandro Barrera · Cloud Architect</p>
   </div>
   <img class="cover-logo" src="../../../assets/estudia-blanco.png" alt="Estud-IA">
 </section>
@@ -278,11 +278,11 @@ ul.clean li:first-child { border-top:0; }
   <span class="k">El plan de hoy · clase {{SESION}}</span>
   <h2>Objetivo de hoy: <span class="grad">defender la tienda por capas</span>.</h2>
   <ul class="rows">
-    <li><span class="t">Parte 1 · Fundamentos<small>la tríada CIA · cómo atacan · responsabilidad compartida · defensa en profundidad</small></span><span class="m">concepto</span></li>
-    <li><span class="t">Parte 2 · Identidad<small>autenticación vs. autorización · mínimo privilegio y roles · root, MFA y llaves filtradas</small></span><span class="m">concepto</span></li>
-    <li><span class="t">Parte 3 · Datos<small>HTTPS/TLS y ACM · cifrado en reposo con KMS · Secrets Manager</small></span><span class="m">concepto</span></li>
-    <li><span class="t">Parte 4 · Red, aplicación y detección<small>SG vs. NACL · WAF · Shield y DDoS · CloudTrail, GuardDuty y Security Hub</small></span><span class="m">concepto</span></li>
-    <li><span class="t">Parte 5 · Rojo vs. azul<small>tu tienda con WAF: el equipo rojo ataca, el equipo azul bloquea</small></span><span class="m">lab</span></li>
+    <li><span class="t">Prólogo · ya eres un blanco<small>superficie de ataque · la tríada CIA · responsabilidad compartida · el castillo por capas</small></span><span class="m">historia</span></li>
+    <li><span class="t">Cap. 1 · El correo de las 21:12 (identidad)<small>phishing y MFA · la llave en GitHub · autenticación vs. autorización</small></span><span class="m">concepto</span></li>
+    <li><span class="t">Cap. 2 · El wifi del café (cifrado)<small>simétrico vs. asimétrico · HTTPS/TLS y ACM · hash · KMS · Secrets Manager</small></span><span class="m">concepto</span></li>
+    <li><span class="t">Cap. 3 · La web bajo ataque · Cap. 4 · ¿Qué pasó anoche?<small>SG vs. NACL · WAF · Shield y DDoS · CloudTrail, GuardDuty y Security Hub</small></span><span class="m">concepto</span></li>
+    <li><span class="t">Lab · Rojo vs. azul<small>tu tienda con WAF: el equipo rojo ataca, el equipo azul bloquea</small></span><span class="m">lab</span></li>
   </ul>
 </section>
 
@@ -585,192 +585,231 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu dark sep">
   <div>
-    <div class="mtag" style="color:#7f9bb5"><b>Parte 1</b>de 4</div>
-    <h2 style="max-width:15ch">Fundamentos de la <span class="g">ciberseguridad</span></h2>
-    <p class="msub">Qué protegemos, cómo atacan de verdad, quién cuida qué en la nube y cómo se defiende un castillo por capas.</p>
+    <div class="mtag" style="color:#7f9bb5"><b>Parte 1</b>de 6</div>
+    <h2 style="max-width:15ch">Prólogo: <span class="g">ya eres un blanco</span></h2>
+    <p class="msub">La tienda de Laura ya tiene EC2, S3, RDS y DynamoDB. Y en internet hay bots que tocan todas las puertas, todo el día.</p>
   </div>
   <div class="mviz"><canvas data-mu="ruta" data-part="1" aria-label="Ruta de la clase: parte 1 de 4"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>1.1</b>parte 1 · los 3 pilares</div>
-    <h2>La tríada <span class="g">CIA</span></h2>
+    <div class="mtag"><b>0.1</b>prólogo · la superficie de ataque</div>
+    <h2>Cada puerta abierta <span class="g">es un blanco</span></h2>
+    <div class="mnote"><span>// como</span> una tienda con muchas puertas a la calle</div>
+    <p class="msub">Todo lo que montamos en clases pasadas queda en internet: el puerto 22 de la EC2, los buckets, la base, la consola. Eso es tu <b>superficie de ataque</b>. Los bots no eligen a Laura por famosa: prueban <b>todo</b>, contra todos, sin parar.</p><p class="muse">Pregunta del día: <b>¿qué pasa si alguien logra entrar?</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="blanco" aria-label="La infraestructura de Laura rodeada de bots que prueban cada puerta"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>0.2</b>prólogo · qué cuidamos</div>
+    <h2>Lo que el atacante <span class="g">quiere romper</span></h2>
     <div class="mnote"><span>// como</span> los tres candados de una tienda</div>
-    <p class="msub">Toda la ciberseguridad cuida 3 cosas: <b>Confidencialidad</b> (solo quien debe ve los datos), <b>Integridad</b> (nadie los cambia sin permiso) y <b>Disponibilidad</b> (están ahí cuando se necesitan). Cada ataque rompe al menos una.</p><p class="muse">CIA: <b>C</b>onfidentiality · <b>I</b>ntegrity · <b>A</b>vailability</p>
+    <p class="msub">Todo ataque rompe al menos uno: la <b>Confidencialidad</b> (ver lo que no debe), la <b>Integridad</b> (cambiar lo que no debe) o la <b>Disponibilidad</b> (tumbar la tienda). A esto se le llama la tríada <b>CIA</b>.</p>
   </div>
   <div class="mviz"><canvas data-mu="cia" aria-label="Tres pilares: confidencialidad, integridad y disponibilidad, cada uno atacado y protegido"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>1.2</b>parte 1 · cómo atacan</div>
-    <h2>Así se <span class="g">meten</span></h2>
-    <div class="mnote"><span>// como</span> las ventanas que uno mismo deja abiertas</div>
-    <p class="msub">La mayoría de ataques aprovecha <b>descuidos</b>: un correo falso, una clave repetida, una llave subida a GitHub, un puerto abierto a todo internet, un bucket público o un sistema sin actualizar.</p><p class="muse">Lo bueno: casi todas se evitan con <b>buenos hábitos</b> y los servicios correctos</p>
-  </div>
-  <div class="mviz"><canvas data-mu="amenazas" aria-label="Seis amenazas comunes y cómo evitar cada una"></canvas></div>
-</section>
-
-<section class="slide mu">
-  <div>
-    <div class="mtag"><b>1.3</b>parte 1 · ¿quién cuida qué?</div>
+    <div class="mtag"><b>0.3</b>prólogo · quién cuida qué</div>
     <h2>Responsabilidad <span class="g">compartida</span></h2>
     <div class="mnote"><span>// como</span> el edificio y tu apartamento</div>
-    <p class="msub"><b>AWS</b> cuida la seguridad <b>DE</b> la nube: edificios, servidores, red física. <b>Tú</b> cuidas la seguridad <b>EN</b> la nube: tus datos, tus usuarios, tus puertos y, si usas EC2, el sistema operativo.</p>
+    <p class="msub"><b>AWS</b> cuida la seguridad <b>DE</b> la nube: edificios, servidores, red física. <b>Laura</b> cuida la seguridad <b>EN</b> la nube: sus datos, sus usuarios, sus puertos y el sistema operativo de su EC2. Si deja la puerta abierta, AWS no la cierra por ella.</p>
   </div>
-  <div class="mviz"><canvas data-mu="compartida" aria-label="AWS cuida la infraestructura; tú cuidas datos, IAM, puertos y el sistema operativo"></canvas></div>
+  <div class="mviz"><canvas data-mu="compartida" aria-label="AWS cuida la infraestructura; el cliente cuida datos, IAM, puertos y sistema operativo"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>1.4</b>parte 1 · defensa en profundidad</div>
+    <div class="mtag"><b>0.4</b>prólogo · el plan de Laura</div>
     <h2>Un castillo <span class="g">por capas</span></h2>
     <div class="mnote"><span>// como</span> murallas, fosos y guardias: si una falla, queda la siguiente</div>
-    <p class="msub">Nunca se confía en una sola protección. En AWS cada capa tiene sus servicios: <b>detección</b>, <b>red</b>, <b>aplicación</b>, <b>identidad</b> y, en el centro, <b>tus datos</b>. Hoy recorremos el castillo de afuera hacia adentro… y lo atacamos.</p><div class="mfacts"><span><i>hoy</i>IAM · ACM · KMS · Secrets Manager · WAF · Shield · CloudTrail · GuardDuty · Security Hub</span></div>
+    <p class="msub">Laura no confía en una sola protección: arma su castillo por capas. Esta noche la van a atacar por cada una… y en cada capítulo veremos qué la salvó.</p><div class="mfacts"><span><i>hoy</i>IAM · MFA · ACM · KMS · Secrets Manager · WAF · Shield · CloudTrail · GuardDuty · Security Hub</span></div>
   </div>
   <div class="mviz"><canvas data-mu="capas" aria-label="Anillos de defensa en profundidad con los servicios de AWS de cada capa"></canvas></div>
 </section>
 
 <section class="slide mu dark sep">
   <div>
-    <div class="mtag" style="color:#7f9bb5"><b>Parte 2</b>de 4</div>
-    <h2 style="max-width:15ch">Identidad: <span class="g">quién entra</span></h2>
-    <p class="msub">IAM decide quién entra a tu cuenta y qué puede tocar. Lo esencial en tres ideas.</p>
+    <div class="mtag" style="color:#7f9bb5"><b>Parte 2</b>de 6</div>
+    <h2 style="max-width:15ch">Capítulo 1: <span class="g">el correo de las 21:12</span></h2>
+    <p class="msub">El primer ataque no va contra los servidores: va contra las personas.</p>
   </div>
   <div class="mviz"><canvas data-mu="ruta" data-part="2" aria-label="Ruta de la clase: parte 2 de 4"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>2.1</b>parte 2 · IAM</div>
-    <h2>Dos preguntas <span class="g">en la puerta</span></h2>
+    <div class="mtag"><b>1.1</b>cap. 1 · identidad</div>
+    <h2>El correo <span class="g">de las 21:12</span></h2>
+    <div class="mnote"><span>// como</span> un ladrón disfrazado de cartero</div>
+    <p class="msub">A Luis le llega un correo “de AWS”: su cuenta será suspendida. Hace clic y escribe su clave en una página <b>falsa</b> (phishing). El atacante la usa en la consola real… y se estrella con el <b>MFA</b>: no tiene el celular de Luis.</p><div class="mfacts"><span><i>factores</i>algo que sabes · algo que tienes · algo que eres</span></div>
+  </div>
+  <div class="mviz"><canvas data-mu="phish" aria-label="Un correo de phishing roba la clave de Luis pero el atacante no pasa el MFA"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>1.2</b>cap. 1 · identidad</div>
+    <h2>La llave <span class="g">que se fue a GitHub</span></h2>
+    <div class="mnote"><span>// como</span> dejar copia de la llave de la tienda en la calle</div>
+    <p class="msub">Pedro sube su proyecto a GitHub… con su llave de acceso adentro. Un bot la encuentra en un minuto. Lo salvan tres cosas: la llave tenía <b>mínimo privilegio</b>, <b>GuardDuty</b> avisó y Laura la <b>desactivó</b> en minutos.</p><p class="muse">Las llaves van en <b>.gitignore</b>; los servicios usan <b>roles</b>, no llaves</p>
+  </div>
+  <div class="mviz"><canvas data-mu="gitkey" aria-label="Línea de tiempo de una llave filtrada en GitHub, frenada por mínimo privilegio, GuardDuty y la revocación"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>1.3</b>cap. 1 · identidad</div>
+    <h2>Quién eres <span class="g">y qué puedes hacer</span></h2>
     <div class="mnote"><span>// como</span> el vigilante: primero tu cédula, después tu lista de permisos</div>
-    <p class="msub"><b>Autenticación</b>: ¿quién eres? (usuario, contraseña y MFA). <b>Autorización</b>: ¿qué puedes hacer? (las políticas de IAM). Pasar la primera no te da permiso para todo.</p>
+    <p class="msub"><b>Autenticación</b> (¿quién eres?: clave + MFA) y <b>autorización</b> (¿qué puedes hacer?: las políticas de IAM). Por eso, aunque el atacante tuviera la clave de Luis, sin MFA no entra; y con la llave de Pedro, solo podía lo poquito que la política permitía.</p>
   </div>
   <div class="mviz"><canvas data-mu="authn" aria-label="Ana se autentica con usuario, clave y MFA; después IAM le permite unas acciones y le niega otras"></canvas></div>
 </section>
 
-<section class="slide mu">
-  <div>
-    <div class="mtag"><b>2.2</b>parte 2 · IAM</div>
-    <h2>Mínimo <span class="g">privilegio</span></h2>
-    <div class="mnote"><span>// como</span> no le das al mensajero la llave de toda la casa</div>
-    <p class="msub">Cada usuario, grupo o rol con <b>solo lo que necesita</b>. Si roban la llave de un administrador, el atacante puede todo; si solo podía leer un bucket, el daño queda <b>encerrado</b>. A los servicios se les dan <b>roles</b> con credenciales temporales, no llaves.</p>
-  </div>
-  <div class="mviz"><canvas data-mu="minpriv" aria-label="Llave maestra robada abre todo; llave de mínimo privilegio abre solo una puerta"></canvas></div>
-</section>
-
-<section class="slide mu">
-  <div>
-    <div class="mtag"><b>2.3</b>parte 2 · IAM</div>
-    <h2>Root, MFA <span class="g">y llaves filtradas</span></h2>
-    <div class="mnote"><span>// como</span> la llave del edificio, el código del celular y las copias que no se prestan</div>
-    <p class="msub">La <b>root</b> puede todo: úsala casi nunca y con <b>MFA</b>. El MFA pide un código que cambia cada 30 s. Las <b>llaves de acceso</b> (AKIA…) son para la CLI: si llegan a GitHub, un bot las encuentra en minutos y la factura se dispara.</p>
-  </div>
-  <div class="mviz"><canvas data-mu="root" aria-label="Cuenta root, código MFA que cambia y la historia de una llave filtrada en GitHub"></canvas></div>
-</section>
-
 <section class="slide mu dark sep">
   <div>
-    <div class="mtag" style="color:#7f9bb5"><b>Parte 3</b>de 4</div>
-    <h2 style="max-width:15ch">Datos: <span class="g">cifrado y secretos</span></h2>
-    <p class="msub">Aunque alguien vea tus datos, que no pueda leerlos: en el camino, guardados y en el código.</p>
+    <div class="mtag" style="color:#7f9bb5"><b>Parte 3</b>de 6</div>
+    <h2 style="max-width:15ch">Capítulo 2: <span class="g">el wifi del café</span></h2>
+    <p class="msub">Laura revisa pedidos desde un café. ¿Quién más está escuchando? Y si roban un disco, ¿pueden leerlo?</p>
   </div>
   <div class="mviz"><canvas data-mu="ruta" data-part="3" aria-label="Ruta de la clase: parte 3 de 4"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>3.1</b>parte 3 · cifrado en tránsito</div>
+    <div class="mtag"><b>2.1</b>cap. 2 · cifrado</div>
+    <h2>Simétrico <span class="g">y asimétrico</span></h2>
+    <div class="mnote"><span>// como</span> una llave para la misma caja vs. candados abiertos que cualquiera puede cerrar</div>
+    <p class="msub"><b>Simétrico</b>: la misma llave cifra y descifra; rapidísimo, pero ¿cómo le mandas la llave a alguien? <b>Asimétrico</b>: repartes candados abiertos (llave <b>pública</b>) y solo tú guardas la llave que los abre (<b>privada</b>).</p>
+  </div>
+  <div class="mviz"><canvas data-mu="cripto" aria-label="Cifrado simétrico con una llave compartida vs. asimétrico con llave pública y privada"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>2.2</b>cap. 2 · cifrado en tránsito</div>
     <h2>El candado: <span class="g">HTTPS y TLS</span></h2>
     <div class="mnote"><span>// como</span> un sobre sellado en vez de una postal</div>
-    <p class="msub">Con <b>HTTP</b> cualquiera en el wifi lee lo que envías. Con <b>HTTPS</b>, navegador y servidor se saludan, el servidor muestra su <b>certificado</b> y acuerdan una llave secreta: lo demás viaja cifrado. <b>ACM</b> te da esos certificados gratis.</p><div class="mfacts"><span><i>servicio</i>AWS Certificate Manager (ACM)</span><span><i>precio</i>gratis en CloudFront y ALB</span></div>
+    <p class="msub">En el wifi del café, todo lo que viaja por <b>HTTP</b> se puede leer. Con <b>HTTPS</b>, el servidor muestra su <b>certificado</b> y usan cifrado asimétrico para acordar una llave, y simétrico para hablar. <b>ACM</b> emite y renueva esos certificados gratis.</p><div class="mfacts"><span><i>servicio</i>AWS Certificate Manager (ACM)</span><span><i>precio</i>gratis en CloudFront y balanceadores</span></div>
   </div>
   <div class="mviz"><canvas data-mu="tls" aria-label="Saludo TLS con certificado y comparación de una clave enviada por HTTP y por HTTPS"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>3.2</b>parte 3 · cifrado en reposo</div>
-    <h2>Llaves que <span class="g">nunca salen</span>: KMS</h2>
+    <div class="mtag"><b>2.3</b>cap. 2 · integridad</div>
+    <h2>Hash: <span class="g">la huella de los datos</span></h2>
+    <div class="mnote"><span>// como</span> una huella digital: identifica, pero no reconstruye a la persona</div>
+    <p class="msub">Un <b>hash</b> convierte cualquier dato en una huella de tamaño fijo. Mismo dato, misma huella; un cambio mínimo, huella totalmente distinta; y no se puede devolver. Así se guardan las claves y así se sabe si un archivo fue alterado.</p>
+  </div>
+  <div class="mviz"><canvas data-mu="hash" aria-label="Una clave entra a SHA-256 y sale su huella; un cambio de una letra cambia toda la huella"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>2.4</b>cap. 2 · cifrado en reposo</div>
+    <h2>El disco <span class="g">que nadie puede leer</span></h2>
     <div class="mnote"><span>// como</span> una caja fuerte que guarda la llave de las otras llaves</div>
-    <p class="msub"><b>KMS</b> guarda tu llave maestra en hardware especial. Para cifrar un archivo crea una <b>llave de datos</b>, cifra con ella y la guarda cifrada al lado (cifrado de sobre). Para leer, KMS revisa IAM y <b>anota</b> quién lo pidió.</p><div class="mfacts"><span><i>con un clic</i>EBS · S3 · RDS · DynamoDB</span><span><i>auditoría</i>cada uso queda en CloudTrail</span></div>
+    <p class="msub">Un snapshot del disco de la tienda se compartió por error. Pero estaba cifrado con <b>KMS</b>: sin permiso para usar la llave, el atacante solo ve ruido. KMS guarda la llave maestra en hardware especial y <b>anota</b> cada vez que alguien la usa.</p><div class="mfacts"><span><i>con un clic</i>EBS · S3 · RDS · DynamoDB</span><span><i>auditoría</i>cada uso queda en CloudTrail</span></div>
   </div>
   <div class="mviz"><canvas data-mu="kms" aria-label="KMS crea una llave de datos, cifra el archivo y registra en CloudTrail quién lo descifra"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>3.3</b>parte 3 · secretos</div>
+    <div class="mtag"><b>2.5</b>cap. 2 · secretos</div>
     <h2>Las claves no van <span class="g">en el código</span></h2>
     <div class="mnote"><span>// como</span> no pegues la clave del cajero en la pared</div>
-    <p class="msub">Una contraseña escrita en el código termina en GitHub. <b>Secrets Manager</b> la guarda cifrada con KMS, la entrega solo a quien IAM permite y la puede <b>cambiar sola</b> cada cierto tiempo, sin tocar tu aplicación.</p><p class="muse">Así se debería conectar una app a la base <b>RDS</b> de la clase pasada</p>
+    <p class="msub">La clave de la base de pedidos estaba escrita en el código. <b>Secrets Manager</b> la guarda cifrada con KMS, la entrega solo a quien IAM permite y la <b>cambia sola</b> cada cierto tiempo, sin tocar la aplicación.</p>
   </div>
   <div class="mviz"><canvas data-mu="secretos" aria-label="La clave dentro del código vs. Secrets Manager que la entrega y la rota sola"></canvas></div>
 </section>
 
 <section class="slide mu dark sep">
   <div>
-    <div class="mtag" style="color:#7f9bb5"><b>Parte 4</b>de 4</div>
-    <h2 style="max-width:15ch">Red, aplicación <span class="g">y detección</span></h2>
-    <p class="msub">Las rejas de la red, el filtro delante de tu web, el escudo contra avalanchas y las cámaras que lo graban todo.</p>
+    <div class="mtag" style="color:#7f9bb5"><b>Parte 4</b>de 6</div>
+    <h2 style="max-width:15ch">Capítulo 3: <span class="g">la web bajo ataque</span></h2>
+    <p class="msub">23:40. Peticiones raras contra la tienda, un bot que no para y, a medianoche, una avalancha.</p>
   </div>
   <div class="mviz"><canvas data-mu="ruta" data-part="4" aria-label="Ruta de la clase: parte 4 de 4"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>4.1</b>parte 4 · la red</div>
+    <div class="mtag"><b>3.1</b>cap. 3 · la red</div>
     <h2>Security Group <span class="g">vs. NACL</span></h2>
     <div class="mnote"><span>// como</span> el portero de tu puerta y la reja de la calle</div>
-    <p class="msub">El <b>Security Group</b> protege cada instancia, solo permite y recuerda la conversación (<b>stateful</b>). La <b>NACL</b> protege toda la subred, permite <b>y niega</b> y no recuerda nada (<b>stateless</b>): útil para bloquear una IP.</p>
+    <p class="msub">El <b>Security Group</b> protege cada instancia, solo permite y recuerda la conversación (<b>stateful</b>). La <b>NACL</b> protege toda la subred, permite <b>y niega</b> y no recuerda nada (<b>stateless</b>): con ella Laura bloquea la IP del bot en toda la red.</p>
   </div>
   <div class="mviz"><canvas data-mu="sgnacl" aria-label="Una petición pasa la NACL y el SG y la respuesta vuelve; un bot es bloqueado por la NACL"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>4.2</b>parte 4 · la aplicación</div>
+    <div class="mtag"><b>3.2</b>cap. 3 · la aplicación</div>
     <h2>AWS WAF: el filtro <span class="g">delante de tu web</span></h2>
     <div class="mnote"><span>// como</span> el detector de metales a la entrada del centro comercial</div>
-    <p class="msub">El <b>WAF</b> revisa cada petición <b>antes</b> de que llegue a tu web: frena patrones de ataque conocidos con <b>reglas que AWS mantiene al día</b>, limita a quien pide demasiado y bloquea IPs de una lista negra. Va delante de CloudFront, un balanceador o una API.</p><div class="mfacts"><span><i>reglas</i>administradas · límite por IP · lista negra</span><span><i>modo</i>contar o bloquear</span></div>
+    <p class="msub">A las 23:40 llegan peticiones con <b>patrones de ataque conocidos</b> y un bot pide cientos por minuto. El <b>WAF</b> las revisa <b>antes</b> de que lleguen a la tienda: reglas que AWS mantiene al día, límite por IP y lista negra.</p><div class="mfacts"><span><i>reglas</i>administradas · límite por IP · lista negra</span><span><i>modo</i>contar o bloquear</span></div>
   </div>
   <div class="mviz"><canvas data-mu="waf" aria-label="Peticiones normales pasan y peticiones maliciosas, bots y una IP bloqueada reciben 403 en el WAF"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>4.3</b>parte 4 · disponibilidad</div>
-    <h2>DDoS: <span class="g">la avalancha</span></h2>
+    <div class="mtag"><b>3.3</b>cap. 3 · disponibilidad</div>
+    <h2>Medianoche: <span class="g">la avalancha</span></h2>
     <div class="mnote"><span>// como</span> mil personas fingiendo hacer fila para que tus clientes no entren</div>
-    <p class="msub">Un <b>DDoS</b> busca tumbar tu web con millones de peticiones. <b>CloudFront</b> reparte el golpe entre cientos de ubicaciones y <b>AWS Shield Standard</b> (gratis) filtra los ataques de red más comunes. Shield Advanced suma un equipo 24/7.</p>
+    <p class="msub">Un <b>DDoS</b> lanza millones de peticiones para tumbar la tienda. <b>CloudFront</b> reparte el golpe entre cientos de ubicaciones y <b>AWS Shield Standard</b> (gratis) filtra los ataques de red más comunes. La tienda sigue vendiendo.</p>
   </div>
   <div class="mviz"><canvas data-mu="shield" aria-label="Tráfico de un ataque DDoS repartido entre ubicaciones de CloudFront protegidas por Shield"></canvas></div>
 </section>
 
-<section class="slide mu">
-  <div>
-    <div class="mtag"><b>4.4</b>parte 4 · detección</div>
-    <h2>Las cámaras: <span class="g">detectar a tiempo</span></h2>
-    <div class="mnote"><span>// como</span> cámaras, alarma y el informe del vigilante</div>
-    <p class="msub"><b>CloudTrail</b> anota cada acción en tu cuenta (quién, qué, cuándo, desde dónde). <b>GuardDuty</b> aprende lo normal y te avisa lo raro. <b>Security Hub</b> te da una nota de seguridad y la lista de lo que debes corregir.</p><div class="mfacts"><span><i>también</i>Inspector (vulnerabilidades) · Macie (datos sensibles en S3)</span></div>
-  </div>
-  <div class="mviz"><canvas data-mu="detect" aria-label="Registro de CloudTrail, hallazgo de GuardDuty y puntaje de Security Hub que sube al corregir fallas"></canvas></div>
-</section>
-
 <section class="slide mu dark sep">
   <div>
-    <div class="mtag" style="color:#7f9bb5"><b>Parte 5</b>de 4</div>
-    <h2 style="max-width:15ch">Rojo vs. azul: <span class="g">ataca tu propia web</span></h2>
-    <p class="msub">Despliegas tu tienda detrás de un WAF. El equipo rojo la golpea, el equipo azul activa el escudo. Todo en tu propia cuenta.</p>
+    <div class="mtag" style="color:#7f9bb5"><b>Parte 5</b>de 6</div>
+    <h2 style="max-width:15ch">Capítulo 4: <span class="g">¿qué pasó anoche?</span></h2>
+    <p class="msub">A la mañana siguiente, Laura reconstruye la noche como en una serie policíaca.</p>
   </div>
   <div class="mviz"><canvas data-mu="ruta" data-part="5" aria-label="Ruta de la clase: parte 5 de 4"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>5.1</b>parte 5 · el diagrama</div>
+    <div class="mtag"><b>4.1</b>cap. 4 · detección</div>
+    <h2>Las cámaras <span class="g">lo grabaron todo</span></h2>
+    <div class="mnote"><span>// como</span> cámaras, alarma y el informe del vigilante</div>
+    <p class="msub"><b>CloudTrail</b> anotó cada acción: el login con MFA fallido, la llave usada desde una IP rara, la desactivación. <b>GuardDuty</b> avisó solo. <b>Security Hub</b> le da a Laura su nota de seguridad y la lista de lo que aún debe corregir.</p><div class="mfacts"><span><i>también</i>Inspector (vulnerabilidades) · Macie (datos sensibles en S3)</span></div>
+  </div>
+  <div class="mviz"><canvas data-mu="detect" aria-label="Registro de CloudTrail de la noche, hallazgo de GuardDuty y puntaje de Security Hub"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>4.2</b>cap. 4 · moraleja</div>
+    <h2>Lo que <span class="g">salvó a Laura</span></h2>
+    <div class="mnote"><span>// como</span> un castillo que aguantó toda la noche</div>
+    <p class="msub">Cada ataque se estrelló contra una capa distinta: el <b>MFA</b>, el <b>mínimo privilegio</b>, el <b>cifrado</b>, el <b>WAF</b>, <b>Shield</b>… y las cámaras lo registraron todo. Ninguna capa sola habría bastado.</p>
+  </div>
+  <div class="mviz"><canvas data-mu="moraleja" aria-label="Cada ataque de la noche rebota en la capa que lo frenó"></canvas></div>
+</section>
+
+<section class="slide mu dark sep">
+  <div>
+    <div class="mtag" style="color:#7f9bb5"><b>Parte 6</b>de 6</div>
+    <h2 style="max-width:15ch">Rojo vs. azul: <span class="g">ataca tu propia web</span></h2>
+    <p class="msub">Despliegas tu tienda detrás de un WAF. El equipo rojo la golpea, el equipo azul activa el escudo. Todo en tu propia cuenta.</p>
+  </div>
+  <div class="mviz"><canvas data-mu="ruta" data-part="6" aria-label="Ruta de la clase: parte 6 de 4"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>5.1</b>lab · el diagrama</div>
     <h2>El campo de <span class="g">batalla</span></h2>
     
     <ol class="msteps"><li><span>1</span><p><b>terraform apply</b>: tu tienda en S3 privado + CloudFront + <b>WAF en modo observar</b>.</p></li><li><span>2</span><p><b>Equipo rojo</b>: una ráfaga de peticiones desde tu PC. Pasan (200), pero el WAF las <b>cuenta</b>.</p></li><li><span>3</span><p><b>Equipo azul</b>: <code>modo=bloquear</code> y tu IP a la <b>lista negra</b>.</p></li><li><span>4</span><p>Rojo otra vez: <b>403</b>. El cliente normal sigue entrando.</p></li></ol><p class="muse">Regla de oro: solo se prueba contra <b>lo tuyo</b>, en <b>tu</b> cuenta</p>
@@ -2076,10 +2115,10 @@ S.shield=function(c,t){var A=E.out(P(t,.1,.5)),E5=[[90,120],[200,80],[330,96],[4
 /* 4.4 · detectar: CloudTrail, GuardDuty y Security Hub */
 S.detect=function(c,t){var A=E.out(P(t,.1,.5));
   box(c,10,10,265,250,{r:16,f:'#0E2841',s:false,al:A});icon(c,'AWSCloudTrail',36,36,26,A);tx(c,'CloudTrail · ¿quién hizo qué?',56,36,{s:11.5,w:800,f:FD,c:'#fff',al:A});
-  var LOG=[['10:31','ana','PutObject','#7ee2a8'],['10:32','luis','RunInstances','#7ee2a8'],['10:33','root','ConsoleLogin','#ffb86b'],['10:35','luis','DeleteBucket','#ff9b9b'],['10:36','ana','GetObject','#7ee2a8'],['10:38','???','CreateAccessKey','#ff9b9b']],n=Math.min(LOG.length,Math.floor(t/.7));
-  for(var i=0;i<n;i++){var l=LOG[i];tx(c,l[0]+'  '+l[1].padEnd(5,' ')+' '+l[2],24,70+i*28,{s:10,w:600,f:FM,c:l[3],al:A})}
+  var LOG=[['21:15','luis?','ConsoleLogin · MFA ✕','#ffb86b'],['21:16','luis','ChangePassword','#7ee2a8'],['10:01','AKIA…','ListBuckets · IP rara','#ff9b9b'],['10:02','AKIA…','RunInstances ✕','#ff9b9b'],['10:05','laura','UpdateAccessKey','#7ee2a8'],['10:06','AKIA…','token inválido ✕','#ff9b9b']],n=Math.min(LOG.length,Math.floor(t/.7));
+  for(var i=0;i<n;i++){var l=LOG[i];tx(c,l[0]+' '+l[1].padEnd(6,' ')+l[2],22,70+i*28,{s:10,w:600,f:FM,c:l[3],al:A})}
   box(c,285,10,265,250,{r:16,al:A,sh:'rgba(14,40,65,.07)'});icon(c,'GuardDuty',312,36,26,A);tx(c,'GuardDuty · detecta solo',332,36,{s:11.5,w:800,f:FD,al:A});
-  var fA=E.back(P(t,4.4,.5));if(fA>0){var al=Math.min(1,fA);box(c,299,62,238,100,{r:12,f:'#fff0f0',s:C.red,lw:1.6,al:al});tx(c,'⚠ hallazgo · severidad ALTA',312,82,{s:11,w:800,f:FD,c:C.red,al:al});wrap(c,'Se creó una llave de acceso desde una IP que nunca había usado la cuenta',312,104,214,15,{s:10,w:600,c:C.ink,al:al});tx(c,'→ te avisa por correo',312,150,{s:10,w:700,f:FM,c:C.mut,al:al})}
+  var fA=E.back(P(t,4.4,.5));if(fA>0){var al=Math.min(1,fA);box(c,299,62,238,100,{r:12,f:'#fff0f0',s:C.red,lw:1.6,al:al});tx(c,'⚠ hallazgo · severidad ALTA',312,82,{s:11,w:800,f:FD,c:C.red,al:al});wrap(c,'La llave de Pedro se usó desde una IP de un país donde la tienda nunca opera',312,104,214,15,{s:10,w:600,c:C.ink,al:al});tx(c,'→ te avisa por correo',312,150,{s:10,w:700,f:FM,c:C.mut,al:al})}
   tx(c,'aprende lo normal y avisa lo raro',418,190,{s:10.5,w:700,a:'center',f:FD,c:C.mut,al:A});
   box(c,10,276,540,190,{r:16,al:A,sh:'rgba(14,40,65,.07)'});icon(c,'AWSSecurityHub',36,302,26,A);tx(c,'Security Hub · tu nota de seguridad',56,302,{s:11.5,w:800,f:FD,al:A});
   var sc=Math.round(52+30*E.io(P(t,2,3)));c.save();c.globalAlpha*=A;c.strokeStyle=C.line;c.lineWidth=12;c.beginPath();c.arc(110,390,48,0,7);c.stroke();c.strokeStyle=sc>75?C.g:C.o;c.beginPath();c.arc(110,390,48,-Math.PI/2,-Math.PI/2+2*Math.PI*sc/100);c.stroke();c.restore();tx(c,sc+'%',110,390,{s:20,w:800,a:'center',f:FD,al:A});
@@ -2098,6 +2137,94 @@ S.dwaf=function(c,t){var A=E.out(P(t,.1,.5)),st=Math.floor(Math.max(0,t-1.2)/2.8
     if(red&&blk&&k>.85){tx(c,'✕ 403',225,128,{s:16,w:800,a:'center',f:FD,c:C.red})}else{var x2=k>.85?170+(480-170)*((k-.85)/.15):x;dot(c,x2,k>.85?235:y,6,red?C.red:C.g,1,12)}}
   var T=['1 · terraform apply: WAF en modo observar','2 · rojo: ráfaga de peticiones → pasan (200), el WAF las cuenta','3 · azul: terraform apply -var="modo=bloquear"','4 · rojo otra vez: 403 ✕ · el cliente normal sigue entrando ✓'];
   box(c,150,350,390,100,{r:12,f:'#0E2841',s:false,al:A});wrap(c,on?T[st]:'',166,376,360,18,{s:12.5,w:700,f:FD,c:'#fff',al:A})};
+/* ===== Historia: la noche en que atacaron la tienda de Laura ===== */
+function clock(c,x,y,txt,col,a){box(c,x-34,y-13,68,26,{r:13,f:'#0E2841',s:false,al:a});tx(c,'🕘 '+txt,x,y+1,{s:10.5,w:800,a:'center',f:FM,c:col||'#fff',al:a})}
+S.ruta=function(c,t,sec){var cur=+(sec.querySelector('canvas[data-mu]').dataset.part||1),L=[['1','Prólogo: ya eres un blanco'],['2','Cap. 1 · Identidad'],['3','Cap. 2 · Cifrado'],['4','Cap. 3 · La web bajo ataque'],['5','Cap. 4 · ¿Qué pasó anoche?'],['6','Lab: rojo vs. azul']],n=L.length,x=70,y0=40,dy=400/(n-1);
+  var g=c.createLinearGradient(0,y0,0,y0+dy*(n-1));g.addColorStop(0,'#0F9ED5');g.addColorStop(1,'#39c8e8');
+  c.save();c.strokeStyle='rgba(180,200,218,.25)';c.lineWidth=4;c.beginPath();c.moveTo(x,y0);c.lineTo(x,y0+dy*(n-1));c.stroke();var k=E.io(P(t,.2,1));c.strokeStyle=g;c.beginPath();c.moveTo(x,y0);c.lineTo(x,y0+dy*(cur-1)*k);c.stroke();c.restore();
+  L.forEach(function(l,i){var y=y0+i*dy,on=i+1===cur,done=i+1<cur,a=E.out(P(t,.1+i*.08,.5)),pl=on?1+.06*Math.sin(t*3):1;
+    c.save();c.globalAlpha*=a;if(on){c.shadowColor='#0F9ED5';c.shadowBlur=30}c.beginPath();c.arc(x,y,20*pl,0,7);c.fillStyle=on?g:(done?'#1d3d5e':'#15304d');c.fill();c.lineWidth=2;c.strokeStyle=on?'#fff':(done?'#39c8e8':'#2b4f74');c.stroke();c.restore();
+    tx(c,done?'✓':l[0],x,y+1,{s:15,w:800,a:'center',f:FD,c:on?'#fff':(done?'#39c8e8':'#7f9bb5'),al:a});tx(c,l[1],x+40,y+1,{s:on?19:15,w:800,f:FD,c:on?'#fff':(done?'#b4c8da':'#7f9bb5'),al:a})})};
+
+/* P.1 · ya eres un blanco: la superficie de ataque */
+S.blanco=function(c,t){var A=E.out(P(t,.1,.5)),cx=290,cy=226,T=[['EC2 · puerto 22','EC2',-78,-30],['S3 · bucket','SimpleStorageService',78,-30],['RDS · 3306','RDS',-78,64],['consola · login','AWSIdentityandAccessManagement',78,64]];
+  box(c,cx-162,cy-118,324,248,{r:18,f:'#f7f9fc',s:rgba(C.p,.35),lw:1.6,al:A});tx(c,'la tienda de Laura (clases 5 a 10)',cx,cy-98,{s:11.5,w:800,a:'center',f:FD,c:C.p,al:A});
+  T.forEach(function(o,i){var a=E.back(P(t,.4+i*.2,.5));if(a<=0)return;var al=Math.min(1,a),x=cx+o[2],y=cy+o[3];box(c,x-70,y-40,140,82,{r:12,al:al});icon(c,o[1],x,y-10,32,al);tx(c,o[0],x,y+26,{s:11.5,w:800,a:'center',f:FD,c:C.ink,al:al})});
+  var B=[[30,40],[520,60],[20,300],[540,330],[280,460],[150,450],[430,450],[540,190]],n=Math.floor(Math.max(0,t-1.4)*240);
+  B.forEach(function(b,i){var a=E.out(P(t,1.2+i*.1,.3));if(a<=0)return;gx(c,'bug',b[0],b[1],22,C.red,a);var tg=T[i%4],tx2=cx+tg[2],ty2=cy+tg[3],u=((t*.8)+i*.13)%1;if(t>1.6){var x=b[0]+(tx2-b[0])*u,y=b[1]+(ty2-b[1])*u;dot(c,x,y,3.5,C.red,.85,6)}});
+  box(c,cx-110,cy+142,220,48,{r:12,f:'#fff0f0',s:false,al:E.out(P(t,1.6,.4))});tx(c,'intentos de entrar hoy',cx,cy+156,{s:10,w:600,a:'center',c:C.mut,al:E.out(P(t,1.6,.4))});tx(c,nf(n),cx,cy+177,{s:18,w:800,a:'center',f:FD,c:C.red,al:E.out(P(t,1.6,.4))});
+  tx(c,'cada puerta abierta es parte de tu superficie de ataque',cx,22,{s:12,w:800,a:'center',f:FD,c:C.red,al:E.out(P(t,3,.4))})};
+
+/* 1.1 · el correo de las 21:12: phishing y MFA */
+S.phish=function(c,t){var A=E.out(P(t,.1,.5)),CY=14,u=t%CY;
+  clock(c,54,20,u<4.5?'21:12':u<9?'21:15':'21:16',null,A);
+  /* el correo */
+  var mA=E.out(P(u,.3,.5));box(c,10,44,270,190,{r:14,al:mA,sh:'rgba(14,40,65,.1)'});tx(c,'📧 bandeja de Luis',24,64,{s:11,w:800,f:FD,al:mA});
+  tx(c,'De: soporte@aws-verificar.co',24,92,{s:10,w:700,f:FM,c:u>1.2?C.red:C.ink,al:mA});tx(c,'Asunto: ¡Tu cuenta será SUSPENDIDA hoy!',24,112,{s:10,w:700,f:FM,c:u>1.8?C.red:C.ink,al:mA});
+  box(c,24,132,120,28,{r:8,f:C.o,s:false,al:mA});tx(c,'Verificar ahora',84,146,{s:10.5,w:800,a:'center',f:FD,c:'#fff',al:mA});
+  [['dominio raro',1.2,96,138],['urgencia',1.8,116,162],['botón con link falso',2.4,160,186]].forEach(function(f){var a=E.back(P(u,f[1],.3));if(a>0){var al=Math.min(1,a);c.save();c.globalAlpha*=al;c.strokeStyle=C.red;c.lineWidth=1.5;c.beginPath();c.moveTo(24,f[2]);c.lineTo(f[1]>2?144:262,f[2]);c.stroke();c.restore();pill(c,'⚠ '+f[0],214,f[3],C.red,al,{s:9.5,f2:'#fff0f0'})}});
+  tx(c,'Luis no lo notó… y hace clic',84,214,{s:10.5,w:700,a:'center',f:FD,c:C.mut,al:E.out(P(u,3,.3))});
+  /* página falsa */
+  var fA=E.out(P(u,3.4,.4));box(c,10,236,270,170,{r:14,f:'#fff',s:C.line,al:fA});box(c,20,246,250,22,{r:11,f:'#fff0f0',s:false,al:fA});tx(c,'🔓 aws-verificar.co/login',30,257,{s:9.5,w:700,f:FM,c:C.red,al:fA});
+  tx(c,'Iniciar sesión (copia de AWS)',145,288,{s:11,w:800,a:'center',f:FD,al:fA});box(c,40,302,210,26,{r:6,al:fA});tx(c,typed('luis',u,3.8,.4),50,315,{s:10,w:600,f:FM,al:fA});box(c,40,336,210,26,{r:6,al:fA});tx(c,typed('●●●●●●●●●',u,4.2,.6),50,349,{s:10,w:600,f:FM,al:fA});
+  if(u>4.8&&u<6.6){var k=E.io(P(u,4.8,1.2)),q=along(c,[[250,349],[400,120]],k);dot(c,q[0],q[1],6,C.red,1,12);tx(c,'clave robada',q[0],q[1]-14,{s:9.5,w:800,a:'center',f:FM,c:C.red})}
+  /* atacante + login real + MFA */
+  gx(c,'bug',400,96,32,C.red,E.out(P(u,4.6,.3)));tx(c,'atacante',400,128,{s:10,w:800,a:'center',f:FD,c:C.red,al:E.out(P(u,4.6,.3))});
+  var lA=E.out(P(u,6.4,.4));box(c,300,150,250,170,{r:14,al:lA,sh:'rgba(14,40,65,.08)'});tx(c,'🔒 signin.aws.amazon.com',425,172,{s:10,w:700,a:'center',f:FM,c:C.g,al:lA});
+  tx(c,'usuario + clave ✓',425,200,{s:11.5,w:800,a:'center',f:FD,c:C.g,al:E.out(P(u,6.9,.3))});
+  var mfa=E.out(P(u,7.6,.4));box(c,330,216,190,40,{r:8,f:'#eef6fb',s:C.t,al:mfa});tx(c,'código MFA: _ _ _ _ _ _',425,236,{s:11,w:700,a:'center',f:FM,c:C.t,al:mfa});
+  if(u>8.6){tx(c,'✕ no tiene el celular de Luis',425,282,{s:11.5,w:800,a:'center',f:FD,c:C.red,al:E.out(P(u,8.6,.3))})}
+  gx(c,'phone',520,370,30,C.p,E.out(P(u,7.8,.3)));tx(c,'482 913',470,372,{s:12,w:800,a:'right',f:FM,c:C.p,al:E.out(P(u,7.8,.3))});tx(c,'el código está aquí 👉',470,354,{s:9.5,w:600,a:'right',f:FM,c:C.mut,al:E.out(P(u,7.8,.3))});
+  var rA=E.back(P(u,9.6,.5));if(rA>0)pill(c,'MFA salvó la cuenta · Luis cambia su clave',280,436,C.g,Math.min(1,rA),{s:12,f2:'#ecfbf3'})};
+
+/* 1.2 · la llave en GitHub: mínimo privilegio + detección + revocar */
+S.gitkey=function(c,t){var A=E.out(P(t,.1,.5)),CY=15,u=t%CY,ev=[['10:00','Pedro hace git push… con terraform.tfvars y su llave AKIA…',C.o,.3],['10:01','un bot que vigila GitHub la encuentra',C.red,1.8],['10:02','el bot intenta lanzar 50 servidores',C.red,3.4],['10:03','GuardDuty: “llave usada desde una IP rara”',C.o,6.4],['10:05','Laura desactiva la llave',C.g,8.4],['10:06','el bot vuelve a intentar',C.red,10]];
+  c.save();c.globalAlpha*=A;c.strokeStyle=C.line;c.lineWidth=3;c.beginPath();c.moveTo(70,30);c.lineTo(70,450);c.stroke();c.restore();
+  ev.forEach(function(e,i){var a=E.out(P(u,e[3],.4));if(a<=0)return;var y=40+i*72;dot(c,70,y,7,e[2],a,8);tx(c,e[0],56,y+1,{s:10,w:800,a:'right',f:FM,c:e[2],al:a});box(c,90,y-24,250,48,{r:10,f:'#fff',s:rgba(e[2],.4),al:a});wrap(c,e[1],102,y-6,228,14,{s:10.5,w:700,f:FD,al:a})});
+  /* resultado del intento */
+  var r1=E.back(P(u,4.4,.4));if(r1>0){var al=Math.min(1,r1);box(c,356,180,194,74,{r:12,f:'#ecfbf3',s:rgba(C.g,.45),al:al});tx(c,'✕ AccessDenied',453,202,{s:12,w:800,a:'center',f:FD,c:C.red,al:al});wrap(c,'la llave solo podía leer un bucket: mínimo privilegio',368,222,174,13,{s:9.5,w:700,f:FD,c:'#0b6b3a',al:al})}
+  var r2=E.out(P(u,5.2,.4));if(r2>0){box(c,356,262,194,62,{r:12,f:'#fff6f4',s:rgba(C.red,.3),al:r2});tx(c,'si fuera administrador…',453,282,{s:10,w:700,a:'center',f:FD,c:C.mut,al:r2});tx(c,'50 servidores · $9.000',453,304,{s:13,w:800,a:'center',f:FD,c:C.red,al:r2})}
+  var r3=E.back(P(u,10.8,.4));if(r3>0){var al3=Math.min(1,r3);box(c,356,396,194,58,{r:12,f:'#ecfbf3',s:rgba(C.g,.45),al:al3});tx(c,'✕ InvalidClientTokenId',453,418,{s:11,w:800,a:'center',f:FM,c:C.red,al:al3});tx(c,'la llave ya no sirve',453,438,{s:10,w:700,a:'center',f:FD,c:'#0b6b3a',al:al3})}
+};
+
+/* 2.1 · cifrado simétrico vs asimétrico */
+S.cripto=function(c,t){var A=E.out(P(t,.1,.5)),u=t%12;
+  box(c,10,10,265,456,{r:16,f:'#f7f9fc',s:C.line,al:A});tx(c,'Simétrico',142,38,{s:15,w:800,a:'center',f:FD,c:C.t,al:A});tx(c,'una sola llave cierra y abre',142,58,{s:10,w:600,a:'center',f:FM,c:C.mut,al:A});
+  av(c,50,120,18,C.p,A,'Laura');av(c,234,120,18,C.t,A,'cliente');gl(c,'key',50,170,22,'#c9a227',A);gl(c,'key',234,170,22,'#c9a227',A);tx(c,'la misma llave',142,172,{s:9.5,w:700,a:'center',f:FM,c:'#c9a227',al:A});
+  var k=((u/3)%1);if(u<6){var x=50+184*k;box(c,x-26,206,52,24,{r:6,f:'#0E2841',s:false});tx(c,'🔒 ░░░',x,218,{s:9.5,w:700,a:'center',f:FM,c:'#7ee2a8'})}
+  wrap(c,'problema: ¿cómo le mandas la llave al cliente sin que la vean?',28,262,228,15,{s:11,w:700,f:FD,c:C.red,al:E.out(P(t,1.8,.4))});
+  if(t>2.4){var kk=((t*.4)%1);gl(c,'key',60+164*kk,320,20,C.red,1);gx(c,'eye',142,350,22,C.red,A);tx(c,'¡la vio!',142,374,{s:10,w:800,a:'center',f:FD,c:C.red,al:A})}
+  tx(c,'ej: AES · rapidísimo',142,438,{s:10.5,w:700,a:'center',f:FM,c:C.t,al:A});
+  box(c,285,10,265,456,{r:16,f:'#f2fbf5',s:rgba(C.g,.35),al:A});tx(c,'Asimétrico',418,38,{s:15,w:800,a:'center',f:FD,c:'#12a15a',al:A});tx(c,'llave pública + llave privada',418,58,{s:10,w:600,a:'center',f:FM,c:C.mut,al:A});
+  av(c,330,120,18,C.p,A,'Laura');av(c,506,120,18,C.t,A,'cliente');
+  var p1=E.out(P(t,1,.4));gx(c,'unlock',418,104,24,'#12a15a',p1);tx(c,'candado abierto = llave pública',418,186,{s:9.5,w:700,a:'center',f:FM,c:'#0b6b3a',al:p1});
+  gl(c,'key',506,206,22,C.p,0);gl(c,'key',330,206,20,C.p,A);tx(c,'privada: nunca sale',330,226,{s:9,w:700,a:'center',f:FM,c:C.p,al:A});
+  var st=Math.floor(u/3)%4;var lines=['1 · Laura reparte candados abiertos','2 · el cliente cierra su mensaje','3 · viaja cerrado: nadie lo abre','4 · solo la llave privada de Laura abre'];
+  lines.forEach(function(l,i){tx(c,(i<=st?'✓ ':'· ')+l,300,250+i*26,{s:10.5,w:700,f:FD,c:i<=st?'#0b6b3a':C.faint,al:A})});
+  var mx=st===2?506-176*((u%3)/3):(st===3?330:506);gx(c,st>=1?'lock':'unlock',mx,370,26,'#12a15a',A);
+  tx(c,'ej: RSA · la base de los certificados',418,438,{s:10.5,w:700,a:'center',f:FM,c:'#12a15a',al:A});
+  pill(c,'HTTPS usa las dos: asimétrica para acordar la llave, simétrica para hablar rápido',280,470,C.p,E.out(P(t,4,.4)),{s:9.5})};
+
+/* 2.3 · hash: la huella digital de los datos */
+S.hash=function(c,t){var A=E.out(P(t,.1,.5)),CY=10,u=t%CY,ph=u<5?0:1,inp=ph?'laura123':'Laura123',out=ph?'4b9a…e07c':'ef92…3a1c';
+  box(c,10,30,170,70,{r:12,al:A});tx(c,'entrada',24,50,{s:10,w:600,f:FM,c:C.mut,al:A});tx(c,typed(inp,u%5,.2,.8),24,78,{s:16,w:800,f:FM,c:ph?C.o:C.ink,al:A});
+  box(c,210,22,140,86,{r:14,f:'#0E2841',s:false,al:A});c.save();c.translate(280,56);c.rotate(u>1.1&&u%5<2.4?t*6:0);gl(c,'gear',0,0,28,'#39c8e8',A);c.restore();tx(c,'SHA-256',280,94,{s:10.5,w:800,a:'center',f:FM,c:'#fff',al:A});
+  var oa=E.out(P(u%5,2.4,.4));box(c,380,30,170,70,{r:12,f:'#eef6fb',s:C.t,al:oa});tx(c,'huella (hash)',394,50,{s:10,w:600,f:FM,c:C.mut,al:oa});tx(c,out,394,78,{s:15,w:800,f:FM,c:ph?C.o:C.t,al:oa});
+  poly(c,[[180,65],[210,65]],C.faint,2,null,A);poly(c,[[350,65],[380,65]],C.faint,2,null,A);
+  if(ph&&u>7.6)pill(c,'una letra distinta → una huella totalmente distinta',280,132,C.o,1,{s:10.5});
+  var R=[['mismo dato → misma huella, siempre',C.t],['no se puede devolver: de la huella no sale la clave',C.red],['por eso las bases guardan el hash, no tu clave',C.g],['si un archivo cambia un byte, su huella cambia: integridad',C.p]];
+  R.forEach(function(r,i){var a=E.out(P(t,1.5+i*.6,.4));if(a<=0)return;box(c,10,164+i*60,540,50,{r:12,al:a,sh:'rgba(14,40,65,.05)'});dot(c,32,189+i*60,6,r[1],a);tx(c,r[0],48,189+i*60,{s:12.5,w:700,f:FD,al:a})});
+  box(c,10,410,540,56,{r:12,f:'#0E2841',s:false,al:E.out(P(t,3.6,.4))});tx(c,'tabla usuarios: luis · ef92…3a1c   (nunca “Laura123”)',280,438,{s:11.5,w:700,a:'center',f:FM,c:'#7ee2a8',al:E.out(P(t,3.6,.4))})};
+
+/* 4.2 · moraleja: cada ataque de la noche rebota en su capa */
+S.moraleja=function(c,t){var A=E.out(P(t,.1,.5)),cx=280,cy=236,RG=[['detección','#7f9bb5',160],['red','#8c4fff',128],['aplicación',C.o,96],['identidad','#dd344c',66],['datos',C.p,38]];
+  RG.forEach(function(r,i){c.save();c.globalAlpha*=A;c.beginPath();c.arc(cx,cy,r[2],0,7);c.fillStyle=rgba(r[1],.06);c.fill();c.strokeStyle=r[1];c.lineWidth=1.4;c.stroke();c.restore()});
+  tx(c,'🏰',cx,cy+2,{s:26,a:'center',al:A});
+  var AT=[['correo falso','MFA',3,180],['llave en GitHub','mínimo privilegio',3,225],['wifi espiado','HTTPS',2,-40],['disco compartido','KMS',4,135],['peticiones raras','WAF',2,20],['avalancha DDoS','Shield',1,-90]],per=1.6,n=Math.floor(Math.max(0,t-.8)/per);
+  AT.forEach(function(a,i){if(i>n)return;var ang=a[3]*Math.PI/180,R=RG[a[2]][2],ox=cx+Math.cos(ang)*250,oy=cy+Math.sin(ang)*250,hx=cx+Math.cos(ang)*R,hy=cy+Math.sin(ang)*R,u=i===n?Math.min(1,((t-.8)%per)/per*1.6):1;
+    var x=ox+(hx-ox)*E.io(u),y=oy+(hy-oy)*E.io(u);poly(c,[[ox,oy],[x,y]],rgba(C.red,.5),2,[4,4],1);dot(c,x,y,6,C.red,1,10);
+    if(u>=1){tx(c,'✕',hx,hy+1,{s:16,w:800,a:'center',c:C.red});var lx=cx+Math.cos(ang)*200,ly=cy+Math.sin(ang)*196;box(c,lx-58,ly-18,116,36,{r:9,f:'#fff',s:rgba(RG[a[2]][1],.6)});tx(c,a[0],lx,ly-6,{s:9.5,w:700,a:'center',f:FD,c:C.red});tx(c,'→ '+a[1],lx,ly+9,{s:9.5,w:800,a:'center',f:FD,c:'#0b6b3a'})}});
+  pill(c,'ninguna capa sola habría bastado',cx,462,C.p,E.out(P(t,.8+per*6,.4)),{s:11.5})};
 
 /* motor: corre la escena de la diapositiva visible */
 var raf=0,cur=null,TOFF=parseFloat((location.search.match(/[?&]mt=([\d.]+)/)||[])[1])||0;function tick(){return document.hidden?setTimeout(function(){frame(performance.now())},33):requestAnimationFrame(frame)}
