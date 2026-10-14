@@ -529,6 +529,8 @@ function isLand(lon,lat){for(var k=0;k<LAND.length;k++)if(inPoly(lon,lat,LAND[k]
 .mu .msteps li b{color:var(--mink)}
 .mu.dark .msteps li{color:#b4c8da}.mu.dark .msteps li b{color:#fff}
 .mu .msteps li span{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;border:2px solid #E97132;color:#E97132;font:800 .8rem "Plus Jakarta Sans",sans-serif}
+.slide.mu.wide.on{grid-template-columns:1fr;align-content:center;gap:10px;padding-top:4vh}
+.mu.wide h2{font-size:clamp(1.5rem,2.8vw,2.3rem);max-width:none}
 .mu .mviz{display:flex;align-items:center;justify-content:center;min-width:0}
 .mu .mviz canvas{display:block}
 .slide.mu.sum.on{grid-template-columns:1fr;align-content:center;gap:22px}
@@ -901,9 +903,18 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
   <div class="mviz"><canvas data-mu="moraleja" aria-label="Cada ataque de la noche rebota en la capa que lo frenó"></canvas></div>
 </section>
 
+<section class="slide mu wide">
+  <div>
+    <div class="mtag"><b>5.7</b>el mapa completo de la noche</div>
+    <h2>Toda la noche, <span class="g">en un solo diagrama</span></h2>
+    <p class="msub" style="max-width:none">Cada ataque entra en rojo y se ilumina el servicio que lo frena · las compras de los clientes (en verde) nunca se detienen · CloudTrail lo graba todo.</p>
+  </div>
+  <div class="mviz"><canvas data-mu="guerra" data-w="1100" data-h="520" data-maxh=".64" aria-label="Arquitectura completa de la tienda con todos los servicios de seguridad frenando cada ataque de la noche"></canvas></div>
+</section>
+
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>5.7</b>el epílogo</div>
+    <div class="mtag"><b>5.8</b>el epílogo</div>
     <h2>El lunes, <span class="g">Laura cambió todo</span></h2>
     <div class="mnote"><span>// como</span> después de un susto, se cambian las chapas</div>
     <p class="msub">Laura no esperó al próximo ataque: activó <b>MFA para todos</b>, sacó las llaves del código, cifró con <b>su propia CMK</b>, puso la tienda detrás de un <b>WAF</b> y dejó las alarmas encendidas. Ahora les toca a ustedes probar el escudo.</p><p class="muse">👉 <b>Laboratorio: ataquen su propia tienda</b></p>
@@ -2816,10 +2827,54 @@ S.dguard=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,4,3.2),st=t<.8?-1:r[0],u=
 post('dwaf',function(c,t){var st=Math.floor(Math.max(0,t-1.2)/2.8)%4,u=(Math.max(0,t-1.2)%2.8)/2.8,on=t>1.2,blk=on&&st>=2;if(!on)return;var red=st===1||st===3;
   flow(c,[[124,100],[150,100],[150,220],[168,220]],C.red,t,{lw:2.5,a:red?1:.25,label:red?(blk?'ráfaga → 403':'ráfaga'):'',lp:.15,lx:24});flow(c,[[124,360],[150,360],[150,250],[168,250]],C.g,t,{lw:2.5,a:red?.25:1,label:red?'':'cliente',lp:.2,lx:24});
   flow(c,[[280,235],[308,235]],C.g,t,{lw:2});flow(c,[[410,235],[428,235]],'#7aa116',t,{lw:2})});
+/* ===== el mapa completo de la noche (lienzo ancho 1100x520) ===== */
+S.guerra=function(c,t){var A=E.out(P(t,.1,.6)),D=3.6,NE=9,ev=t<1?-1:Math.floor((t-1)/D)%NE,u=t<1?0:((t-1)%D)/D;
+  var NP={cf:[265,188],waf:[265,278],shield:[265,362],ec2:[440,150],ebs:[560,150],rds:[440,300],s3:[710,110],ddb:[710,250],iam:[880,70],kms:[880,175],sm:[880,280],acm:[1000,70],ssm:[1000,175],insp:[1000,280],ct:[420,462],gd:[600,462],sh:[780,462]};
+  var LB={cf:['CloudFront','CloudFront','la vitrina'],waf:['AWSWAF','WAF','el filtro'],shield:['AWSShield','Shield','anti-DDoS'],ec2:['EC2','EC2','la tienda'],ebs:['R_AmazonElasticBlockStoreVolume','EBS','disco cifrado'],rds:['RDS','RDS','pedidos'],s3:['SimpleStorageService','S3','catálogo'],ddb:['DynamoDB','DynamoDB','carritos'],iam:['AWSIdentityandAccessManagement','IAM + MFA','quién entra'],kms:['AWSKeyManagementService','KMS','las llaves'],sm:['AWSSecretsManager','Secrets Mgr','las claves'],acm:['AWSCertificateManager','ACM','HTTPS'],ssm:['AWSSystemsManager','Session Mgr','sin puerto 22'],insp:['Inspector','Inspector','revisa la EC2'],ct:['AWSCloudTrail','CloudTrail','graba todo'],gd:['GuardDuty','GuardDuty','la alarma'],sh:['AWSSecurityHub','Security Hub','el tablero']};
+  var EV=[
+   {h:'21:12',t:'Phishing: el atacante tiene la clave de Luis',p:[[118,80],[330,30],[858,30],[870,44]],d:['iam'],a:'IAM pide el código MFA → ✕ no entra',log:'ConsoleLogin · luis · MFA ✕'},
+   {h:'21:40',t:'La llave de Pedro, filtrada en GitHub',p:[[118,92],[340,46],[846,46],[858,52]],d:['iam','gd'],a:'AccessDenied (mínimo privilegio) · GuardDuty avisa',log:'RunInstances · AKIA… ✕',alert:1},
+   {h:'22:30',t:'Un espía en el wifi del café de Laura',p:null,d:['acm','cf'],a:'HTTPS con certificado de ACM: el espía solo ve ruido',log:'TLS 1.3 · laura · ✓'},
+   {h:'23:05',t:'Snapshot del disco compartido por error',p:null,d:['kms','ebs'],a:'KMS: Decrypt ✕ (sin permiso en la llave)',log:'Decrypt · cuenta-extraña ✕'},
+   {h:'23:20',t:'Un bot golpea el puerto 22 de la EC2',p:[[118,104],[300,120],[380,120],[408,136]],d:['ec2','ssm'],a:'SG: 22 cerrado · el equipo entra con Session Manager',log:'conexión :22 rechazada'},
+   {h:'23:40',t:'Peticiones con patrones de ataque',p:[[118,110],[170,110],[170,262],[211,268]],d:['waf'],a:'WAF: 403 a todo lo sospechoso',log:'WAF · 1.284 bloqueadas'},
+   {h:'00:00',t:'DDoS: millones de peticiones',p:null,d:['shield','cf'],a:'Shield + CloudFront absorben la avalancha',log:'DDoS mitigado · tienda arriba'},
+   {h:'08:00',t:'Laura revisa: Inspector y Macie',p:null,d:['insp','s3'],a:'Inspector: 3 fallas en la EC2 · Macie: datos en bucket público',log:'3 CVE · 1 bucket público'},
+   {h:'08:30',t:'Security Hub junta todo y Laura corrige',p:null,d:['ct','gd','sh'],a:'nota de seguridad: 48 % → 94 %',log:'hallazgos resueltos ✓'}];
+  function node(id){var p=NP[id],l=LB[id],on=ev>=0&&EV[ev].d.indexOf(id)>=0,col=on?C.o:C.line;var w=104,h=64;box(c,p[0]-w/2,p[1]-h/2,w,h,{r:12,f:on?'#fff4ec':'#fff',s:on?C.o:C.line,lw:on?2.5:1.2,al:A,sh:on?'rgba(233,113,50,.35)':'rgba(14,40,65,.06)'});icon(c,l[0],p[0]-30,p[1],28,A);tx(c,l[1],p[0]-12,p[1]-8,{s:10.5,w:800,f:FD,al:A});tx(c,l[2],p[0]-12,p[1]+10,{s:8.5,w:600,f:FM,c:on?C.o:C.mut,al:A})}
+  /* zonas */
+  box(c,6,8,166,394,{r:14,f:'#fff6f4',s:rgba(C.red,.25),al:A});tx(c,'internet',89,24,{s:10,w:800,a:'center',f:FM,c:C.red,al:A});
+  gx(c,'bug',60,96,30,C.red,A);tx(c,'atacante',100,96,{s:11,w:800,f:FD,c:C.red,al:A});icon(c,'R_Users',60,250,30,A);tx(c,'clientes',100,250,{s:11,w:800,f:FD,c:C.g,al:A});icon(c,'R_Mobileclient',60,372,28,A);tx(c,'Laura (café)',94,372,{s:10.5,w:800,f:FD,al:A});
+  box(c,200,128,130,274,{r:14,f:'#f7f9fc',s:rgba(C.t,.4),al:A});tx(c,'borde de AWS',265,144,{s:9.5,w:800,a:'center',f:FM,c:C.t,al:A});
+  grp(c,350,8,440,394,'#00a4a6','us-east-1','G_Region',{al:A,dash:[5,4]});grp(c,364,40,250,350,'#8c4fff','VPC','G_VirtualprivatecloudVPC',{al:A});
+  box(c,374,82,232,130,{r:10,f:'#f2f6e8',s:rgba('#7aa116',.5),al:A});tx(c,'subred pública',384,96,{s:9,w:700,f:FM,c:'#5c7a10',al:A});box(c,374,228,232,150,{r:10,f:'#e6f6f7',s:rgba('#00a4a6',.5),al:A});tx(c,'subred privada',384,242,{s:9,w:700,f:FM,c:'#00787a',al:A});
+  box(c,812,8,284,330,{r:14,f:'#fdf6f3',s:rgba('#dd344c',.3),al:A});tx(c,'servicios de seguridad',954,24,{s:9.5,w:800,a:'center',f:FM,c:'#dd344c',al:A});
+  box(c,350,414,520,98,{r:14,f:'#f1f4f8',s:rgba('#7f9bb5',.4),al:A});tx(c,'detección: las cámaras',364,428,{s:9.5,w:800,f:FM,c:'#5f7890',al:A});
+  /* tráfico normal de clientes: nunca se detiene */
+  flow(c,[[118,250],[150,250],[150,278],[211,278]],C.g,t,{lw:2.5,a:A});flow(c,[[265,246],[265,222]],C.g,t,{lw:2,a:A});flow(c,[[317,185],[386,155]],C.g,t,{lw:2.5,a:A,label:'compras ✓',ly:-12});flow(c,[[317,176],[340,110],[656,110]],C.g,t,{lw:2,a:A*.8});
+  flow(c,[[440,182],[440,266]],C.p,t,{lw:2,a:A*.8});flow(c,[[492,150],[506,150]],'#7aa116',t,{lw:2,a:A*.8});
+  flow(c,[[472,462],[546,462]],'#5f7890',t,{lw:2,a:A*.7});flow(c,[[652,462],[726,462]],'#5f7890',t,{lw:2,a:A*.7});
+  Object.keys(NP).forEach(node);
+  /* evento activo */
+  if(ev>=0){var e=EV[ev],k=E.io(Math.min(1,u*1.8));
+    if(e.p)flow(c,e.p,C.red,t,{lw:3,prog:k});
+    if(ev===2){flow(c,[[118,372],[180,372],[180,200],[211,195]],C.g,t,{lw:3,prog:k});gx(c,'eye',160,320,22,C.red,1);if(u>.5){chip(c,'x9#kQ!2@…',170,346,C.red,'#fff',1,{s:9})}}
+    if(ev===6){for(var q=0;q<12;q++){var kk=((t*.8)+q/12)%1,y0=50+q*28;dot(c,118+(211-118)*kk,y0+(362-y0)*kk,3,C.red,.85)}flow(c,[[118,104],[180,330],[211,355]],C.red,t,{lw:3,prog:k});}
+    if(ev===7){flow(c,[[948,280],[880,330],[480,190]],'#8c4fff',t,{lw:2,prog:k,noHead:false});flow(c,[[1000,312],[1000,330],[760,330],[730,142]],'#8c4fff',t,{lw:2,prog:k})}
+    if(ev===3){if(u<.5)flow(c,[[560,118],[560,70],[118,70]],C.o,t,{lw:3,prog:E.io(u*2),label:'snapshot compartido',lp:.5});else flow(c,[[118,84],[330,58],[846,58],[862,160]],C.red,t,{lw:3,prog:E.io((u-.5)*2.4),label:'¿Decrypt?',lp:.5})}
+    if(u>.5){var dn=e.d[0],dp=NP[dn];var w=chip(c,'✓ '+e.a,Math.min(Math.max(dp[0],250),850),dp[1]+(dp[1]>380?-48:46),C.g,'#ecfbf3',E.back(P(u,.5,.12))>0?1:0,{s:10,f:FD,w:800})}
+    if(e.alert&&u>.6){flow(c,[[650,462],[652,462]],C.red,t,{a:0});chip(c,'🔔 alerta al celular de Laura',600,420,C.red,'#fff0f0',1,{s:9.5})}}
+  /* bitácora de CloudTrail */
+  box(c,880,350,216,162,{r:12,f:'#0E2841',s:false,al:A});icon(c,'AWSCloudTrail',900,368,16,A);tx(c,'CloudTrail · esta noche',914,368,{s:9.5,w:800,f:FD,c:'#fff',al:A});
+  var nl=ev<0?0:ev+(u>.5?1:0);for(var i=Math.max(0,nl-6);i<nl;i++){var y=390+(i-Math.max(0,nl-6))*19;tx(c,EV[i].h+' '+EV[i].log,890,y,{s:8.5,w:600,f:FM,c:EV[i].log.indexOf('✕')>=0?'#ff9b9b':'#7ee2a8',al:A})}
+  /* nota de seguridad */
+  var sc=ev===8?Math.round(48+46*E.io(u)):48;c.save();c.globalAlpha*=A;c.strokeStyle=C.line;c.lineWidth=6;c.beginPath();c.arc(852,462,16,0,7);c.stroke();c.strokeStyle=sc>80?C.g:C.o;c.beginPath();c.arc(852,462,16,-Math.PI/2,-Math.PI/2+2*Math.PI*sc/100);c.stroke();c.restore();tx(c,sc+'',852,462,{s:9.5,w:800,a:'center',f:FM,al:A});
+  /* título del evento */
+  box(c,6,410,336,102,{r:14,f:'#0E2841',s:false,al:A});if(ev>=0){var e2=EV[ev];tx(c,'🕘 '+e2.h,22,436,{s:13,w:800,f:FM,c:'#ffb86b',al:A});wrap(c,e2.t,22,462,306,16,{s:12.5,w:800,f:FD,c:'#fff',al:A});for(var j=0;j<NE;j++)dot(c,24+j*14,500,j===ev?4.5:3,j===ev?C.o:'#2b4f74',A)}else tx(c,'la noche del ataque, en un solo mapa',174,460,{s:12.5,w:800,a:'center',f:FD,c:'#fff',al:A})};
 
 /* motor: corre la escena de la diapositiva visible */
 var raf=0,cur=null,TOFF=parseFloat((location.search.match(/[?&]mt=([\d.]+)/)||[])[1])||0;function tick(){return document.hidden?setTimeout(function(){frame(performance.now())},33):requestAnimationFrame(frame)}
-function fit(cv){var box=cv.parentElement,bw=box.clientWidth||W,mh=innerHeight*.74,s=Math.min(bw/W,mh/H);cv.style.width=W*s+'px';cv.style.height=H*s+'px';cv.width=Math.round(W*s*DPR);cv.height=Math.round(H*s*DPR);cv.__k=s*DPR}
+function fit(cv){var w=+cv.dataset.w||W,h=+cv.dataset.h||H,box=cv.parentElement,bw=box.clientWidth||w,mh=innerHeight*(+cv.dataset.maxh||.74),s=Math.min(bw/w,mh/h);cv.style.width=w*s+'px';cv.style.height=h*s+'px';cv.width=Math.round(w*s*DPR);cv.height=Math.round(h*s*DPR);cv.__k=s*DPR}
 function frame(now){raf=0;if(!cur||!cur.sec.classList.contains('on'))return;var c=cur.cv.getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,cur.cv.width,cur.cv.height);c.setTransform(cur.cv.__k,0,0,cur.cv.__k,0,0);
   try{S[cur.cv.dataset.mu](c,Math.max(0,(now-cur.t0)/1000)+TOFF,cur.sec)}catch(e){console.error(e)}raf=tick()}
 document.querySelectorAll('.slide.mu').forEach(function(sec){if(sec.id==='muQuiz')sec.__next=function(){if((sec.__st||0)>=9)return false;sec.__st=(sec.__st||0)+1;sec.__ts=performance.now();return true};sec.__enter=function(){sec.__st=0;sec.__ts=performance.now();var cv=sec.querySelector('canvas[data-mu]');if(!cv){cur=null;return}
