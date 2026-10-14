@@ -587,7 +587,7 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
   <div>
     <div class="mtag" style="color:#7f9bb5"><b>Parte 1</b>de 6</div>
     <h2 style="max-width:15ch">La historia: <span class="g">la tienda de Laura</span></h2>
-    <p class="msub">Laura empezó con una idea y una EC2. Hoy su tienda vende en internet… y eso la convirtió en un blanco.</p>
+    <p class="msub">Hace unas semanas era una idea y una EC2. Hoy vende por internet todos los días… y eso la convirtió en un blanco.</p>
   </div>
   <div class="mviz"><canvas data-mu="ruta" data-part="1" aria-label="Ruta de la clase: parte 1 de 4"></canvas></div>
 </section>
@@ -597,57 +597,67 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
     <div class="mtag"><b>1.1</b>la historia · cómo creció</div>
     <h2>La tienda <span class="g">creció</span></h2>
     <div class="mnote"><span>// como</span> de un puesto en la feria a una tienda con bodega, caja y vitrina</div>
-    <p class="msub">En cada clase Laura le sumó una pieza: la tienda web en una <b>EC2</b>, sus archivos en un disco <b>EBS</b>, el catálogo en <b>S3</b> con <b>CloudFront</b>, los pedidos en <b>RDS</b> y los carritos en <b>DynamoDB</b>. Hoy ahí viven los datos de cientos de clientes.</p>
+    <p class="msub">Clase a clase, Laura le fue sumando piezas: la tienda web en una <b>EC2</b>, sus archivos en un disco <b>EBS</b>, el catálogo en <b>S3</b> con <b>CloudFront</b>, los pedidos en <b>RDS</b> y los carritos en <b>DynamoDB</b>. Hoy ahí viven los datos de cientos de clientes… y su plata.</p><p class="muse">👉 <b>Y una tienda que vende necesita gente</b></p>
   </div>
   <div class="mviz"><canvas data-mu="tienda" aria-label="Cómo creció la infraestructura de la tienda clase por clase: EC2, EBS, S3, CloudFront, RDS y DynamoDB"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>1.2</b>la historia · el blanco</div>
+    <div class="mtag"><b>1.2</b>la historia · los personajes</div>
+    <h2>El equipo <span class="g">de Laura</span></h2>
+    <div class="mnote"><span>// como</span> como el elenco de una serie: cada uno con su llave del local</div>
+    <p class="msub">Laura contrató a tres personas, y cada una entra a AWS: <b>Luis</b> ve los pedidos, <b>Pedro</b> programa la tienda, <b>Ana</b> descarga reportes. Más gente con acceso significa más puertas… y alguien afuera espera <b>un solo descuido</b>.</p><p class="muse">👉 <b>¿Qué tan expuesta está la tienda?</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="personajes" aria-label="Los personajes: Laura, Luis, Pedro, Ana y un atacante desconocido"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>1.3</b>la historia · el blanco</div>
     <h2>Cada puerta abierta <span class="g">es un blanco</span></h2>
     <div class="mnote"><span>// como</span> una tienda con muchas puertas a la calle</div>
-    <p class="msub">Todo eso queda conectado a internet: el puerto 22 de la EC2, los buckets, la base, la consola. Es su <b>superficie de ataque</b>. Los bots no eligen a Laura por famosa: prueban <b>todo</b>, contra todos, sin parar.</p>
+    <p class="msub">Todo queda conectado a internet: el puerto 22 de la EC2, los snapshots, los buckets, la base, la consola. Esa lista es su <b>superficie de ataque</b>. Los bots no eligen a Laura por famosa: prueban <b>todo</b>, contra todos, todo el día.</p><p class="muse">👉 <b>¿Y qué buscan exactamente?</b></p>
   </div>
   <div class="mviz"><canvas data-mu="blanco" aria-label="La infraestructura de Laura rodeada de bots que prueban cada puerta"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>1.3</b>la historia · qué está en juego</div>
+    <div class="mtag"><b>1.4</b>la historia · qué está en juego</div>
     <h2>Lo que el atacante <span class="g">quiere romper</span></h2>
     <div class="mnote"><span>// como</span> los tres candados de una tienda</div>
-    <p class="msub">Todo ataque rompe al menos uno: la <b>Confidencialidad</b> (ver los datos de los clientes), la <b>Integridad</b> (cambiar precios o pedidos) o la <b>Disponibilidad</b> (tumbar la tienda). A esto se le llama la tríada <b>CIA</b>.</p>
+    <p class="msub">Todo ataque rompe al menos uno: la <b>Confidencialidad</b> (ver los datos de los clientes), la <b>Integridad</b> (cambiar precios o pedidos) o la <b>Disponibilidad</b> (tumbar la tienda). Es la tríada <b>CIA</b>, y esa noche la van a probar entera.</p><p class="muse">👉 <b>Llegó el viernes</b></p>
   </div>
   <div class="mviz"><canvas data-mu="cia" aria-label="Tres pilares: confidencialidad, integridad y disponibilidad, cada uno atacado y protegido"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>1.4</b>la historia · la noche</div>
+    <div class="mtag"><b>1.5</b>la historia · la noche</div>
     <h2>La noche <span class="g">del ataque</span></h2>
     <div class="mnote"><span>// como</span> una noche de serie policíaca, hora por hora</div>
-    <p class="msub">Un viernes, entre las 21:12 y la medianoche, a la tienda le pasa de todo: un correo falso, una llave filtrada, un wifi espiado, un disco compartido por error, peticiones raras y una avalancha. A la mañana siguiente, Laura investiga.</p><p class="muse">En cada servicio veremos <b>qué ataque frenó</b></p>
+    <p class="msub">Viernes. Entre las 21:12 y la medianoche le pasa de todo: un correo falso a Luis, la llave de Pedro en GitHub, un wifi espiado, un disco compartido por error, peticiones raras y una avalancha. El sábado a las 8:00, Laura investiga.</p><p class="muse">👉 <b>Spoiler: la tienda sobrevivió. ¿Cómo?</b></p>
   </div>
   <div class="mviz"><canvas data-mu="noche" aria-label="Línea de tiempo de la noche del ataque, de las 21:12 a las 08:00"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>1.5</b>la historia · quién cuida qué</div>
+    <div class="mtag"><b>1.6</b>la historia · quién cuida qué</div>
     <h2>Responsabilidad <span class="g">compartida</span></h2>
     <div class="mnote"><span>// como</span> el edificio y tu apartamento</div>
-    <p class="msub"><b>AWS</b> cuida la seguridad <b>DE</b> la nube: edificios, servidores, red física. <b>Laura</b> cuida la seguridad <b>EN</b> la nube: sus datos, sus usuarios, sus puertos y el sistema operativo de su EC2. Para eso usa los servicios de seguridad de AWS.</p>
+    <p class="msub"><b>AWS</b> cuida la seguridad <b>DE</b> la nube: edificios, servidores, red física. <b>Laura</b> cuida la seguridad <b>EN</b> la nube: sus datos, sus usuarios, sus puertos y su EC2. Si deja la puerta abierta, AWS no la cierra por ella.</p><p class="muse">👉 <b>Por eso Laura armó un castillo</b></p>
   </div>
   <div class="mviz"><canvas data-mu="compartida" aria-label="AWS cuida la infraestructura; el cliente cuida datos, IAM, puertos y sistema operativo"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>1.6</b>la historia · el plan</div>
+    <div class="mtag"><b>1.7</b>la historia · el plan</div>
     <h2>Un castillo <span class="g">por capas</span></h2>
     <div class="mnote"><span>// como</span> murallas, fosos y guardias: si una falla, queda la siguiente</div>
-    <p class="msub">Laura no confía en una sola protección: cada capa tiene sus servicios de AWS. Ahora los vamos a conocer uno por uno, cada uno con el ataque de la noche que frenó.</p>
+    <p class="msub">Laura no confía en una sola protección: cada capa tiene sus servicios de AWS. Ahora los conocemos uno por uno, cada uno con el ataque de esa noche que frenó.</p><p class="muse">👉 <b>Empezamos por la puerta: quién entra</b></p>
   </div>
   <div class="mviz"><canvas data-mu="capas" aria-label="Anillos de defensa en profundidad con los servicios de AWS de cada capa"></canvas></div>
 </section>
@@ -656,39 +666,39 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
   <div>
     <div class="mtag" style="color:#7f9bb5"><b>Parte 2</b>de 6</div>
     <h2 style="max-width:15ch">Identidad: <span class="g">quién entra</span></h2>
-    <p class="msub">IAM decide quién entra a la cuenta y qué puede tocar. Esa noche la atacaron dos veces.</p>
+    <p class="msub">Los primeros dos ataques no fueron contra servidores. Fueron contra personas: Luis y Pedro.</p>
   </div>
   <div class="mviz"><canvas data-mu="ruta" data-part="2" aria-label="Ruta de la clase: parte 2 de 4"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>2.1</b>servicio · IAM + MFA</div>
+    <div class="mtag"><b>2.1</b>21:12 · IAM + MFA</div>
     <h2>El correo <span class="g">de las 21:12</span></h2>
     <div class="mnote"><span>// como</span> un ladrón disfrazado de cartero</div>
-    <p class="msub"><b>El caso de Laura:</b> a Luis le llega un correo “de AWS” que dice que su cuenta será suspendida. Hace clic y escribe su clave en una página <b>falsa</b> (phishing).</p>
-    <p class="msub"><b>La protección:</b> el atacante usa la clave en la consola real… y se estrella con el <b>MFA</b>: un código que solo está en el celular de Luis.</p><div class="mfacts"><span><i>factores</i>algo que sabes · algo que tienes · algo que eres</span></div>
+    <p class="msub"><b>El caso:</b> a Luis le llega un correo “de AWS”: su cuenta será suspendida hoy. Nervioso, hace clic y escribe su clave en una página <b>idéntica… pero falsa</b> (phishing).</p>
+    <p class="msub"><b>Lo que la salvó:</b> el atacante usa esa clave en la consola real y se estrella con el <b>MFA</b>: falta un código que solo está en el celular de Luis.</p><div class="mfacts"><span><i>factores</i>algo que sabes · algo que tienes · algo que eres</span></div><p class="muse">👉 <b>Media hora después, el atacante prueba otra puerta</b></p>
   </div>
   <div class="mviz"><canvas data-mu="phish" aria-label="Un correo de phishing roba la clave de Luis pero el atacante no pasa el MFA"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>2.2</b>servicio · IAM (mínimo privilegio)</div>
+    <div class="mtag"><b>2.2</b>21:40 · IAM (mínimo privilegio)</div>
     <h2>La llave <span class="g">que se fue a GitHub</span></h2>
     <div class="mnote"><span>// como</span> dejar copia de la llave de la tienda en la calle</div>
-    <p class="msub"><b>El caso de Laura:</b> a las 21:40 Pedro sube su proyecto a GitHub con su llave de acceso adentro. Un bot la encuentra en un minuto.</p>
-    <p class="msub"><b>La protección:</b> la llave tenía <b>mínimo privilegio</b> (solo leer un bucket), <b>GuardDuty</b> avisó y Laura la <b>desactivó</b> en minutos.</p><div class="mfacts"><span><i>regla</i>llaves en .gitignore · servicios con roles, no con llaves</span></div>
+    <p class="msub"><b>El caso:</b> Pedro sube su proyecto de Terraform a GitHub… con su llave de acceso (AKIA…) adentro. Un bot que vigila GitHub la encuentra en un minuto.</p>
+    <p class="msub"><b>Lo que la salvó:</b> la llave tenía <b>mínimo privilegio</b> (solo leer un bucket), <b>GuardDuty</b> avisó y Laura la <b>desactivó</b> en minutos.</p><div class="mfacts"><span><i>regla</i>llaves en .gitignore · servicios con roles, no con llaves</span></div><p class="muse">👉 <b>¿Por qué Luis no entró y Pedro casi?</b></p>
   </div>
   <div class="mviz"><canvas data-mu="gitkey" aria-label="Línea de tiempo de una llave filtrada en GitHub, frenada por mínimo privilegio, GuardDuty y la revocación"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>2.3</b>servicio · IAM</div>
+    <div class="mtag"><b>2.3</b>la lección · IAM</div>
     <h2>Quién eres <span class="g">y qué puedes hacer</span></h2>
     <div class="mnote"><span>// como</span> el vigilante: primero tu cédula, después tu lista de permisos</div>
-    <p class="msub"><b>Autenticación</b> (¿quién eres?: clave + MFA) y <b>autorización</b> (¿qué puedes hacer?: las políticas de IAM). Por eso, aunque el atacante tuviera la clave de Luis, sin MFA no entró; y con la llave de Pedro solo podía lo poquito que su política permitía.</p>
+    <p class="msub"><b>Autenticación</b> (¿quién eres?: clave + MFA) y <b>autorización</b> (¿qué puedes hacer?: las políticas de IAM). Con la clave de Luis, sin MFA, el atacante no pasó la primera; con la llave de Pedro pasó la primera… pero la segunda solo le dejaba leer un bucket.</p><p class="muse">👉 <b>Mientras tanto, Laura salió a un café</b></p>
   </div>
   <div class="mviz"><canvas data-mu="authn" aria-label="Ana se autentica con usuario, clave y MFA; después IAM le permite unas acciones y le niega otras"></canvas></div>
 </section>
@@ -696,61 +706,81 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 <section class="slide mu dark sep">
   <div>
     <div class="mtag" style="color:#7f9bb5"><b>Parte 3</b>de 6</div>
-    <h2 style="max-width:15ch">Datos: <span class="g">cifrado y secretos</span></h2>
-    <p class="msub">Aunque alguien vea los datos, que no pueda leerlos: en el camino, guardados y en el código.</p>
+    <h2 style="max-width:15ch">Datos: <span class="g">llaves, candados y secretos</span></h2>
+    <p class="msub">Si el atacante no puede entrar, intenta leer: lo que viaja por el aire y lo que está guardado.</p>
   </div>
   <div class="mviz"><canvas data-mu="ruta" data-part="3" aria-label="Ruta de la clase: parte 3 de 4"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>3.1</b>concepto · cifrado</div>
+    <div class="mtag"><b>3.1</b>la base · cifrado</div>
     <h2>Simétrico <span class="g">y asimétrico</span></h2>
     <div class="mnote"><span>// como</span> una llave para la misma caja vs. candados abiertos que cualquiera puede cerrar</div>
-    <p class="msub"><b>Cifrar</b> es volver ilegible un dato para quien no tenga la llave. <b>Simétrico</b>: la misma llave cifra y descifra; rapidísimo, pero ¿cómo mandas la llave? <b>Asimétrico</b>: repartes candados abiertos (llave <b>pública</b>) y solo tú guardas la que los abre (<b>privada</b>).</p>
+    <p class="msub"><b>Cifrar</b> es volver ilegible un dato para quien no tenga la llave. <b>Simétrico</b>: la misma llave cifra y descifra; rapidísimo, pero ¿cómo mandas la llave? <b>Asimétrico</b>: repartes candados abiertos (llave <b>pública</b>) y solo tú guardas la que los abre (<b>privada</b>).</p><p class="muse">👉 <b>Y ustedes ya lo usaron… desde la clase 6</b></p>
   </div>
   <div class="mviz"><canvas data-mu="cripto" aria-label="Cifrado simétrico con una llave compartida vs. asimétrico con llave pública y privada"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>3.2</b>servicio · ACM (HTTPS)</div>
+    <div class="mtag"><b>3.2</b>lo que ya usaste · tu .ppk</div>
+    <h2>Tu .ppk: <span class="g">la llave de tu EC2</span></h2>
+    <div class="mnote"><span>// como</span> la llave de tu casa: el cerrojo está en la puerta, la llave en tu bolsillo</div>
+    <p class="msub">Cuando crearon su EC2 eligieron un <b>key pair</b>: la llave <b>pública</b> quedó dentro de la EC2 y la <b>privada</b> la descargaron (.pem) y la pasaron a <b>.ppk</b> para MobaXterm. Al conectarse, la EC2 lanza un reto que solo su llave privada sabe firmar: eso es <b>criptografía asimétrica</b>.</p><p class="muse">👉 <b>Ahora sí: Laura en el wifi del café</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="ppk" aria-label="Par de llaves de la EC2: la pública en el servidor, la privada .ppk en el PC, y el reto firmado al conectarse"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>3.3</b>22:30 · ACM (HTTPS)</div>
     <h2>El wifi <span class="g">del café</span></h2>
     <div class="mnote"><span>// como</span> un sobre sellado en vez de una postal</div>
-    <p class="msub"><b>El caso de Laura:</b> a las 22:30 Laura revisa pedidos desde el wifi de un café. Cualquiera conectado a esa red puede intentar leer lo que viaja.</p>
-    <p class="msub"><b>La protección:</b> la tienda usa <b>HTTPS</b>: el servidor muestra un <b>certificado</b> y todo viaja cifrado. <b>ACM</b> emite y renueva esos certificados gratis.</p><div class="mfacts"><span><i>servicio</i>AWS Certificate Manager (ACM)</span><span><i>precio</i>gratis en CloudFront y balanceadores</span></div>
+    <p class="msub"><b>El caso:</b> Laura revisa pedidos desde el wifi de un café. Alguien en la mesa de al lado está escuchando todo lo que pasa por esa red.</p>
+    <p class="msub"><b>Lo que la salvó:</b> la tienda usa <b>HTTPS</b>: el servidor muestra su <b>certificado</b> y usan asimétrico para acordar una llave y simétrico para hablar. <b>ACM</b> emite y renueva esos certificados gratis.</p><div class="mfacts"><span><i>servicio</i>AWS Certificate Manager (ACM)</span><span><i>precio</i>gratis en CloudFront y balanceadores</span></div><p class="muse">👉 <b>¿Y cómo guarda la tienda las claves de sus clientes?</b></p>
   </div>
   <div class="mviz"><canvas data-mu="tls" aria-label="Saludo TLS con certificado y comparación de una clave enviada por HTTP y por HTTPS"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>3.3</b>concepto · integridad</div>
+    <div class="mtag"><b>3.4</b>la base · hash</div>
     <h2>Hash: <span class="g">la huella de los datos</span></h2>
     <div class="mnote"><span>// como</span> una huella digital: identifica, pero no reconstruye a la persona</div>
-    <p class="msub">Un <b>hash</b> convierte cualquier dato en una huella de tamaño fijo. Mismo dato, misma huella; un cambio mínimo, huella totalmente distinta; y no se puede devolver. Así se guardan las claves de los clientes y así se sabe si un archivo fue alterado.</p>
+    <p class="msub">Un <b>hash</b> convierte cualquier dato en una huella de tamaño fijo. Mismo dato, misma huella; un cambio mínimo, huella totalmente distinta; y no se puede devolver. Así guarda la tienda las claves de sus clientes: si roban la base, no ven ninguna.</p><p class="muse">👉 <b>23:05 · alguien comparte un disco por error</b></p>
   </div>
   <div class="mviz"><canvas data-mu="hash" aria-label="Una clave entra a SHA-256 y sale su huella; un cambio de una letra cambia toda la huella"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>3.4</b>servicio · AWS KMS</div>
+    <div class="mtag"><b>3.5</b>23:05 · AWS KMS</div>
     <h2>El disco <span class="g">que nadie puede leer</span></h2>
     <div class="mnote"><span>// como</span> una caja fuerte que guarda la llave de las otras llaves</div>
-    <p class="msub"><b>El caso de Laura:</b> a las 23:05 un <b>snapshot</b> del disco EBS de la tienda (con todos los pedidos) se comparte por error con una cuenta desconocida.</p>
-    <p class="msub"><b>La protección:</b> el disco estaba cifrado con <b>KMS</b>. Sin permiso de IAM para usar la llave, el extraño solo ve ruido. Y <b>CloudTrail</b> anotó el intento.</p><div class="mfacts"><span><i>con un clic</i>EBS · S3 · RDS · DynamoDB</span><span><i>la llave</i>nunca sale de KMS</span></div>
+    <p class="msub"><b>El caso:</b> un <b>snapshot</b> del disco EBS de la tienda, con todos los pedidos, se comparte por error con una cuenta desconocida.</p>
+    <p class="msub"><b>Lo que la salvó:</b> el disco estaba cifrado con una llave de <b>KMS</b>. Sin permiso de IAM para usarla, el extraño solo ve ruido. Y <b>CloudTrail</b> anotó el intento.</p><div class="mfacts"><span><i>con un clic</i>EBS · S3 · RDS · DynamoDB</span></div><p class="muse">👉 <b>Pero… ¿de quién era esa llave?</b></p>
   </div>
   <div class="mviz"><canvas data-mu="kms2" aria-label="La EC2 escribe cifrado en el disco EBS; un snapshot filtrado no se puede leer porque KMS niega la llave"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>3.5</b>servicio · Secrets Manager</div>
+    <div class="mtag"><b>3.6</b>la lección · tipos de llave</div>
+    <h2>¿De quién <span class="g">es la llave</span>?</h2>
+    <div class="mnote"><span>// como</span> la llave del edificio, la del administrador y la tuya propia</div>
+    <p class="msub">En KMS hay tres tipos: <b>AWS owned</b> (AWS cifra por ti y ni la ves), <b>AWS managed</b> (como <code>aws/ebs</code>: la ves, pero las reglas son de AWS) y <b>Customer managed key (CMK)</b>: la creas tú y decides quién la usa. Un snapshot cifrado con <code>aws/ebs</code> no se puede compartir a otra cuenta; con una CMK, solo con quien tú autorices.</p><p class="muse">👉 <b>Y la clave de la base de pedidos… estaba en el código</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="kmskeys" aria-label="Tres tipos de llaves de KMS: AWS owned, AWS managed y customer managed (CMK)"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>3.7</b>la lección · Secrets Manager</div>
     <h2>Las claves no van <span class="g">en el código</span></h2>
     <div class="mnote"><span>// como</span> no pegues la clave del cajero en la pared</div>
-    <p class="msub"><b>El caso de Laura:</b> la clave de la base de pedidos (RDS) estaba escrita en el código de la tienda. Si el código se filtra, la clave también.</p>
-    <p class="msub"><b>La protección:</b> <b>Secrets Manager</b> la guarda cifrada con KMS, la entrega solo a quien IAM permite y la <b>cambia sola</b> cada 30 días.</p>
+    <p class="msub"><b>El caso:</b> la clave de la base de pedidos (RDS) estaba escrita en el código de la tienda, el mismo que Pedro sube a GitHub.</p>
+    <p class="msub"><b>Lo que la salvó:</b> <b>Secrets Manager</b> la guarda cifrada con KMS, la entrega solo a quien IAM permite y la <b>cambia sola</b> cada 30 días, sin tocar la aplicación.</p><p class="muse">👉 <b>23:40 · el atacante va directo contra la tienda</b></p>
   </div>
   <div class="mviz"><canvas data-mu="secretos" aria-label="La clave dentro del código vs. Secrets Manager que la entrega y la rota sola"></canvas></div>
 </section>
@@ -759,40 +789,40 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
   <div>
     <div class="mtag" style="color:#7f9bb5"><b>Parte 4</b>de 6</div>
     <h2 style="max-width:15ch">Red y <span class="g">aplicación</span></h2>
-    <p class="msub">23:40. Peticiones raras contra la tienda, un bot que no para y, a medianoche, una avalancha.</p>
+    <p class="msub">Ya no busca descuidos: ahora golpea la tienda de frente. Peticiones raras, un bot insistente y, a medianoche, una avalancha.</p>
   </div>
   <div class="mviz"><canvas data-mu="ruta" data-part="4" aria-label="Ruta de la clase: parte 4 de 4"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>4.1</b>servicio · VPC (SG y NACL)</div>
+    <div class="mtag"><b>4.1</b>23:20 · VPC (SG y NACL)</div>
     <h2>El portero <span class="g">y la reja</span></h2>
     <div class="mnote"><span>// como</span> el portero de tu puerta y la reja de la calle</div>
-    <p class="msub"><b>El caso de Laura:</b> un bot insiste en conectarse a la EC2 de la tienda desde la misma IP.</p>
-    <p class="msub"><b>La protección:</b> el <b>Security Group</b> (portero de cada instancia) solo deja entrar lo permitido; la <b>NACL</b> (reja de toda la subred) además puede <b>negar</b> una IP completa.</p><div class="mfacts"><span><i>SG</i>instancia · solo permite · stateful</span><span><i>NACL</i>subred · permite y niega · stateless</span></div>
+    <p class="msub"><b>El caso:</b> un bot insiste en conectarse a la EC2 de la tienda desde la misma red de IPs.</p>
+    <p class="msub"><b>Lo que la salvó:</b> el <b>Security Group</b> (portero de cada instancia) solo deja entrar lo permitido; la <b>NACL</b> (reja de toda la subred) además puede <b>negar</b> una red completa.</p><div class="mfacts"><span><i>SG</i>instancia · solo permite · stateful</span><span><i>NACL</i>subred · permite y niega · stateless</span></div><p class="muse">👉 <b>Entonces cambia de táctica: ataca la página web</b></p>
   </div>
   <div class="mviz"><canvas data-mu="sgnacl" aria-label="Una petición pasa la NACL y el SG y la respuesta vuelve; un bot es bloqueado por la NACL"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>4.2</b>servicio · AWS WAF</div>
+    <div class="mtag"><b>4.2</b>23:40 · AWS WAF</div>
     <h2>El filtro <span class="g">delante de la tienda</span></h2>
     <div class="mnote"><span>// como</span> el detector de metales a la entrada del centro comercial</div>
-    <p class="msub"><b>El caso de Laura:</b> a las 23:40 llegan peticiones con <b>patrones de ataque conocidos</b>, un bot pide 300 por minuto y vuelven IPs que Laura ya conoce.</p>
-    <p class="msub"><b>La protección:</b> el <b>WAF</b> revisa cada petición <b>antes</b> de que llegue: reglas que AWS mantiene al día, límite por IP y lista negra. Los clientes ni lo notan.</p><div class="mfacts"><span><i>reglas</i>administradas · límite por IP · lista negra</span><span><i>modo</i>contar o bloquear</span></div>
+    <p class="msub"><b>El caso:</b> llegan peticiones con <b>patrones de ataque conocidos</b>, un bot pide 300 páginas por minuto y vuelven IPs que Laura ya conoce.</p>
+    <p class="msub"><b>Lo que la salvó:</b> el <b>WAF</b> revisa cada petición <b>antes</b> de que llegue: reglas que AWS mantiene al día, límite por IP y lista negra. Los clientes ni lo notan.</p><div class="mfacts"><span><i>reglas</i>administradas · límite por IP · lista negra</span><span><i>modo</i>contar o bloquear</span></div><p class="muse">👉 <b>Último intento: si no puede entrar, la tumba</b></p>
   </div>
   <div class="mviz"><canvas data-mu="waf2" aria-label="Cinta de peticiones: clientes pasan a la tienda; ataques, bots e IPs bloqueadas reciben 403 en el WAF"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>4.3</b>servicio · AWS Shield</div>
+    <div class="mtag"><b>4.3</b>00:00 · AWS Shield</div>
     <h2>Medianoche: <span class="g">la avalancha</span></h2>
     <div class="mnote"><span>// como</span> mil personas fingiendo hacer fila para que tus clientes no entren</div>
-    <p class="msub"><b>El caso de Laura:</b> a las 00:00 millones de peticiones intentan tumbar la tienda (un ataque <b>DDoS</b>).</p>
-    <p class="msub"><b>La protección:</b> <b>CloudFront</b> reparte el golpe entre cientos de ubicaciones y <b>Shield</b> filtra la basura en el borde. La tienda sigue vendiendo.</p><div class="mfacts"><span><i>Shield Standard</i>gratis y siempre activo</span><span><i>Shield Advanced</i>equipo 24/7, de pago</span></div>
+    <p class="msub"><b>El caso:</b> millones de peticiones al tiempo intentan tumbar la tienda: un ataque <b>DDoS</b>.</p>
+    <p class="msub"><b>Lo que la salvó:</b> <b>CloudFront</b> reparte el golpe entre cientos de ubicaciones y <b>Shield</b> filtra la basura en el borde. La tienda sigue vendiendo.</p><div class="mfacts"><span><i>Shield Standard</i>gratis y siempre activo</span><span><i>Shield Advanced</i>equipo 24/7, de pago</span></div><p class="muse">👉 <b>Sábado, 8:00. Laura abre su portátil</b></p>
   </div>
   <div class="mviz"><canvas data-mu="shield2" aria-label="El tráfico del ataque sube a millones mientras lo que llega a la tienda sigue normal"></canvas></div>
 </section>
@@ -801,74 +831,84 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
   <div>
     <div class="mtag" style="color:#7f9bb5"><b>Parte 5</b>de 6</div>
     <h2 style="max-width:15ch">Detección: <span class="g">las cámaras</span></h2>
-    <p class="msub">08:00 del sábado. Laura reconstruye la noche como en una serie policíaca.</p>
+    <p class="msub">Laura reconstruye la noche como en una serie policíaca. Cada pista quedó grabada.</p>
   </div>
   <div class="mviz"><canvas data-mu="ruta" data-part="5" aria-label="Ruta de la clase: parte 5 de 4"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>5.1</b>servicio · AWS CloudTrail</div>
+    <div class="mtag"><b>5.1</b>08:00 · AWS CloudTrail</div>
     <h2>La cámara <span class="g">que lo grabó todo</span></h2>
     <div class="mnote"><span>// como</span> el libro de visitas que nadie puede borrar</div>
-    <p class="msub"><b>El caso de Laura:</b> Laura necesita saber qué hizo la llave filtrada de Pedro y si alguien entró con la clave de Luis.</p>
-    <p class="msub"><b>La protección:</b> <b>CloudTrail</b> anota cada acción de la cuenta: quién, qué, cuándo y desde dónde. Con un filtro, la historia aparece sola.</p>
+    <p class="msub"><b>El caso:</b> Laura necesita saber qué hizo la llave de Pedro y si alguien entró con la clave de Luis.</p>
+    <p class="msub"><b>Lo que la salvó:</b> <b>CloudTrail</b> anota cada acción de la cuenta: quién, qué, cuándo y desde dónde. Con un filtro, la historia aparece sola.</p><p class="muse">👉 <b>¿Y quién le avisó a las 21:43, antes de mirar?</b></p>
   </div>
   <div class="mviz"><canvas data-mu="trail" aria-label="Registro de CloudTrail de la noche y búsqueda de lo que hizo la llave filtrada"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>5.2</b>servicio · Amazon GuardDuty</div>
+    <div class="mtag"><b>5.2</b>la alarma · GuardDuty</div>
     <h2>La alarma <span class="g">que aprende</span></h2>
     <div class="mnote"><span>// como</span> el vigilante que conoce a todos los clientes de siempre</div>
-    <p class="msub"><b>El caso de Laura:</b> la llave de Pedro se usó de noche, desde un país donde la tienda nunca opera.</p>
-    <p class="msub"><b>La protección:</b> <b>GuardDuty</b> aprende lo normal de la cuenta y avisa lo raro, sin instalar nada. Le llegó una alerta a Laura en segundos.</p><div class="mfacts"><span><i>mira</i>CloudTrail · tráfico de red · DNS</span></div>
+    <p class="msub"><b>El caso:</b> la llave de Pedro se usó de noche, desde un país donde la tienda nunca opera.</p>
+    <p class="msub"><b>Lo que la salvó:</b> <b>GuardDuty</b> aprende lo normal de la cuenta y avisa lo raro, sin instalar nada. La alerta le llegó a Laura en segundos.</p><div class="mfacts"><span><i>mira</i>CloudTrail · tráfico de red · DNS</span></div><p class="muse">👉 <b>Revisando, Laura encuentra más problemas</b></p>
   </div>
-  <div class="mviz"><canvas data-mu="guard" aria-label="GuardDuty aprende el patrón normal de accesos y detecta uno anómalo de madrugada"></canvas></div>
+  <div class="mviz"><canvas data-mu="guard" aria-label="GuardDuty aprende el patrón normal de accesos y detecta uno anómalo"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>5.3</b>servicio · Amazon Inspector</div>
+    <div class="mtag"><b>5.3</b>la revisión · Inspector</div>
     <h2>El chequeo <span class="g">médico del servidor</span></h2>
     <div class="mnote"><span>// como</span> el revisor que avisa qué chapa ya tiene copia en la calle</div>
-    <p class="msub"><b>El caso de Laura:</b> la EC2 de la tienda lleva meses sin actualizarse y tiene programas con fallas conocidas.</p>
-    <p class="msub"><b>La protección:</b> <b>Inspector</b> revisa el software instalado contra la lista mundial de fallas (CVE) y dice qué actualizar primero.</p>
+    <p class="msub"><b>El caso:</b> la EC2 de la tienda lleva meses sin actualizarse y tiene programas con fallas conocidas.</p>
+    <p class="msub"><b>Lo que la salvó:</b> <b>Inspector</b> revisa el software instalado contra la lista mundial de fallas (CVE) y dice qué actualizar primero.</p><p class="muse">👉 <b>Y en un bucket… un archivo que no debería estar ahí</b></p>
   </div>
   <div class="mviz"><canvas data-mu="inspector" aria-label="Inspector escanea la EC2, encuentra programas vulnerables y quedan corregidos al actualizar"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>5.4</b>servicio · Amazon Macie</div>
+    <div class="mtag"><b>5.4</b>la revisión · Macie</div>
     <h2>Datos sensibles <span class="g">a la vista</span></h2>
     <div class="mnote"><span>// como</span> alguien dejó la carpeta de los clientes en la vitrina</div>
-    <p class="msub"><b>El caso de Laura:</b> un archivo con cédulas y correos de clientes quedó en un bucket S3 <b>público</b>.</p>
-    <p class="msub"><b>La protección:</b> <b>Macie</b> revisa los archivos de S3, encuentra los datos personales y avisa. Laura bloquea el acceso público.</p>
+    <p class="msub"><b>El caso:</b> Ana dejó un archivo con cédulas y correos de clientes en un bucket S3 <b>público</b>.</p>
+    <p class="msub"><b>Lo que la salvó:</b> <b>Macie</b> revisa los archivos de S3, encuentra los datos personales y avisa. Laura bloquea el acceso público.</p><p class="muse">👉 <b>Demasiadas alertas sueltas… necesita un solo lugar</b></p>
   </div>
   <div class="mviz"><canvas data-mu="macie" aria-label="Macie revisa los objetos del bucket y encuentra datos personales en un bucket público"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>5.5</b>servicio · AWS Security Hub</div>
+    <div class="mtag"><b>5.5</b>el tablero · Security Hub</div>
     <h2>El tablero <span class="g">que lo junta todo</span></h2>
     <div class="mnote"><span>// como</span> el informe del jefe de seguridad cada mañana</div>
-    <p class="msub"><b>El caso de Laura:</b> cada servicio encontró cosas por su lado: llaves, fallas, archivos, configuraciones.</p>
-    <p class="msub"><b>La protección:</b> <b>Security Hub</b> junta todos los hallazgos en un solo tablero, los ordena por gravedad y le da a Laura una <b>nota de seguridad</b> que sube al corregir.</p>
+    <p class="msub"><b>El caso:</b> cada servicio encontró cosas por su lado: llaves, fallas, archivos, configuraciones.</p>
+    <p class="msub"><b>Lo que la salvó:</b> <b>Security Hub</b> junta todos los hallazgos en un solo tablero, los ordena por gravedad y le da a Laura una <b>nota de seguridad</b> que sube al corregir.</p><p class="muse">👉 <b>Al final del sábado, Laura entiende qué la salvó</b></p>
   </div>
   <div class="mviz"><canvas data-mu="hub" aria-label="Hallazgos de GuardDuty, Inspector, Macie y Config llegan a Security Hub y la nota sube al corregirlos"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>5.6</b>moraleja</div>
+    <div class="mtag"><b>5.6</b>la moraleja</div>
     <h2>Lo que <span class="g">salvó a Laura</span></h2>
     <div class="mnote"><span>// como</span> un castillo que aguantó toda la noche</div>
-    <p class="msub">Cada ataque se estrelló contra una capa distinta: el <b>MFA</b>, el <b>mínimo privilegio</b>, el <b>HTTPS</b>, <b>KMS</b>, el <b>WAF</b>, <b>Shield</b>… y las cámaras lo registraron todo. Ninguna capa sola habría bastado.</p>
+    <p class="msub">Cada ataque se estrelló contra una capa distinta: el <b>MFA</b>, el <b>mínimo privilegio</b>, el <b>HTTPS</b>, <b>KMS</b>, el <b>WAF</b>, <b>Shield</b>… y las cámaras lo registraron todo. Ninguna capa sola habría bastado.</p><p class="muse">👉 <b>¿Y qué cambió Laura el lunes?</b></p>
   </div>
   <div class="mviz"><canvas data-mu="moraleja" aria-label="Cada ataque de la noche rebota en la capa que lo frenó"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>5.7</b>el epílogo</div>
+    <h2>El lunes, <span class="g">Laura cambió todo</span></h2>
+    <div class="mnote"><span>// como</span> después de un susto, se cambian las chapas</div>
+    <p class="msub">Laura no esperó al próximo ataque: activó <b>MFA para todos</b>, sacó las llaves del código, cifró con <b>su propia CMK</b>, puso la tienda detrás de un <b>WAF</b> y dejó las alarmas encendidas. Ahora les toca a ustedes probar el escudo.</p><p class="muse">👉 <b>Laboratorio: ataquen su propia tienda</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="epilogo" aria-label="La lista de cambios de Laura el lunes, marcada uno por uno"></canvas></div>
 </section>
 
 <section class="slide mu dark sep">
@@ -2562,6 +2602,43 @@ S.sgnacl=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,4,2.8),st=t<.8?-1:r[0],u=
   if(st===2){var k2=E.io(u),q2=along(c,[[398,280],[330,290],[200,280],[76,252]],k2);dot(c,q2[0],q2[1],7,C.g,1,14);chip(c,u<.4?'SG: la deja salir sola':'NACL: necesita su regla 200',q2[0],q2[1]+24,C.g,'#ecfbf3',1,{s:9})}
   if(st===3){var k3=Math.min(1,E.io(u*1.4)),x3=76+(190-76)*k3;dot(c,x3,240,7,C.red,1,14);if(k3>=1){tx(c,'✕',200,240,{s:30,w:800,a:'center',c:C.red});chip(c,'regla 300: negado',200,206,C.red,'#fff0f0',1,{s:9.5})}}
   if(t>.8)band(c,['Un cliente pide la página: la NACL de la subred lo deja pasar','El Security Group de la EC2 también: puerto 443 permitido','La respuesta: el SG la deja salir solo; la NACL necesita su propia regla','Un bot insiste: la NACL niega toda su red de IPs (el SG no sabe negar)'],st,A,u)};
+/* personajes de la historia */
+S.personajes=function(c,t){var A=E.out(P(t,.1,.5)),PJ=[['Laura','dueña de la tienda','ve todo: es la administradora',C.p,'AWSIdentityandAccessManagement'],['Luis','ventas','entra a la consola a ver pedidos',C.t,'RDS'],['Pedro','desarrollador','programa la tienda con Terraform y GitHub','#12a15a','EC2'],['Ana','contabilidad','descarga reportes de S3',C.o,'SimpleStorageService']],r=stp(t,5,2.4),st=t<.8?-1:r[0];
+  PJ.forEach(function(p,i){var a=E.back(P(t,.3+i*.25,.5));if(a<=0)return;var al=Math.min(1,a),x=10+(i%2)*275,y=14+Math.floor(i/2)*150,on=st===i;box(c,x,y,265,138,{r:16,f:on?rgba(p[3],.08):'#fff',s:on?p[3]:C.line,lw:on?2.5:1.2,al:al,sh:'rgba(14,40,65,.07)'});
+    av(c,x+46,y+52,30,p[3],al,'');tx(c,p[0],x+92,y+40,{s:17,w:800,f:FD,al:al});tx(c,p[1],x+92,y+62,{s:11,w:700,f:FM,c:p[3],al:al});wrap(c,p[2],x+20,y+104,170,14,{s:10.5,w:600,c:C.mut,al:al});icon(c,p[4],x+232,y+108,28,al)});
+  var ax=E.out(P(t,.8+2.4*4,.6));box(c,10,316,540,86,{r:16,f:'#0E2841',s:false,al:A});gx(c,'bug',60,358,36,C.red,A*(st>=4||st<0?1:.4));tx(c,'y alguien que nadie conoce',100,346,{s:14,w:800,f:FD,c:'#fff',al:A*(st>=4||st<0?1:.4)});tx(c,'no quiere la tienda: quiere sus datos, sus servidores o tumbarla',100,370,{s:11,w:600,c:'#b4c8da',al:A*(st>=4||st<0?1:.4)});
+  if(t>.8)band(c,['Laura: la dueña. Su cuenta puede hacerlo todo','Luis: ventas. Solo debería ver pedidos','Pedro: el desarrollador. Tiene llaves para Terraform','Ana: contabilidad. Descarga reportes de S3','Y el atacante: espera un solo descuido'],st,A,r[1])};
+
+/* tu .ppk: criptografía asimétrica que ya usaste */
+S.ppk=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,5,2.8),st=t<.8?-1:r[0],u=r[1];
+  box(c,10,14,200,250,{r:16,al:A,sh:'rgba(14,40,65,.08)'});icon(c,'R_Client',110,56,40,A);tx(c,'tu PC',110,92,{s:12.5,w:800,a:'center',f:FD,al:A});
+  box(c,350,14,200,250,{r:16,f:'#fff7ed',s:rgba('#ED7100',.45),al:A});icon(c,'EC2',450,56,40,A);tx(c,'tu EC2',450,92,{s:12.5,w:800,a:'center',f:FD,al:A});
+  if(st===0){var k=E.out(u);icon(c,'AWSIdentityandAccessManagement',280,60,34,1);tx(c,'AWS genera un par de llaves',280,96,{s:10.5,w:800,a:'center',f:FD,c:C.p});gl(c,'key',260,130,24,'#12a15a',k);gl(c,'key',300,130,24,C.p,k);tx(c,'pública',260,150,{s:9.5,w:700,a:'center',f:FM,c:'#12a15a',al:k});tx(c,'privada',300,150,{s:9.5,w:700,a:'center',f:FM,c:C.p,al:k})}
+  var pubIn=st>=1||st<0,privIn=st>=1||st<0;
+  if(st===1){var k1=E.io(u);gl(c,'key',260+(450-260)*k1,130+(150-130)*k1,24,'#12a15a',1);gl(c,'key',300+(110-300)*k1,130+(150-130)*k1,24,C.p,1)}
+  if(pubIn&&st!==1){gl(c,'key',450,150,24,'#12a15a',A);box(c,370,172,160,24,{r:8,f:'#fff',s:rgba('#12a15a',.5),al:A});tx(c,'~/.ssh/authorized_keys',450,184,{s:9,w:700,a:'center',f:FM,c:'#0b6b3a',al:A})}
+  if(privIn&&st!==1){var fmt=st>=2||st<0?'mi-llave.ppk':'mi-llave.pem';gl(c,'key',110,150,24,C.p,A);box(c,30,172,160,24,{r:8,f:'#fff',s:rgba(C.p,.5),al:A});tx(c,fmt,110,184,{s:10,w:800,a:'center',f:FM,c:C.p,al:A})}
+  if(st===2){chip(c,'PuTTYgen: .pem → .ppk',110,226,C.p,'#e8f3f9',1,{s:9.5});tx(c,'misma llave, otro formato',110,248,{s:9.5,w:600,a:'center',f:FM,c:C.mut})}
+  if(st===3){var steps=[['1 · reto: 7f3a…',350,170,1],['2 · firmado con la privada',210,200,-1],['3 · ✓ verificado con la pública',350,232,1]];steps.forEach(function(s,i){var a=E.out(P(u,i*.3,.2));if(a<=0)return;var y=110+i*44,x0=s[3]>0?350:210,x1=s[3]>0?210:350,k=E.io(P(u,i*.3,.25));poly(c,[[x0,y],[x0+(x1-x0)*k,y]],i===2?C.g:C.t,2,null,a);chip(c,s[0],280,y-14,i===2?C.g:C.t,'#fff',a,{s:9})});if(u>.9)chip(c,'entras sin contraseña ✓',280,242,C.g,'#ecfbf3',1,{s:10.5,f:FD})}
+  if(st===4){gx(c,'bug',110,226,26,C.red,1);var k4=E.io(u);gl(c,'key',110+(230-110)*k4,184+(300-184)*k4,22,C.red,1);tx(c,'si te roban el .ppk, entran como tú',280,300,{s:12,w:800,a:'center',f:FD,c:C.red})}
+  box(c,10,320,540,84,{r:14,f:C.soft,s:false,al:A});tx(c,'esto es criptografía asimétrica:',28,342,{s:11.5,w:800,f:FD,al:A});tx(c,'la pública puede estar en cualquier servidor · la privada solo en tu PC (y nunca en GitHub)',28,368,{s:10.5,w:700,f:FD,c:C.mut,al:A});tx(c,'las mismas ideas protegen HTTPS, las firmas digitales y tus llaves de AWS',28,388,{s:10.5,w:600,f:FD,c:C.mut,al:A});
+  if(t>.8)band(c,['Al crear tu EC2 elegiste un “key pair”: AWS generó dos llaves','La pública quedó dentro de la EC2; la privada la descargaste una sola vez (.pem)','PuTTYgen la convirtió a .ppk: la misma llave, en el formato de MobaXterm','Al conectarte: la EC2 lanza un reto, tu PC lo firma y la EC2 lo verifica','Por eso el .ppk se cuida como la llave de tu casa'],st,A,u)};
+
+/* tipos de llaves de KMS: ¿de quién es la llave? */
+S.kmskeys=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,4,3.2),st=t<.8?-1:r[0],u=r[1],K=[['AWS owned key','llave propia de AWS','no la ves ni la administras','ej: DynamoDB por defecto','gratis',C.faint],['AWS managed key','aws/ebs · aws/s3 · aws/rds','la ves; AWS la crea y la rota','no controlas quién la usa','gratis',C.t],['Customer managed key (CMK)','llave-pedidos (la crea Laura)','tú decides quién la usa (key policy)','la rotas, la desactivas o la borras','≈ USD 1/mes',C.p]];
+  K.forEach(function(k,i){var a=E.back(P(t,.3+i*.25,.5));if(a<=0)return;var al=Math.min(1,a),x=10+i*184,on=st===i||(st===3&&i===2);box(c,x,14,172,262,{r:16,f:on?rgba(k[5],.08):'#fff',s:on?k[5]:C.line,lw:on?2.5:1.2,al:al,sh:'rgba(14,40,65,.06)'});
+    c.save();c.globalAlpha*=al;rr(c,x+56,30,60,60,18);c.fillStyle=rgba(k[5],.15);c.fill();c.restore();gl(c,'key',x+86,60,30,k[5],al);
+    wrap(c,k[0],x+14,112,146,16,{s:13,w:800,f:FD,c:i===2?C.p:C.ink,al:al});tx(c,k[1],x+14,152,{s:9.5,w:700,f:FM,c:k[5],al:al});wrap(c,k[2],x+14,176,148,14,{s:10.5,w:600,c:C.ink,al:al});wrap(c,k[3],x+14,212,148,14,{s:10.5,w:600,c:C.mut,al:al});tx(c,k[4],x+14,258,{s:11,w:800,f:FM,c:k[5],al:al})});
+  var ax=E.out(P(t,1,.4));c.save();c.globalAlpha*=ax;var g=c.createLinearGradient(20,0,540,0);g.addColorStop(0,'#dfe5ee');g.addColorStop(1,C.p);c.fillStyle=g;rr(c,20,290,520,10,5);c.fill();c.restore();tx(c,'menos control',20,316,{s:10,w:700,f:FM,c:C.mut,al:ax});tx(c,'más control (y más responsabilidad)',540,316,{s:10,w:700,a:'right',f:FM,c:C.p,al:ax});
+  if(st===3){box(c,10,330,540,74,{r:14,f:'#e8f3f9',s:C.p,lw:2,al:1});icon(c,'R_AmazonElasticBlockStoreVolume',40,367,30,1);tx(c,'Laura cifra el disco EBS y RDS con su CMK “llave-pedidos”',64,356,{s:11.5,w:800,f:FD,c:C.p});tx(c,'puede quitarle el permiso a cualquiera… y desactivarla si la roban',64,380,{s:10.5,w:600,f:FD,c:C.mut})}
+  else{box(c,10,330,540,74,{r:14,f:C.soft,s:false,al:A});tx(c,'CMK = Customer Managed Key: la llave del cliente, bajo su control',280,358,{s:11.5,w:800,a:'center',f:FD,al:A});tx(c,'(antes AWS la llamaba “Customer Master Key”)',280,382,{s:10,w:600,a:'center',f:FM,c:C.mut,al:A})}
+  if(t>.8)band(c,['AWS owned: AWS cifra por ti con llaves que ni ves','AWS managed (aws/ebs): la ves en tu cuenta, pero las reglas son de AWS','CMK: la creas tú y tú decides quién la usa, cuándo y cómo','Laura usa su CMK para el disco de la tienda y los pedidos en RDS'],st,A,u)};
+
+/* epílogo: lo que Laura cambió el lunes */
+S.epilogo=function(c,t){var A=E.out(P(t,.1,.5)),L=[['MFA para todos los usuarios, no solo la root','AWSIdentityandAccessManagement'],['Llaves fuera del código: roles y Secrets Manager','AWSSecretsManager'],['Disco y base cifrados con su propia CMK','AWSKeyManagementService'],['La tienda detrás de CloudFront + WAF','AWSWAF'],['GuardDuty y Security Hub encendidos, con alertas al celular','GuardDuty'],['Cada mes: revisar el tablero y actualizar la EC2','AmazonInspector']];
+  tx(c,'Lunes 8:00 · la lista de Laura',280,24,{s:14,w:800,a:'center',f:FD,c:C.p,al:A});
+  L.forEach(function(l,i){var a=E.out(P(t,.6+i*.55,.4));if(a<=0)return;var y=46+i*60,dn=t>.9+i*.55+.4;box(c,10,y,540,50,{r:12,f:dn?'#ecfbf3':'#fff',s:dn?rgba(C.g,.45):C.line,al:a,sh:'rgba(14,40,65,.05)'});c.save();c.globalAlpha*=a;c.strokeStyle=dn?C.g:C.faint;c.lineWidth=2;rr(c,24,y+15,20,20,5);c.stroke();c.restore();if(dn)tx(c,'✓',34,y+26,{s:13,w:800,a:'center',c:C.g,al:a});icon(c,l[1]==='AmazonInspector'?'Inspector':l[1],70,y+25,28,a);tx(c,l[0],94,y+25,{s:12,w:700,f:FD,al:a})});
+  var fa=E.back(P(t,.6+6*.55+.4,.5));if(fa>0)chip(c,'¿Y si mañana el atacante vuelve? Que se estrelle. 🛡️',280,428,C.p,'#e8f3f9',Math.min(1,fa),{s:12,f:FD})};
 
 /* motor: corre la escena de la diapositiva visible */
 var raf=0,cur=null,TOFF=parseFloat((location.search.match(/[?&]mt=([\d.]+)/)||[])[1])||0;function tick(){return document.hidden?setTimeout(function(){frame(performance.now())},33):requestAnimationFrame(frame)}
