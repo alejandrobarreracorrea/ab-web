@@ -2248,17 +2248,17 @@ S.phish=function(c,t){var A=E.out(P(t,.1,.5)),CY=14,u=t%CY;
   var mfa=E.out(P(u,7.6,.4));box(c,330,216,190,40,{r:8,f:'#eef6fb',s:C.t,al:mfa});tx(c,'código MFA: _ _ _ _ _ _',425,236,{s:11,w:700,a:'center',f:FM,c:C.t,al:mfa});
   if(u>8.6){tx(c,'✕ no tiene el celular de Luis',425,282,{s:11.5,w:800,a:'center',f:FD,c:C.red,al:E.out(P(u,8.6,.3))})}
   gx(c,'phone',520,370,30,C.p,E.out(P(u,7.8,.3)));tx(c,'482 913',470,372,{s:12,w:800,a:'right',f:FM,c:C.p,al:E.out(P(u,7.8,.3))});tx(c,'el código está aquí 👉',470,354,{s:9.5,w:600,a:'right',f:FM,c:C.mut,al:E.out(P(u,7.8,.3))});
-  var rA=E.back(P(u,9.6,.5));if(rA>0)pill(c,'MFA salvó la cuenta · Luis cambia su clave',280,436,C.g,Math.min(1,rA),{s:12,f2:'#ecfbf3'})};
+  var ps=u<3.2?0:u<4.8?1:u<6.4?2:u<9.6?3:4;if(t>.4)band(c,['21:12 · llega un correo “de AWS”: urgencia, dominio raro, botón','Luis hace clic: una página idéntica a la de AWS… pero falsa','Escribe su clave y le llega al atacante','El atacante entra a la consola real: le falta el código MFA','MFA salvó la cuenta · Luis cambia su clave'],ps,A,ps===4?Math.min(1,(u-9.6)/4.4):null)};
 
 /* 1.2 · la llave en GitHub: mínimo privilegio + detección + revocar */
 S.gitkey=function(c,t){var A=E.out(P(t,.1,.5)),CY=15,u=t%CY,ev=[['21:40','Pedro hace git push… con terraform.tfvars y su llave AKIA…',C.o,.3],['21:41','un bot que vigila GitHub la encuentra',C.red,1.8],['21:42','el bot intenta lanzar 50 servidores',C.red,3.4],['21:43','GuardDuty: “llave usada desde una IP rara”',C.o,6.4],['21:45','Laura desactiva la llave',C.g,8.4],['21:46','el bot vuelve a intentar',C.red,10]];
-  c.save();c.globalAlpha*=A;c.strokeStyle=C.line;c.lineWidth=3;c.beginPath();c.moveTo(70,30);c.lineTo(70,450);c.stroke();c.restore();
-  ev.forEach(function(e,i){var a=E.out(P(u,e[3],.4));if(a<=0)return;var y=40+i*72;dot(c,70,y,7,e[2],a,8);tx(c,e[0],56,y+1,{s:10,w:800,a:'right',f:FM,c:e[2],al:a});box(c,90,y-24,250,48,{r:10,f:'#fff',s:rgba(e[2],.4),al:a});wrap(c,e[1],102,y-6,228,14,{s:10.5,w:700,f:FD,al:a})});
+  c.save();c.globalAlpha*=A;c.strokeStyle=C.line;c.lineWidth=3;c.beginPath();c.moveTo(70,24);c.lineTo(70,384);c.stroke();c.restore();
+  ev.forEach(function(e,i){var a=E.out(P(u,e[3],.4));if(a<=0)return;var y=36+i*62;dot(c,70,y,7,e[2],a,8);tx(c,e[0],56,y+1,{s:10,w:800,a:'right',f:FM,c:e[2],al:a});box(c,90,y-24,250,48,{r:10,f:'#fff',s:rgba(e[2],.4),al:a});wrap(c,e[1],102,y-6,228,14,{s:10.5,w:700,f:FD,al:a})});
   /* resultado del intento */
-  var r1=E.back(P(u,4.4,.4));if(r1>0){var al=Math.min(1,r1);box(c,356,180,194,74,{r:12,f:'#ecfbf3',s:rgba(C.g,.45),al:al});tx(c,'✕ AccessDenied',453,202,{s:12,w:800,a:'center',f:FD,c:C.red,al:al});wrap(c,'la llave solo podía leer un bucket: mínimo privilegio',368,222,174,13,{s:9.5,w:700,f:FD,c:'#0b6b3a',al:al})}
-  var r2=E.out(P(u,5.2,.4));if(r2>0){box(c,356,262,194,62,{r:12,f:'#fff6f4',s:rgba(C.red,.3),al:r2});tx(c,'si fuera administrador…',453,282,{s:10,w:700,a:'center',f:FD,c:C.mut,al:r2});tx(c,'50 servidores · $9.000',453,304,{s:13,w:800,a:'center',f:FD,c:C.red,al:r2})}
-  var r3=E.back(P(u,10.8,.4));if(r3>0){var al3=Math.min(1,r3);box(c,356,396,194,58,{r:12,f:'#ecfbf3',s:rgba(C.g,.45),al:al3});tx(c,'✕ InvalidClientTokenId',453,418,{s:11,w:800,a:'center',f:FM,c:C.red,al:al3});tx(c,'la llave ya no sirve',453,438,{s:10,w:700,a:'center',f:FD,c:'#0b6b3a',al:al3})}
-};
+  var r1=E.back(P(u,4.4,.4));if(r1>0){var al=Math.min(1,r1);box(c,356,150,194,74,{r:12,f:'#ecfbf3',s:rgba(C.g,.45),al:al});tx(c,'✕ AccessDenied',453,172,{s:12,w:800,a:'center',f:FD,c:C.red,al:al});wrap(c,'la llave solo podía leer un bucket: mínimo privilegio',368,192,174,13,{s:9.5,w:700,f:FD,c:'#0b6b3a',al:al})}
+  var r2=E.out(P(u,5.2,.4));if(r2>0){box(c,356,234,194,62,{r:12,f:'#fff6f4',s:rgba(C.red,.3),al:r2});tx(c,'si fuera administrador…',453,254,{s:10,w:700,a:'center',f:FD,c:C.mut,al:r2});tx(c,'50 servidores · $9.000',453,276,{s:13,w:800,a:'center',f:FD,c:C.red,al:r2})}
+  var r3=E.back(P(u,10.8,.4));if(r3>0){var al3=Math.min(1,r3);box(c,356,326,194,58,{r:12,f:'#ecfbf3',s:rgba(C.g,.45),al:al3});tx(c,'✕ InvalidClientTokenId',453,348,{s:11,w:800,a:'center',f:FM,c:C.red,al:al3});tx(c,'la llave ya no sirve',453,368,{s:10,w:700,a:'center',f:FD,c:'#0b6b3a',al:al3})}
+  var gs=u<1.8?0:u<3.4?1:u<6.4?2:u<8.4?3:u<10?4:5;if(t>.3)band(c,['21:40 · Pedro sube su proyecto… con su llave adentro','21:41 · un bot que vigila GitHub la encuentra en un minuto','21:42 · intenta lanzar 50 servidores: AccessDenied (mínimo privilegio)','21:43 · GuardDuty detecta el uso raro y avisa a Laura','21:45 · Laura desactiva la llave en la consola de IAM','21:46 · el bot vuelve a intentar: la llave ya no sirve'],gs,A)};
 
 /* 2.1 · cifrado simétrico vs asimétrico */
 S.cripto=function(c,t){var A=E.out(P(t,.1,.5)),u=t%12;
@@ -2297,7 +2297,7 @@ S.moraleja=function(c,t){var A=E.out(P(t,.1,.5)),cx=280,cy=236,RG=[['detección'
   AT.forEach(function(a,i){if(i>n)return;var ang=a[3]*Math.PI/180,R=RG[a[2]][2],ox=cx+Math.cos(ang)*250,oy=cy+Math.sin(ang)*250,hx=cx+Math.cos(ang)*R,hy=cy+Math.sin(ang)*R,u=i===n?Math.min(1,((t-.8)%per)/per*1.6):1;
     var x=ox+(hx-ox)*E.io(u),y=oy+(hy-oy)*E.io(u);poly(c,[[ox,oy],[x,y]],rgba(C.red,.5),2,[4,4],1);dot(c,x,y,6,C.red,1,10);
     if(u>=1){tx(c,'✕',hx,hy+1,{s:16,w:800,a:'center',c:C.red});var lx=cx+Math.cos(ang)*200,ly=cy+Math.sin(ang)*196;box(c,lx-58,ly-18,116,36,{r:9,f:'#fff',s:rgba(RG[a[2]][1],.6)});tx(c,a[0],lx,ly-6,{s:9.5,w:700,a:'center',f:FD,c:C.red});tx(c,'→ '+a[1],lx,ly+9,{s:9.5,w:800,a:'center',f:FD,c:'#0b6b3a'})}});
-  pill(c,'ninguna capa sola habría bastado',cx,462,C.p,E.out(P(t,.8+per*6,.4)),{s:11.5})};
+  if(t>.8)band(c,['21:12 · el correo falso choca con el MFA','21:40 · la llave en GitHub choca con el mínimo privilegio','22:30 · el espía del wifi choca con HTTPS','23:05 · el disco filtrado choca con KMS','23:40 · las peticiones raras chocan con el WAF','00:00 · la avalancha choca con Shield · ninguna capa sola bastaba'],Math.min(5,n),A)};
 /* ===== animaciones de alto nivel: historia base + servicios ===== */
 function band(c,T,st,A){box(c,10,414,540,54,{r:12,f:'#0E2841',s:false,al:A});tx(c,T[st]||'',280,436,{s:12.5,w:700,a:'center',f:FD,c:'#fff',al:A});for(var i=0;i<T.length;i++)dot(c,280-(T.length-1)*9+i*18,456,i===st?4.5:3,i===st?C.o:'#2b4f74',A)}
 function stp(t,n,d){var x=Math.max(0,t-.8);return[Math.floor(x/d)%n,(x%d)/d]}
@@ -2435,6 +2435,133 @@ S.hub=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,4,3),st=r[0],T=['Cada servic
   F.forEach(function(f,i){var a=st>=1?E.out(P(t,.8+3+i*.3,.3)):0;if(st>=2)a=1;if(a<=0)return;var y=90+i*44,ok=i<fixed;box(c,234,y-16,302,34,{r:8,f:ok?'#ecfbf3':'#fff',s:ok?rgba(C.g,.4):rgba(f[2],.35),al:a});tx(c,(ok?'✓ ':'')+f[0],246,y+1,{s:10.5,w:700,f:FD,c:ok?'#0b6b3a':C.ink,al:a});tx(c,ok?'resuelto':f[1],524,y+1,{s:9.5,w:800,a:'right',f:FM,c:ok?C.g:f[2],al:a})});
   var sc=st<2?0:st===2?48:Math.round(48+46*fixed/5);if(st>=2){c.save();c.globalAlpha*=A;c.strokeStyle=C.line;c.lineWidth=10;c.beginPath();c.arc(300,334,34,0,7);c.stroke();c.strokeStyle=sc>80?C.g:C.o;c.beginPath();c.arc(300,334,34,-Math.PI/2,-Math.PI/2+2*Math.PI*sc/100);c.stroke();c.restore();tx(c,sc+'%',300,334,{s:15,w:800,a:'center',f:FD,al:A});tx(c,'nota de seguridad',420,334,{s:11,w:800,a:'center',f:FD,c:C.mut,al:A})}
   if(t>.8)band(c,T,st,A)};
+/* ===== revisión: todas las escenas con pasos narrados ===== */
+band=function(c,T,st,A,u){box(c,10,414,540,54,{r:12,f:'#0E2841',s:false,al:A});tx(c,T[st]||'',280,434,{s:12.5,w:700,a:'center',f:FD,c:'#fff',al:A});
+  for(var i=0;i<T.length;i++){var x=280-(T.length-1)*13+i*26;c.save();c.globalAlpha*=A;rr(c,x-10,452,20,4,2);c.fillStyle=i<st?'#39c8e8':'#2b4f74';c.fill();if(i===st&&u!=null){rr(c,x-10,452,20*u,4,2);c.fillStyle=C.o;c.fill()}c.restore()}};
+
+/* CIA */
+S.cia=function(c,t){var K=[['C','Confidencialidad','solo quien debe, ve','lock',C.p],['I','Integridad','nadie cambia sin permiso','seal',C.t],['D','Disponibilidad','abierta cuando la necesitan','power','#12a15a']],r=stp(t,3,3.6),ph=t>.8?r[0]:-1,u=t>.8?r[1]*3.6:0,A=E.out(P(t,.1,.5));
+  K.forEach(function(k,i){var a=E.back(P(t,.2+i*.2,.5));if(a<=0)return;var al=Math.min(1,a),x=10+i*184,w=172,on=i===ph,dim=ph>=0&&!on,col=k[4];
+    box(c,x,14,w,388,{r:18,al:al*(dim?.55:1),f:on?rgba(col,.07):'#fff',s:on?col:C.line,lw:on?2.5:1.2,sh:on?rgba(col,.25):'rgba(14,40,65,.06)'});
+    c.save();c.globalAlpha*=al;rr(c,x+w/2-30,30,60,60,18);c.fillStyle=rgba(col,.14);c.fill();c.restore();gx(c,k[3],x+w/2,60,32,col,al);
+    tx(c,k[0],x+w/2,112,{s:28,w:800,a:'center',f:FD,c:col,al:al});tx(c,k[1],x+w/2,140,{s:13.5,w:800,a:'center',f:FD,al:al});tx(c,k[2],x+w/2,160,{s:10.5,w:600,a:'center',c:C.mut,al:al});
+    var bx=x+12,by=180,bw=w-24;box(c,bx,by,bw,200,{r:12,f:C.soft,s:false,al:al});
+    if(i===0){var att=on&&u>.4,prot=on&&u>1.8;box(c,bx+12,by+16,bw-24,70,{r:10,f:'#fff',s:prot?C.p:C.line,lw:prot?2:1,al:al});tx(c,'clientes.csv',bx+bw/2,by+34,{s:10,w:800,a:'center',f:FM,al:al});tx(c,prot?'▓░▒▓░▒░▓':'Camila · 300 123…',bx+bw/2,by+60,{s:10.5,w:600,a:'center',f:FM,c:prot?C.faint:C.ink,al:al});
+      if(att){var ex=bx+bw-14-(bw-60)*E.io(P(u,.4,.8));gx(c,'eye',ex,by+116,24,C.red,1);tx(c,'espía',ex,by+136,{s:9.5,w:800,a:'center',f:FM,c:C.red})}
+      if(prot){gx(c,'lock',bx+bw-22,by+26,18,C.p,1);tx(c,prot?'cifrado + permisos':'',bx+bw/2,by+170,{s:10.5,w:800,a:'center',f:FD,c:C.p})}}
+    if(i===1){var bad=on&&u>.5&&u<2.2,fix=on&&u>=2.2;box(c,bx+12,by+16,bw-24,70,{r:10,f:bad?'#fff0f0':fix?'#ecfbf3':'#fff',s:bad?C.red:fix?C.g:C.line,lw:bad||fix?2:1,al:al});tx(c,'precio camiseta',bx+bw/2,by+34,{s:9.5,w:700,a:'center',f:FM,c:C.mut,al:al});
+      var pr=bad?'$4':'$45';c.save();if(bad){c.translate(bx+bw/2,by+62);c.rotate(Math.sin(t*20)*.04);c.translate(-(bx+bw/2),-(by+62))}tx(c,pr,bx+bw/2,by+62,{s:20,w:800,a:'center',f:FD,c:bad?C.red:C.ink,al:al});c.restore();
+      if(bad){gx(c,'bug',bx+bw/2,by+120,24,C.red,1);tx(c,'alguien lo cambió',bx+bw/2,by+146,{s:10,w:700,a:'center',f:FD,c:C.red})}if(fix)tx(c,'✓ detectado y revertido',bx+bw/2,by+130,{s:10.5,w:800,a:'center',f:FD,c:C.g})}
+    if(i===2){var down=on&&u>.8;[0,1].forEach(function(q){var sx=bx+12+q*((bw-36)/2+12),sw=(bw-36)/2,dn=down&&q===0;box(c,sx,by+20,sw,66,{r:10,f:dn?'#fff0f0':'#fff',s:dn?C.red:C.line,al:al});gx(c,'server',sx+sw/2,by+46,22,dn?C.red:'#12a15a',al);tx(c,q?'zona B':'zona A',sx+sw/2,by+76,{s:9,w:700,a:'center',f:FM,c:dn?C.red:C.mut,al:al})});
+      for(var d=0;d<6;d++){var dd=((t*.9)+d/6)%1,tgx=down?bx+bw-40:bx+bw/2;dot(c,bx+bw/2+(tgx-bx-bw/2)*dd*0,by+150-60*dd,3,C.t,.7*al)}
+      tx(c,down?'una cae, la otra sigue ✓':'2 copias en 2 zonas',bx+bw/2,by+170,{s:10.5,w:800,a:'center',f:FD,c:down?C.g:C.mut,al:al})}
+    tx(c,['ej: datos de clientes','ej: precios y pedidos','ej: la tienda 24/7'][i],x+w/2,394,{s:10,w:700,a:'center',f:FM,c:col,al:al})});
+  if(t>.8)band(c,['C · un espía quiere leer los datos de los clientes → cifrado y permisos','I · alguien cambia un precio → se detecta y se revierte','D · un servidor se cae → la copia en otra zona sigue vendiendo'],ph,A,r[1])};
+
+/* responsabilidad compartida */
+S.compartida=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,3,3.4),st=t<.8?-1:r[0],TU=['tus datos y quién los ve','usuarios y permisos (IAM)','Security Groups y puertos','el sistema operativo de tu EC2','cifrar lo importante'],AWS=['data centers y guardas','servidores y discos físicos','el hipervisor','la red global'];
+  var a2=st>=0?1:0,a1=st>=1?1:0;
+  box(c,10,224,540,176,{r:18,f:'#fff4ec',s:rgba(C.o,.45),al:A});tx(c,'AWS · seguridad DE la nube',28,250,{s:14,w:800,f:FD,c:C.o,al:A});
+  AWS.forEach(function(s,i){var a=st>=0?E.out(P(t,.8+i*.25,.4)):0;if(a<=0)return;var x=28+(i%2)*262,y=268+Math.floor(i/2)*58;box(c,x,y,250,46,{r:10,al:a});gx(c,'server',x+22,y+23,18,C.o,a);tx(c,s,x+44,y+23,{s:11.5,w:700,f:FD,al:a})});
+  box(c,10,10,540,200,{r:18,f:'#e8f3f9',s:rgba(C.p,.4),al:A*(st>=1?1:.3)});tx(c,'LAURA · seguridad EN la nube',28,36,{s:14,w:800,f:FD,c:C.p,al:A*(st>=1?1:.3)});
+  TU.forEach(function(s,i){var a=st>=1?E.out(P(t,4.2+i*.25,.4)):0;if(a<=0)return;var x=28+(i%2)*262,y=52+Math.floor(i/2)*50,hl=st===2&&i===3;box(c,x,y,250,40,{r:10,f:hl?'#fff4ec':'#fff',s:hl?C.o:C.line,lw:hl?2:1,al:a});av(c,x+20,y+20,10,C.p,a,'');tx(c,s,x+38,y+20,{s:11.5,w:700,f:FD,al:a})});
+  if(st===2){chip(c,'EC2: el sistema operativo es de Laura',394,176,C.o,'#fff4ec',1,{s:10,f:FD});chip(c,'RDS y DynamoDB: lo parcha AWS',150,176,C.g,'#ecfbf3',1,{s:10,f:FD})}
+  if(t>.8)band(c,['AWS cuida lo físico: edificios, servidores, red global','Laura cuida lo suyo: datos, usuarios, puertos, su EC2','Cuanto más administrado el servicio, menos le toca a Laura'],Math.max(0,st),A,r[1])};
+
+/* castillo por capas */
+S.capas=function(c,t){var cx=350,cy=200,R=[['detección','#7f9bb5',178,['AWSCloudTrail','GuardDuty','AWSSecurityHub'],'CloudTrail · GuardDuty · Security Hub'],['red','#8c4fff',142,['AWSShield','VirtualPrivateCloud'],'SG · NACL · Shield'],['aplicación',C.o,106,['AWSWAF','AWSCertificateManager'],'WAF · ACM (HTTPS)'],['identidad','#dd344c',72,['AWSIdentityandAccessManagement'],'IAM · MFA'],['datos',C.p,40,['AWSKeyManagementService','AWSSecretsManager'],'KMS · Secrets Manager']],r=stp(t,5,2.4),hi=t>.8?r[0]:-1,A=E.out(P(t,.1,.5));
+  R.forEach(function(g,i){var a=E.out(P(t,.2+i*.12,.5));var on=i===hi;c.save();c.globalAlpha*=a*(hi>=0&&!on?.5:1);c.beginPath();c.arc(cx,cy,g[2],0,7);c.fillStyle=rgba(g[1],on?.18:.07);c.fill();c.lineWidth=on?3.5:1.5;c.strokeStyle=g[1];if(on){c.shadowColor=g[1];c.shadowBlur=18}c.stroke();c.restore()});
+  tx(c,'🏰',cx,cy-4,{s:24,a:'center',al:A});tx(c,'datos',cx,cy+20,{s:9.5,w:800,a:'center',f:FD,c:C.p,al:A});
+  R.forEach(function(g,i){var a=E.out(P(t,.4+i*.12,.4)),on=i===hi,y=20+i*78;box(c,0,y,150,70,{r:12,f:on?rgba(g[1],.12):'#fff',s:on?g[1]:C.line,lw:on?2:1.2,al:a});tx(c,g[0],12,y+16,{s:12.5,w:800,f:FD,c:g[1],al:a});g[3].forEach(function(n,q){icon(c,n,22+q*30,y+46,24,a)});
+    if(on){poly(c,[[150,y+35],[cx-g[2]*.92,cy-g[2]*.38]],g[1],2,[4,4],1)}});
+  if(t>.8)band(c,['Detección: las cámaras que lo graban y lo vigilan todo','Red: rejas y escudo contra avalanchas','Aplicación: el filtro delante de la web y el candado HTTPS','Identidad: quién entra y qué puede hacer','Datos: cifrados, con llaves que nunca salen'],hi,A,r[1])};
+
+/* superficie de ataque (agrega pasos) */
+var _blanco=S.blanco;S.blanco=function(c,t){_blanco(c,t);var r=stp(t,3,3);if(t>.8)band(c,['Todo lo que Laura montó queda conectado a internet','Bots automáticos prueban cada puerta, todo el día','Esa lista de puertas abiertas es su superficie de ataque'],r[0],1,r[1])};
+
+/* autenticación vs autorización */
+S.authn=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,4,2.6),st=t<.8?-1:r[0],u=r[1];
+  box(c,150,14,160,330,{r:16,f:'#e8f3f9',s:st===0||st===1?C.p:rgba(C.p,.4),lw:st<=1&&st>=0?2.5:1.4,al:A});tx(c,'1 · Autenticación',230,38,{s:13,w:800,a:'center',f:FD,c:C.p,al:A});tx(c,'¿quién eres?',230,58,{s:10.5,w:600,a:'center',f:FM,c:C.mut,al:A});
+  box(c,330,14,220,330,{r:16,f:'#fff4ec',s:st>=2?C.o:rgba(C.o,.4),lw:st>=2?2.5:1.4,al:A});tx(c,'2 · Autorización',440,38,{s:13,w:800,a:'center',f:FD,c:C.o,al:A});tx(c,'¿qué puedes hacer?',440,58,{s:10.5,w:600,a:'center',f:FM,c:C.mut,al:A});
+  var F=['usuario: ana','clave ●●●●●','MFA: 482 913'];F.forEach(function(f,i){var a=st===0?E.out(P(u,i*.25,.2)):st>0?1:0;if(a<=0)return;box(c,164,84+i*46,132,36,{r:8,f:'#fff',s:st>=1?rgba(C.g,.5):C.line,al:a});tx(c,f,176,102+i*46,{s:10.5,w:600,f:FM,al:a});if(st>=1)tx(c,'✓',286,102+i*46,{s:12,w:800,a:'right',c:C.g,al:a})});
+  if(st>=1){var k=E.back(P(st===1?u:1,0,.4));box(c,170,236,120,64,{r:12,f:'#ecfbf3',s:C.g,al:Math.min(1,k)});tx(c,'✓ eres Ana',230,258,{s:12,w:800,a:'center',f:FD,c:'#0b6b3a',al:Math.min(1,k)});tx(c,'grupo: vendedores',230,280,{s:9.5,w:600,a:'center',f:FM,c:C.mut,al:Math.min(1,k)})}
+  var R=[['leer pedidos (S3)',1],['ver la EC2',1],['borrar la base RDS',0],['crear usuarios',0]];
+  R.forEach(function(q,i){var show=st>=2?(st===2?E.out(P(u,i*.22,.2)):1):0;if(show<=0)return;var res=st>=3,y=84+i*56;box(c,344,y,192,44,{r:10,f:res?(q[1]?'#ecfbf3':'#fff0f0'):'#fff',s:res?(q[1]?C.g:C.red):C.line,lw:res?2:1,al:show});tx(c,(res?(q[1]?'✓ ':'✕ '):'? ')+q[0],358,y+22,{s:11.5,w:700,f:FD,c:res?(q[1]?'#0b6b3a':C.red):C.ink,al:show})});
+  var ax=st<1?60:st<2?60+170*E.io(st===1?u:1):230+210*E.io(st===2?u:1);av(c,ax>440?440:ax,370,20,C.t,A,'');tx(c,'Ana',(ax>440?440:ax),400,{s:11,w:800,a:'center',f:FD,al:A});
+  if(st>=0)poly(c,[[60,370],[Math.min(ax,440),370]],C.t,2,[4,4],A*.5);
+  if(t>.8)band(c,['1 · Ana demuestra quién es: usuario, clave y código MFA','2 · IAM la reconoce: “eres Ana, del grupo vendedores”','3 · Cada acción que pide se revisa contra sus políticas','4 · Lo permitido pasa ✓, todo lo demás se niega ✕'],st,A,u)};
+
+/* simétrico vs asimétrico */
+S.cripto=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,5,2.8),st=t<.8?-1:r[0],u=r[1];
+  var L=st<=1;box(c,10,10,265,392,{r:16,f:'#f7f9fc',s:L&&st>=0?C.t:C.line,lw:L&&st>=0?2.5:1.2,al:A});box(c,285,10,265,392,{r:16,f:'#f2fbf5',s:!L?'#12a15a':rgba(C.g,.35),lw:!L?2.5:1.2,al:A});
+  tx(c,'Simétrico',142,36,{s:15,w:800,a:'center',f:FD,c:C.t,al:A});tx(c,'una sola llave cierra y abre',142,56,{s:10,w:600,a:'center',f:FM,c:C.mut,al:A});
+  tx(c,'Asimétrico',418,36,{s:15,w:800,a:'center',f:FD,c:'#12a15a',al:A});tx(c,'llave pública + llave privada',418,56,{s:10,w:600,a:'center',f:FM,c:C.mut,al:A});
+  av(c,52,110,18,C.p,A,'Laura');av(c,232,110,18,C.t,A,'cliente');av(c,330,110,18,C.p,A,'Laura');av(c,506,110,18,C.t,A,'cliente');
+  /* simétrico */
+  gl(c,'key',52,166,22,'#c9a227',A);gl(c,'key',232,166,22,'#c9a227',A*(st>=1||st<0?1:.25));tx(c,'misma llave',142,168,{s:9.5,w:700,a:'center',f:FM,c:'#c9a227',al:A});
+  if(st===0){var k=(u*1.6)%1;box(c,52+180*k-30,198,60,24,{r:6,f:'#0E2841',s:false});tx(c,'🔒 ░░░',52+180*k,210,{s:9.5,w:700,a:'center',f:FM,c:'#7ee2a8'});tx(c,'cifrado con AES: rapidísimo',142,250,{s:11,w:700,a:'center',f:FD,c:C.t})}
+  if(st===1){var k2=E.io(u);gl(c,'key',52+180*k2,290,22,C.red,1);gx(c,'eye',142,330,24,C.red,1);if(u>.5)tx(c,'¡la vio en el camino!',142,360,{s:11,w:800,a:'center',f:FD,c:C.red});tx(c,'¿cómo le mando la llave?',142,250,{s:11.5,w:800,a:'center',f:FD,c:C.red})}
+  /* asimétrico */
+  gl(c,'key',330,166,20,C.p,A*(st>=2||st<0?1:.3));tx(c,'privada: nunca sale',330,190,{s:9,w:700,a:'center',f:FM,c:C.p,al:A*(st>=2||st<0?1:.3)});
+  if(st===2){for(var q=0;q<3;q++){var k3=E.io(Math.min(1,u*1.3+q*.1));gx(c,'unlock',330+176*k3,214+q*36,22,'#12a15a',1)}tx(c,'candados abiertos = llave pública',418,342,{s:10.5,w:800,a:'center',f:FD,c:'#0b6b3a'})}
+  if(st===3){gx(c,u<.3?'unlock':'lock',506-176*E.io(P(u,.3,.7)),250,26,'#12a15a',1);if(u<.3)tx(c,'el cliente cierra su mensaje',506,290,{s:10.5,w:700,a:'center',f:FD,c:'#0b6b3a'});gx(c,'eye',418,300,22,C.red,1);if(u>.5)tx(c,'el espía no lo puede abrir',418,326,{s:10.5,w:800,a:'center',f:FD,c:C.red})}
+  if(st===4){gx(c,'unlock',330,250,26,'#12a15a',1);gl(c,'key',330,290,20,C.p,1);tx(c,'solo la llave privada de Laura abre',418,340,{s:11,w:800,a:'center',f:FD,c:'#0b6b3a'})}
+  tx(c,'ej: AES',142,384,{s:10.5,w:700,a:'center',f:FM,c:C.t,al:A});tx(c,'ej: RSA · base de los certificados',418,384,{s:10.5,w:700,a:'center',f:FM,c:'#12a15a',al:A});
+  if(t>.8)band(c,['Simétrico: la misma llave cifra y descifra, y es rapidísimo','El problema: ¿cómo le mando la llave sin que la vean?','Asimétrico: Laura reparte candados abiertos (su llave pública)','El cliente cierra con ese candado: nadie más lo abre','Solo la llave privada de Laura lo abre · HTTPS usa los dos'],st,A,u)};
+
+/* HTTPS / TLS con ACM */
+S.tls=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,5,2.6),st=t<.8?-1:r[0],u=r[1];
+  box(c,10,10,540,128,{r:16,f:'#eef6fb',s:st>=0&&st<=2?C.t:rgba(C.t,.3),lw:st>=0&&st<=2?2:1.2,al:A});icon(c,'AWSCertificateManager',36,34,24,A);tx(c,'el saludo TLS, antes de enviar nada',56,34,{s:12,w:800,f:FD,al:A});
+  icon(c,'R_Mobileclient',52,92,32,A);tx(c,'Laura (café)',52,124,{s:9.5,w:700,a:'center',f:FM,c:C.mut,al:A});icon(c,'CloudFront',508,92,32,A);tx(c,'tienda',508,124,{s:9.5,w:700,a:'center',f:FM,c:C.mut,al:A});
+  var H=[['hola, ¿eres la tienda de verdad?',1],['sí: este es mi certificado ✓ (firmado por Amazon)',-1],['acordamos una llave secreta para esta sesión',1]];
+  H.forEach(function(h,i){var on=st>i||(st===i);if(!on)return;var y=64+i*24,k=st===i?E.io(u):1,x0=h[1]>0?80:478,x1=h[1]>0?476:82;poly(c,[[x0,y],[x0+(x1-x0)*k,y]],h[1]>0?C.t:'#12a15a',2,null,1);if(k>=1)arrowhead(c,[x0,y],[x1,y],h[1]>0?C.t:'#12a15a',1);tx(c,h[0],280,y-7,{s:9.5,w:700,a:'center',f:FD,c:h[1]>0?C.t:'#0b6b3a'})});
+  if(st===1&&u>.3){box(c,330,90,140,40,{r:8,f:'#fff',s:'#12a15a'});tx(c,'📜 tienda-laura.com',400,104,{s:9.5,w:800,a:'center',f:FM,c:'#0b6b3a'});tx(c,'válido hasta 2027 ✓',400,120,{s:9,w:600,a:'center',f:FM,c:C.mut})}
+  var lanes=[['HTTP · sin candado',C.red,'clave: Laura123',false,150],['HTTPS · con candado 🔒','#12a15a','x9#kQ!2@mZ…',true,276]];
+  lanes.forEach(function(l,i){var show=st>=3||st<0;var a=show?E.out(P(t,.8+2.6*3+i*.3,.4)):.25;var y=l[4];box(c,10,y,540,116,{r:16,f:i?'#f2fbf5':'#fff6f4',s:rgba(l[1],.4),al:a});tx(c,l[0],28,y+22,{s:12.5,w:800,f:FD,c:l[1],al:a});
+    icon(c,'R_Mobileclient',46,y+70,26,a);icon(c,'CloudFront',514,y+70,26,a);poly(c,[[66,y+70],[494,y+70]],'#dfe5ee',2,[4,4],a);gx(c,'eye',280,y+44,22,C.red,a);tx(c,'espía en el wifi',318,y+44,{s:9,w:700,f:FM,c:C.red,al:a});
+    if(show&&st>=3){var k=((t*.25)+i*.5)%1,px=66+428*k;box(c,px-56,y+58,112,24,{r:12,f:l[3]?'#0E2841':'#fff',s:l[1]});tx(c,(l[3]?'🔒 ':'')+l[2],px,y+70,{s:9.5,w:700,a:'center',f:FM,c:l[3]?'#7ee2a8':C.red});if(Math.abs(px-280)<70)tx(c,l[3]?'no entiende nada':'¡la leyó!',280,y+100,{s:11,w:800,a:'center',f:FD,c:l[3]?'#0b6b3a':C.red})}});
+  if(t>.8)band(c,['1 · El navegador saluda: “¿eres la tienda de verdad?”','2 · La tienda muestra su certificado, emitido gratis por ACM','3 · Acuerdan una llave secreta solo para esta conversación','4 · Sin HTTPS, el espía del wifi lee tu clave','5 · Con HTTPS solo ve ruido: el candado del navegador'],st,A,u)};
+
+/* hash */
+S.hash=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,4,3),st=t<.8?-1:r[0],u=r[1],inp=st===1?'laura123':'Laura123',out=st===1?'4b9a…e07c':'ef92…3a1c';
+  box(c,10,22,170,74,{r:12,al:A});tx(c,'entrada',24,42,{s:10,w:600,f:FM,c:C.mut,al:A});tx(c,st<=1&&st>=0?typed(inp,u,.05,.35):inp,24,72,{s:16,w:800,f:FM,c:st===1?C.o:C.ink,al:A});
+  box(c,210,14,140,90,{r:14,f:'#0E2841',s:false,al:A});c.save();c.translate(280,50);var sp=st<=1&&st>=0&&u>.4&&u<.75;c.rotate(sp?t*8:0);gl(c,'gear',0,0,30,'#39c8e8',A);c.restore();tx(c,'SHA-256',280,90,{s:10.5,w:800,a:'center',f:FM,c:'#fff',al:A});
+  var oa=st<0||st>=2?1:E.out(P(u,.75,.2));box(c,380,22,170,74,{r:12,f:'#eef6fb',s:C.t,al:oa});tx(c,'huella (hash)',394,42,{s:10,w:600,f:FM,c:C.mut,al:oa});tx(c,out,394,72,{s:15,w:800,f:FM,c:st===1?C.o:C.t,al:oa});
+  poly(c,[[180,59],[210,59]],C.faint,2,null,A);arrowhead(c,[180,59],[210,59],C.faint,A);poly(c,[[350,59],[380,59]],C.faint,2,null,A);arrowhead(c,[350,59],[380,59],C.faint,A);
+  if(st===1&&u>.8)chip(c,'una letra distinta → huella totalmente distinta',280,128,C.o,'#fff4ec',1,{s:10.5,f:FD});
+  if(st===2){poly(c,[[380,140],[180,140]],C.red,2.5,[6,5],1);tx(c,'✕ no se puede devolver: de la huella no sale la clave',280,160,{s:11.5,w:800,a:'center',f:FD,c:C.red})}
+  var dA=st>=3||st<0?A:0;c.save();c.globalAlpha*=A*(dA?0:1);c.setLineDash([6,5]);c.strokeStyle=C.line;rr(c,10,196,540,200,16);c.stroke();c.restore();if(!dA)tx(c,'¿y cómo se guardan las claves?',280,296,{s:12,w:700,a:'center',f:FD,c:C.faint,al:A});box(c,10,196,540,200,{r:16,f:'#0E2841',s:false,al:dA});tx(c,'la base de usuarios de la tienda guarda solo huellas:',28,222,{s:11.5,w:700,f:FD,c:'#b4c8da',al:dA});
+  [['luis','ef92…3a1c'],['ana','91c0…77de'],['pedro','0a4f…b812']].forEach(function(q,i){tx(c,q[0],40,256+i*30,{s:12,w:700,f:FM,c:'#e6edf3',al:dA});tx(c,q[1],170,256+i*30,{s:12,w:700,f:FM,c:'#7ee2a8',al:dA})});
+  if(st===3){tx(c,'Luis inicia sesión: hash(lo que escribe) = ef92…3a1c ✓',280,354,{s:11.5,w:800,a:'center',f:FD,c:'#7ee2a8'});tx(c,'aunque roben la base, no ven ninguna clave',280,378,{s:11,w:700,a:'center',f:FD,c:'#ffb86b'})}
+  if(t>.8)band(c,['El hash convierte cualquier dato en una huella de tamaño fijo','Cambias una sola letra y la huella cambia por completo','Y no se puede devolver: de la huella no sale el dato','Por eso las bases guardan huellas, no las claves'],st,A,u)};
+
+/* Secrets Manager */
+S.secretos=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,4,3),st=t<.8?-1:r[0],u=r[1];
+  var L=st<=1;box(c,10,10,265,392,{r:16,f:'#fff6f4',s:L&&st>=0?C.red:rgba(C.red,.3),lw:L&&st>=0?2.5:1.2,al:A});tx(c,'✕ la clave dentro del código',142,36,{s:13,w:800,a:'center',f:FD,c:C.red,al:A});
+  term(c,24,54,238,104,[['app.py','#7f9bb5',9.5],['db = conectar(','#e6edf3',10],['  clave="Laura123")','#ffb86b',10]],A);
+  if(st===1){var k=E.io(u);tx(c,'git push',143,186,{s:11,w:800,a:'center',f:FM,c:C.red});var gy=200+120*k;box(c,93,gy,100,30,{r:8,f:'#fff',s:C.red});tx(c,'Laura123',143,gy+15,{s:10,w:800,a:'center',f:FM,c:C.red});if(u>.6){gx(c,'bug',143,370,26,C.red,1)}}
+  if(st===0)['la ve quien tenga el código','cambiarla = cambiar el código','si se filtra, se filtra la clave'].forEach(function(s,i){var a=E.out(P(u,i*.25,.2));box(c,24,184+i*60,238,48,{r:10,f:'#fff',s:rgba(C.red,.35),al:a});tx(c,s,143,208+i*60,{s:11,w:700,a:'center',f:FD,c:C.red,al:a})});
+  var R=!L||st<0;box(c,285,10,265,392,{r:16,f:'#f2fbf5',s:R&&st>=0?C.g:rgba(C.g,.35),lw:R&&st>=0?2.5:1.2,al:A});tx(c,'✓ AWS Secrets Manager',418,36,{s:13,w:800,a:'center',f:FD,c:'#0b6b3a',al:A});
+  term(c,299,54,238,104,[['app.py','#7f9bb5',9.5],['clave = secretos(','#e6edf3',10],['  "tienda/bd-pedidos")','#7ee2a8',10]],A);
+  icon(c,'AWSSecretsManager',418,214,48,A);tx(c,'caja fuerte de claves (cifrada con KMS)',418,254,{s:10,w:800,a:'center',f:FD,al:A});
+  if(st===2){var k2=E.io(u);poly(c,[[418,158],[418,190]],C.g,2.5,null,1);chip(c,'IAM: ¿la EC2 puede? ✓',418,176,C.g,'#ecfbf3',1,{s:9.5});if(u>.5)chip(c,'••••••• (solo en memoria)',418,290,C.g,'#fff',1,{s:9.5})}
+  if(st>=3||st<0){var days=st===3?Math.max(0,30-Math.floor(u*30)):30;c.save();c.globalAlpha*=A;c.strokeStyle=C.line;c.lineWidth=6;c.beginPath();c.arc(418,320,28,0,7);c.stroke();c.strokeStyle=C.g;c.beginPath();c.arc(418,320,28,-Math.PI/2,-Math.PI/2+2*Math.PI*days/30);c.stroke();c.restore();tx(c,days+' d',418,320,{s:12,w:800,a:'center',f:FM,c:C.g,al:A});if(st===3&&u>.9)chip(c,'🔄 clave nueva: K7#p…',418,372,C.g,'#ecfbf3',1,{s:9.5});else tx(c,'rota la clave cada 30 días',418,372,{s:10.5,w:700,a:'center',f:FD,c:'#0b6b3a',al:A})}
+  if(t>.8)band(c,['La clave de la base RDS está escrita en el código de la tienda','Un git push… y la clave queda a la vista de cualquiera','Con Secrets Manager la app pide la clave, y IAM decide si puede','Y la cambia sola cada 30 días, sin tocar la app'],st,A,u)};
+
+/* SG vs NACL */
+S.sgnacl=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,4,2.8),st=t<.8?-1:r[0],u=r[1];
+  grp(c,120,10,430,390,'#8c4fff','VPC de la tienda','G_VirtualprivatecloudVPC',{al:A});
+  grp(c,200,56,330,330,'#7aa116','subred pública','G_Publicsubnet',{al:A,fill:'#f2f6e8'});
+  c.save();c.globalAlpha*=A;c.fillStyle=st===3?'rgba(224,69,123,.3)':'rgba(224,69,123,.12)';c.fillRect(190,56,20,330);c.strokeStyle='#e0457b';c.lineWidth=2;c.strokeRect(190,56,20,330);c.restore();
+  box(c,220,90,168,92,{r:10,f:'#fff',s:rgba('#e0457b',.6),al:A});tx(c,'NACL · la reja de la calle',230,106,{s:9.5,w:800,f:FD,c:'#e0457b',al:A});
+  [['100 permitir 443',st===0],['200 permitir 1024-65535',st===2],['300 negar 45.13.0.0/16',st===3],['* negar todo',false]].forEach(function(q,i){if(q[1]){c.save();rr(c,226,116+i*16,156,15,4);c.fillStyle='rgba(224,69,123,.2)';c.fill();c.restore()}tx(c,q[0],232,124+i*16,{s:9,w:600,f:FM,c:i===2?C.red:C.ink,al:A})});
+  c.save();c.globalAlpha*=A;c.strokeStyle=C.o;c.lineWidth=st===1?4:3;c.setLineDash([6,4]);rr(c,330,200,180,150,16);c.stroke();c.restore();icon(c,'EC2',420,256,44,A);tx(c,'tienda',420,292,{s:11,w:800,a:'center',f:FD,al:A});
+  box(c,338,316,164,26,{r:8,f:'#fff7ed',s:rgba(C.o,.6),al:A});tx(c,'SG · el portero: permitir 443',420,329,{s:9,w:800,a:'center',f:FM,c:C.o,al:A});
+  av(c,52,240,22,st===3?C.red:C.t,A,'');tx(c,st===3?'bot 45.13.x':'cliente',52,276,{s:10.5,w:800,a:'center',f:FD,c:st===3?C.red:C.ink,al:A});
+  if(st===0||st===1){var k=E.io(u),q=along(c,st===0?[[76,240],[200,240]]:[[200,240],[330,262],[398,262]],k);dot(c,q[0],q[1],7,C.t,1,14);chip(c,st===0?'NACL: regla 100 ✓':'SG: 443 permitido ✓',q[0],q[1]-22,C.t,'#fff',1,{s:9})}
+  if(st===2){var k2=E.io(u),q2=along(c,[[398,280],[330,290],[200,280],[76,252]],k2);dot(c,q2[0],q2[1],7,C.g,1,14);chip(c,u<.4?'SG: la deja salir sola':'NACL: necesita su regla 200',q2[0],q2[1]+24,C.g,'#ecfbf3',1,{s:9})}
+  if(st===3){var k3=Math.min(1,E.io(u*1.4)),x3=76+(190-76)*k3;dot(c,x3,240,7,C.red,1,14);if(k3>=1){tx(c,'✕',200,240,{s:30,w:800,a:'center',c:C.red});chip(c,'regla 300: negado',200,206,C.red,'#fff0f0',1,{s:9.5})}}
+  if(t>.8)band(c,['Un cliente pide la página: la NACL de la subred lo deja pasar','El Security Group de la EC2 también: puerto 443 permitido','La respuesta: el SG la deja salir solo; la NACL necesita su propia regla','Un bot insiste: la NACL niega toda su red de IPs (el SG no sabe negar)'],st,A,u)};
 
 /* motor: corre la escena de la diapositiva visible */
 var raf=0,cur=null,TOFF=parseFloat((location.search.match(/[?&]mt=([\d.]+)/)||[])[1])||0;function tick(){return document.hidden?setTimeout(function(){frame(performance.now())},33):requestAnimationFrame(frame)}
