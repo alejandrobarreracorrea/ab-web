@@ -282,7 +282,7 @@ ul.clean li:first-child { border-top:0; }
     <li><span class="t">Identidad · Datos<small>IAM + MFA · mínimo privilegio · cifrado simétrico/asimétrico · ACM · hash · KMS · Secrets Manager</small></span><span class="m">servicios</span></li>
     <li><span class="t">Red y aplicación<small>Security Groups y NACL · AWS WAF · AWS Shield</small></span><span class="m">servicios</span></li>
     <li><span class="t">Detección<small>CloudTrail · GuardDuty · Inspector · Macie · Security Hub</small></span><span class="m">servicios</span></li>
-    <li><span class="t">Laboratorio · 4 retos<small>hash con tus manos · EC2 sin puertos (Session Manager) · GuardDuty con alertas de ejemplo · rojo vs. azul con WAF</small></span><span class="m">lab</span></li>
+    <li><span class="t">Laboratorio · 3 retos<small>hash con tus manos · EC2 sin puertos (Session Manager) · rojo vs. azul con WAF</small></span><span class="m">lab</span></li>
   </ul>
 </section>
 
@@ -925,8 +925,8 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 <section class="slide mu dark sep">
   <div>
     <div class="mtag" style="color:#7f9bb5"><b>Parte 6</b>de 6</div>
-    <h2 style="max-width:15ch">Laboratorio: <span class="g">4 retos</span></h2>
-    <p class="msub">Hash con tus manos, una EC2 sin puertos abiertos, alarmas de GuardDuty sin atacar a nadie… y rojo vs. azul con WAF.</p>
+    <h2 style="max-width:15ch">Laboratorio: <span class="g">3 retos</span></h2>
+    <p class="msub">Hash con tus manos, una EC2 sin puertos abiertos… y rojo vs. azul con WAF.</p>
   </div>
   <div class="mviz"><canvas data-mu="ruta" data-part="6" aria-label="Ruta de la clase: parte 6 de 4"></canvas></div>
 </section>
@@ -988,29 +988,8 @@ cat /etc/os-release | head -2</pre></div><div class="snip"><div class="top"><spa
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>6.3</b>LAB 3 · GuardDuty</div>
-    <h2>LAB 3: la alarma <span class="g">sin atacar a nadie</span></h2>
-    
-    <ol class="msteps"><li><span>1</span><p>Activas <b>GuardDuty</b> (prueba gratis de 30 días).</p></li><li><span>2</span><p>Pides <b>hallazgos de ejemplo</b>: amenazas simuladas con la etiqueta [SAMPLE].</p></li><li><span>3</span><p>Abres uno de severidad <b>ALTA</b>: qué pasó, dónde y qué hacer.</p></li><li><span>4</span><p>Al terminar lo <b>suspendes</b>.</p></li></ol><p class="muse">👉 <b>Así se ve una alerta real… sin riesgo</b></p>
-  </div>
-  <div class="mviz"><canvas data-mu="dguard" aria-label="Diagrama del LAB 3: GuardDuty lee CloudTrail, red y DNS, y genera hallazgos de ejemplo"></canvas></div>
-</section>
-
-<section class="slide" id="labGd">
-  <span class="k"><span class="act-chip">🧪 LAB 3</span> Hallazgos de ejemplo</span>
-  <h2 style="font-size:clamp(1.15rem,2.3vw,1.6rem)">Enciende <span class="grad">GuardDuty</span> y lee una alerta</h2>
-  <div class="grid2" style="align-items:start;grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
-    <ul class="cmdlist"><li><span>Consola → <b>GuardDuty</b> → Comenzar → <b>Habilitar GuardDuty</b></span><span>prueba gratis de 30 días</span></li><li><span><b>Configuración</b> → <b>Generar resultados de muestra</b></span><span>aparecen decenas de hallazgos [SAMPLE]</span></li><li><span><b>Resultados</b> → filtra gravedad <b>Alta</b> → abre uno</span><span>lee: tipo, recurso afectado, IP y recomendación 📸</span></li><li><span>Pregunta</span><span>¿cuál de esos se parece a la llave de Pedro?</span></li><li><span>Al terminar: <b>Configuración</b> → <b>Suspender</b> GuardDuty</span><span>así no cobra después de la prueba</span></li></ul>
-    <div class="snips"><div class="snip"><div class="top"><span>opcional · lo mismo desde la CLI (PowerShell)</span><button type="button">📋 Copiar</button></div><pre>$D = aws guardduty list-detectors --query &quot;DetectorIds[0]&quot; --output text
-aws guardduty create-sample-findings --detector-id $D
-aws guardduty list-findings --detector-id $D --query &quot;length(FindingIds)&quot;</pre></div></div>
-  </div>
-</section>
-
-<section class="slide mu">
-  <div>
-    <div class="mtag"><b>6.4</b>LAB 4 · rojo vs. azul</div>
-    <h2>LAB 4: el campo <span class="g">de batalla</span></h2>
+    <div class="mtag"><b>6.3</b>LAB 3 · rojo vs. azul</div>
+    <h2>LAB 3: el campo <span class="g">de batalla</span></h2>
     
     <ol class="msteps"><li><span>1</span><p><b>terraform apply</b>: tu tienda en S3 privado + CloudFront + <b>WAF en modo observar</b>.</p></li><li><span>2</span><p><b>Equipo rojo</b>: una ráfaga de peticiones desde tu PC. Pasan (200), pero el WAF las <b>cuenta</b>.</p></li><li><span>3</span><p><b>Equipo azul</b>: <code>modo=bloquear</code> y tu IP a la <b>lista negra</b>.</p></li><li><span>4</span><p>Rojo otra vez: <b>403</b>. El cliente normal sigue entrando.</p></li></ol><p class="muse">Regla de oro: solo se prueba contra <b>lo tuyo</b>, en <b>tu</b> cuenta</p>
   </div>
@@ -1020,7 +999,7 @@ aws guardduty list-findings --detector-id $D --query &quot;length(FindingIds)&qu
 <style>.term.lab{max-height:52vh;overflow:auto;font-size:clamp(.7rem,1vw,.88rem)}.term.lab p{white-space:pre-wrap;word-break:break-all;min-height:1.35em}.term.lab p.hl b{color:#FFC928;font-weight:600;background:rgba(255,201,40,.14);border-radius:4px;padding:0 3px}.term.lab p.note{color:#9fb3c8;font-size:.85em}.term.lab .cur{display:inline-block;width:.6em;background:#39c8e8;animation:blk 1s steps(1) infinite}@keyframes blk{50%{opacity:0}}
   .cmdlist{list-style:none;display:flex;flex-direction:column;gap:6px;font-size:clamp(.78rem,1.1vw,.95rem)}.cmdlist li{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:10px;padding:6px 0;border-bottom:1px solid var(--line)}.cmdlist code{font-family:var(--mono);color:var(--a1);font-weight:600;font-size:.92em}</style>
 <section class="slide" id="labW0">
-  <span class="k"><span class="act-chip">🧪 LAB 4 · PASO 0</span> La tienda con escudo, desde Terraform</span>
+  <span class="k"><span class="act-chip">🧪 LAB 3 · PASO 0</span> La tienda con escudo, desde Terraform</span>
   <h2 style="font-size:clamp(1.15rem,2.3vw,1.6rem)">Copia, guarda y <span class="grad">terraform apply</span></h2>
   <div class="grid2" style="align-items:start;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)">
     <ul class="cmdlist">
@@ -1346,7 +1325,7 @@ terraform destroy</pre></div></div>
   </div>
 </section>
 
-<script>['labHash','labSsm0','labSsm1','labGd','labW0','labW1','labW2'].forEach(function(id){wireSnips(document.getElementById(id))});</script>
+<script>['labHash','labSsm0','labSsm1','labW0','labW1','labW2'].forEach(function(id){wireSnips(document.getElementById(id))});</script>
 
 <!-- 15 · CIERRE -->
 <section class="slide">

@@ -1,6 +1,6 @@
-# Laboratorios sesión 11 · 4 retos de seguridad (copiar y pegar en el chat)
+# Laboratorios sesión 11 · 3 retos de seguridad (copiar y pegar en el chat)
 
-_Todo contra tus propios recursos, en tu propia cuenta. Terraform del LAB 4 validado: plan = 8 to add._
+_Todo contra tus propios recursos, en tu propia cuenta. Terraform del LAB 3 validado: plan = 8 to add._
 
 
 ## LAB 1 · Hash con tus manos
@@ -53,22 +53,7 @@ cat /etc/os-release | head -2
 # Security Group → Agregar regla: SSH (22) · origen: Mi IP
 ```
 
-## LAB 3 · GuardDuty con hallazgos de ejemplo
-
-- Consola → GuardDuty → Comenzar → Habilitar GuardDuty → prueba gratis de 30 días
-- Configuración → Generar resultados de muestra → aparecen decenas de hallazgos [SAMPLE]
-- Resultados → filtra gravedad Alta → abre uno → lee: tipo, recurso afectado, IP y recomendación 📸
-- Pregunta → ¿cuál de esos se parece a la llave de Pedro?
-- Al terminar: Configuración → Suspender GuardDuty → así no cobra después de la prueba
-
-**opcional · lo mismo desde la CLI (PowerShell)**
-```
-$D = aws guardduty list-detectors --query "DetectorIds[0]" --output text
-aws guardduty create-sample-findings --detector-id $D
-aws guardduty list-findings --detector-id $D --query "length(FindingIds)"
-```
-
-## LAB 4 · Paso 0 · la tienda con escudo
+## LAB 3 · Paso 0 · la tienda con escudo
 
 - IAM → terraform-lab → Agregar permisos → AWSWAFFullAccess → (S3 y CloudFront ya los tiene de clases pasadas)
 - mkdir $HOME\tienda-wafcode $HOME\tienda-waf → carpeta nueva, abierta en VS Code
@@ -86,7 +71,7 @@ terraform init
 terraform apply
 ```
 
-## LAB 4 · Equipo rojo
+## LAB 3 · Equipo rojo
 
 - $W = tu tu_web_https → cópialo de la salida de terraform apply
 - Una petición normal → 200 ✓
@@ -101,7 +86,7 @@ curl.exe -s -o NUL -w "%{http_code}`n" "$W/?buscar=camiseta"
 1..150 | ForEach-Object { curl.exe -s -o NUL -w "%{http_code} " "$W/" }
 ```
 
-## LAB 4 · Equipo azul
+## LAB 3 · Equipo azul
 
 - terraform apply -var="modo=bloquear" → tarda segundos: no toca CloudFront
 - Rojo repite la ráfaga → después de ~100: 403 ✕ (puede tardar hasta 1 min en reaccionar) 📸
@@ -132,4 +117,4 @@ terraform apply -var-file="bloqueo.tfvars"
 terraform destroy
 ```
 
-> Al terminar: `terraform destroy` (LAB 4) y suspender GuardDuty (LAB 3).
+> Al terminar: `terraform destroy` (LAB 3).
