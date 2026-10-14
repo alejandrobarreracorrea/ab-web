@@ -282,7 +282,7 @@ ul.clean li:first-child { border-top:0; }
     <li><span class="t">Identidad · Datos<small>IAM + MFA · mínimo privilegio · cifrado simétrico/asimétrico · ACM · hash · KMS · Secrets Manager</small></span><span class="m">servicios</span></li>
     <li><span class="t">Red y aplicación<small>Security Groups y NACL · AWS WAF · AWS Shield</small></span><span class="m">servicios</span></li>
     <li><span class="t">Detección<small>CloudTrail · GuardDuty · Inspector · Macie · Security Hub</small></span><span class="m">servicios</span></li>
-    <li><span class="t">Lab · Rojo vs. azul<small>tu tienda con WAF: el equipo rojo ataca, el equipo azul bloquea</small></span><span class="m">lab</span></li>
+    <li><span class="t">Laboratorio · 4 retos<small>hash con tus manos · EC2 sin puertos (Session Manager) · GuardDuty con alertas de ejemplo · rojo vs. azul con WAF</small></span><span class="m">lab</span></li>
   </ul>
 </section>
 
@@ -914,16 +914,92 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 <section class="slide mu dark sep">
   <div>
     <div class="mtag" style="color:#7f9bb5"><b>Parte 6</b>de 6</div>
-    <h2 style="max-width:15ch">Rojo vs. azul: <span class="g">ataca tu propia web</span></h2>
-    <p class="msub">Despliegas tu tienda detrás de un WAF. El equipo rojo la golpea, el equipo azul activa el escudo. Todo en tu propia cuenta.</p>
+    <h2 style="max-width:15ch">Laboratorio: <span class="g">4 retos</span></h2>
+    <p class="msub">Hash con tus manos, una EC2 sin puertos abiertos, alarmas de GuardDuty sin atacar a nadie… y rojo vs. azul con WAF.</p>
   </div>
   <div class="mviz"><canvas data-mu="ruta" data-part="6" aria-label="Ruta de la clase: parte 6 de 4"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>6.1</b>lab · el diagrama</div>
-    <h2>El campo de <span class="g">batalla</span></h2>
+    <div class="mtag"><b>6.1</b>LAB 1 · hash</div>
+    <h2>LAB 1: ¿alguien <span class="g">cambió el archivo</span>?</h2>
+    
+    <ol class="msteps"><li><span>1</span><p>Creas <b>precio.txt</b> con “camiseta,45” y sacas su huella con <b>Get-FileHash</b>.</p></li><li><span>2</span><p>Cambias una sola cifra (45 → 4) y vuelves a sacar la huella.</p></li><li><span>3</span><p>Comparas: si no coincide con la publicada, <b>el archivo fue alterado</b>.</p></li><li><span>4</span><p>Así se verifica que una descarga es auténtica.</p></li></ol><p class="muse">👉 <b>5 minutos, sin AWS, en tu PC</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="dhash" aria-label="Diagrama del LAB 1: el archivo pasa por SHA-256 y su huella se compara con la publicada"></canvas></div>
+</section>
+
+<section class="slide" id="labHash">
+  <span class="k"><span class="act-chip">🧪 LAB 1</span> La huella de un archivo</span>
+  <h2 style="font-size:clamp(1.15rem,2.3vw,1.6rem)"><span class="grad">Get-FileHash</span> en PowerShell</h2>
+  <div class="grid2" style="align-items:start;grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
+    <ul class="cmdlist"><li><span>Terminal de VS Code (PowerShell)</span><span>carpeta nueva lab-hash</span></li><li><span>Crea el archivo y saca su huella</span><span>copia los primeros 8 caracteres</span></li><li><span>Cambia 45 por 4 y repite</span><span>compara: ¿cuánto cambió la huella?</span></li><li><span>Pregunta</span><span>¿por qué la tienda guarda huellas y no claves? 📸</span></li></ul>
+    <div class="snips"><div class="snip"><div class="top"><span>en PowerShell</span><button type="button">📋 Copiar</button></div><pre>mkdir $HOME\lab-hash; cd $HOME\lab-hash
+&quot;camiseta,45&quot; &gt; precio.txt
+Get-FileHash precio.txt -Algorithm SHA256
+&quot;camiseta,4&quot; &gt; precio.txt
+Get-FileHash precio.txt -Algorithm SHA256</pre></div></div>
+  </div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>6.2</b>LAB 2 · Session Manager</div>
+    <h2>LAB 2: tu EC2 <span class="g">sin puertos abiertos</span></h2>
+    
+    <ol class="msteps"><li><span>1</span><p>Le pones a tu EC2 un <b>rol IAM</b> para Systems Manager.</p></li><li><span>2</span><p>El <b>agente SSM</b> (ya viene en Amazon Linux) llama hacia afuera por HTTPS.</p></li><li><span>3</span><p>Entras desde la <b>consola</b>: una terminal en el navegador, sin .ppk.</p></li><li><span>4</span><p>Borras la regla del <b>22</b>: los bots rebotan y tú sigues entrando.</p></li></ol><p class="muse">👉 <b>Cero puertos abiertos = nada que atacar</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="dssm" aria-label="Diagrama del LAB 2: el agente SSM llama hacia afuera, entras desde la consola y el puerto 22 queda cerrado"></canvas></div>
+</section>
+
+<section class="slide" id="labSsm0">
+  <span class="k"><span class="act-chip">🧪 LAB 2 · PASO 0</span> El rol para Systems Manager</span>
+  <h2 style="font-size:clamp(1.15rem,2.3vw,1.6rem)">Un <span class="grad">rol</span> y tu EC2 queda lista</h2>
+  <div class="grid2" style="align-items:start;grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
+    <ul class="cmdlist"><li><span>Consola → <b>IAM</b> → Roles → <b>Crear rol</b></span><span>Servicio de AWS → <b>EC2</b></span></li><li><span>Permisos: <code>AmazonSSMManagedInstanceCore</code></span><span>nombre: <code>ec2-ssm</code> → Crear rol</span></li><li><span>EC2 → tu instancia → <b>Acciones</b> → Seguridad → <b>Modificar el rol de IAM</b></span><span>elige <b>ec2-ssm</b> → Actualizar</span></li><li><span>Espera 1–3 minutos</span><span>o reinicia el agente desde MobaXterm (comando de la derecha)</span></li></ul>
+    <div class="snips"><div class="snip"><div class="top"><span>opcional · en MobaXterm, dentro de la EC2</span><button type="button">📋 Copiar</button></div><pre>sudo systemctl restart amazon-ssm-agent
+sudo systemctl status amazon-ssm-agent --no-pager</pre></div></div>
+  </div>
+</section>
+
+<section class="slide" id="labSsm1">
+  <span class="k"><span class="act-chip">🧪 LAB 2 · PASO 1</span> Entra sin .ppk y cierra el 22</span>
+  <h2 style="font-size:clamp(1.15rem,2.3vw,1.6rem)">Una terminal <span class="grad">en el navegador</span></h2>
+  <div class="grid2" style="align-items:start;grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
+    <ul class="cmdlist"><li><span>EC2 → tu instancia → <b>Conectar</b> → pestaña <b>Session Manager</b> → Conectar</span><span>se abre una terminal en el navegador</span></li><li><span>Escribe los comandos de la derecha</span><span><b>ssm-user</b>: entraste sin llave ni puerto</span></li><li><span>Security Group → Editar reglas de entrada → <b>elimina la regla 22</b></span><span>Guardar: 0 reglas de entrada 🔒</span></li><li><span>Prueba MobaXterm</span><span>ya no conecta ✕ · Session Manager sí ✓ 📸</span></li><li><span>Systems Manager → Session Manager → <b>Historial</b></span><span>cada sesión queda registrada</span></li></ul>
+    <div class="snips"><div class="snip"><div class="top"><span>en la terminal del navegador</span><button type="button">📋 Copiar</button></div><pre>whoami
+sudo su - ec2-user
+hostname
+cat /etc/os-release | head -2</pre></div><div class="snip"><div class="top"><span>si mañana necesitas MobaXterm otra vez</span><button type="button">📋 Copiar</button></div><pre># Security Group → Agregar regla: SSH (22) · origen: Mi IP</pre></div></div>
+  </div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>6.3</b>LAB 3 · GuardDuty</div>
+    <h2>LAB 3: la alarma <span class="g">sin atacar a nadie</span></h2>
+    
+    <ol class="msteps"><li><span>1</span><p>Activas <b>GuardDuty</b> (prueba gratis de 30 días).</p></li><li><span>2</span><p>Pides <b>hallazgos de ejemplo</b>: amenazas simuladas con la etiqueta [SAMPLE].</p></li><li><span>3</span><p>Abres uno de severidad <b>ALTA</b>: qué pasó, dónde y qué hacer.</p></li><li><span>4</span><p>Al terminar lo <b>suspendes</b>.</p></li></ol><p class="muse">👉 <b>Así se ve una alerta real… sin riesgo</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="dguard" aria-label="Diagrama del LAB 3: GuardDuty lee CloudTrail, red y DNS, y genera hallazgos de ejemplo"></canvas></div>
+</section>
+
+<section class="slide" id="labGd">
+  <span class="k"><span class="act-chip">🧪 LAB 3</span> Hallazgos de ejemplo</span>
+  <h2 style="font-size:clamp(1.15rem,2.3vw,1.6rem)">Enciende <span class="grad">GuardDuty</span> y lee una alerta</h2>
+  <div class="grid2" style="align-items:start;grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
+    <ul class="cmdlist"><li><span>Consola → <b>GuardDuty</b> → Comenzar → <b>Habilitar GuardDuty</b></span><span>prueba gratis de 30 días</span></li><li><span><b>Configuración</b> → <b>Generar resultados de muestra</b></span><span>aparecen decenas de hallazgos [SAMPLE]</span></li><li><span><b>Resultados</b> → filtra gravedad <b>Alta</b> → abre uno</span><span>lee: tipo, recurso afectado, IP y recomendación 📸</span></li><li><span>Pregunta</span><span>¿cuál de esos se parece a la llave de Pedro?</span></li><li><span>Al terminar: <b>Configuración</b> → <b>Suspender</b> GuardDuty</span><span>así no cobra después de la prueba</span></li></ul>
+    <div class="snips"><div class="snip"><div class="top"><span>opcional · lo mismo desde la CLI (PowerShell)</span><button type="button">📋 Copiar</button></div><pre>$D = aws guardduty list-detectors --query &quot;DetectorIds[0]&quot; --output text
+aws guardduty create-sample-findings --detector-id $D
+aws guardduty list-findings --detector-id $D --query &quot;length(FindingIds)&quot;</pre></div></div>
+  </div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>6.4</b>LAB 4 · rojo vs. azul</div>
+    <h2>LAB 4: el campo <span class="g">de batalla</span></h2>
     
     <ol class="msteps"><li><span>1</span><p><b>terraform apply</b>: tu tienda en S3 privado + CloudFront + <b>WAF en modo observar</b>.</p></li><li><span>2</span><p><b>Equipo rojo</b>: una ráfaga de peticiones desde tu PC. Pasan (200), pero el WAF las <b>cuenta</b>.</p></li><li><span>3</span><p><b>Equipo azul</b>: <code>modo=bloquear</code> y tu IP a la <b>lista negra</b>.</p></li><li><span>4</span><p>Rojo otra vez: <b>403</b>. El cliente normal sigue entrando.</p></li></ol><p class="muse">Regla de oro: solo se prueba contra <b>lo tuyo</b>, en <b>tu</b> cuenta</p>
   </div>
@@ -933,7 +1009,7 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 <style>.term.lab{max-height:52vh;overflow:auto;font-size:clamp(.7rem,1vw,.88rem)}.term.lab p{white-space:pre-wrap;word-break:break-all;min-height:1.35em}.term.lab p.hl b{color:#FFC928;font-weight:600;background:rgba(255,201,40,.14);border-radius:4px;padding:0 3px}.term.lab p.note{color:#9fb3c8;font-size:.85em}.term.lab .cur{display:inline-block;width:.6em;background:#39c8e8;animation:blk 1s steps(1) infinite}@keyframes blk{50%{opacity:0}}
   .cmdlist{list-style:none;display:flex;flex-direction:column;gap:6px;font-size:clamp(.78rem,1.1vw,.95rem)}.cmdlist li{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:10px;padding:6px 0;border-bottom:1px solid var(--line)}.cmdlist code{font-family:var(--mono);color:var(--a1);font-weight:600;font-size:.92em}</style>
 <section class="slide" id="labW0">
-  <span class="k"><span class="act-chip">🧪 LAB · PASO 0</span> La tienda con escudo, desde Terraform</span>
+  <span class="k"><span class="act-chip">🧪 LAB 4 · PASO 0</span> La tienda con escudo, desde Terraform</span>
   <h2 style="font-size:clamp(1.15rem,2.3vw,1.6rem)">Copia, guarda y <span class="grad">terraform apply</span></h2>
   <div class="grid2" style="align-items:start;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)">
     <ul class="cmdlist">
@@ -1259,7 +1335,7 @@ terraform destroy</pre></div></div>
   </div>
 </section>
 
-<script>['labW0','labW1','labW2'].forEach(function(id){wireSnips(document.getElementById(id))});</script>
+<script>['labHash','labSsm0','labSsm1','labGd','labW0','labW1','labW2'].forEach(function(id){wireSnips(document.getElementById(id))});</script>
 
 <!-- 15 · CIERRE -->
 <section class="slide">
@@ -1311,7 +1387,7 @@ function box(c,x,y,w,h,o){o=o||{};c.save();c.globalAlpha*=(o.al==null?1:o.al);if
 function dot(c,x,y,r,col,a,gl){c.save();c.globalAlpha*=(a==null?1:a);if(gl){c.shadowColor=col;c.shadowBlur=gl}c.fillStyle=col;c.beginPath();c.arc(x,y,r,0,7);c.fill();c.restore()}
 function qp(a,b,k,cp){var u=1-k;return[u*u*a[0]+2*u*k*cp[0]+k*k*b[0],u*u*a[1]+2*u*k*cp[1]+k*k*b[1]]}
 function curve(c,a,b,cp,k,col,lw,a2){if(k<=0)return;c.save();c.globalAlpha*=(a2==null?1:a2);c.strokeStyle=col;c.lineWidth=lw||2;c.lineCap='round';c.beginPath();c.moveTo(a[0],a[1]);for(var i=1;i<=40*k;i++){var p=qp(a,b,i/40,cp);c.lineTo(p[0],p[1])}c.stroke();c.restore()}
-var IM={};['EC2','RDS','Aurora','DynamoDB','ElastiCache','MemoryDB','DocumentDB','Neptune','Timestream','Redshift','OpenSearchService','Keyspaces','AWSCommandLineInterface','AWSIdentityandAccessManagement','G_AWSCloudlogo','G_Region','G_VirtualprivatecloudVPC','G_Publicsubnet','G_Privatesubnet','R_AmazonVPCInternetGateway','R_AmazonEC2Instance','R_AmazonDynamoDBTable','R_Client','R_AWSIdentityAccessManagementLongTermSecurityCredential','SimpleStorageService','AWSCloudTrail','GuardDuty','AWSSecurityHub','AWSShield','AWSWAF','AWSCertificateManager','AWSKeyManagementService','AWSSecretsManager','CloudFront','ElasticBlockStore','AWSConfig','Inspector','Macie','VirtualPrivateCloud','R_AmazonElasticBlockStoreSnapshot','R_AmazonElasticBlockStoreVolume','R_AmazonSimpleStorageServiceBucketWithObjects','R_AmazonSimpleStorageServiceObject','R_AWSSecurityHubFinding','R_Alert','R_Email','R_Mobileclient','R_Users'].forEach(function(n){var i=new Image();i.src='aws/'+(/^(AWS|Res|G_|R_)/.test(n)?n:'Amazon'+n)+'.svg';IM[n]=i});
+var IM={};['EC2','RDS','Aurora','DynamoDB','ElastiCache','MemoryDB','DocumentDB','Neptune','Timestream','Redshift','OpenSearchService','Keyspaces','AWSCommandLineInterface','AWSIdentityandAccessManagement','G_AWSCloudlogo','G_Region','G_VirtualprivatecloudVPC','G_Publicsubnet','G_Privatesubnet','R_AmazonVPCInternetGateway','R_AmazonEC2Instance','R_AmazonDynamoDBTable','R_Client','R_AWSIdentityAccessManagementLongTermSecurityCredential','SimpleStorageService','AWSCloudTrail','GuardDuty','AWSSecurityHub','AWSShield','AWSWAF','AWSCertificateManager','AWSKeyManagementService','AWSSecretsManager','CloudFront','ElasticBlockStore','AWSConfig','Inspector','Macie','VirtualPrivateCloud','R_AmazonElasticBlockStoreSnapshot','R_AmazonElasticBlockStoreVolume','R_AmazonSimpleStorageServiceBucketWithObjects','R_AmazonSimpleStorageServiceObject','R_AWSSecurityHubFinding','R_Alert','R_Email','R_Mobileclient','R_Users','AWSSystemsManager'].forEach(function(n){var i=new Image();i.src='aws/'+(/^(AWS|Res|G_|R_)/.test(n)?n:'Amazon'+n)+'.svg';IM[n]=i});
 function icon(c,n,x,y,s,a){var im=IM[n];if(!im||!im.complete||!im.naturalWidth)return;c.save();c.globalAlpha*=(a==null?1:a);rr(c,x-s/2,y-s/2,s,s,s*.2);c.clip();c.drawImage(im,x-s/2,y-s/2,s,s);c.restore()}
 function nf(n){return Math.round(n).toLocaleString('es-CO')}
 var S={};
@@ -2639,6 +2715,107 @@ S.epilogo=function(c,t){var A=E.out(P(t,.1,.5)),L=[['MFA para todos los usuarios
   tx(c,'Lunes 8:00 · la lista de Laura',280,24,{s:14,w:800,a:'center',f:FD,c:C.p,al:A});
   L.forEach(function(l,i){var a=E.out(P(t,.6+i*.55,.4));if(a<=0)return;var y=46+i*60,dn=t>.9+i*.55+.4;box(c,10,y,540,50,{r:12,f:dn?'#ecfbf3':'#fff',s:dn?rgba(C.g,.45):C.line,al:a,sh:'rgba(14,40,65,.05)'});c.save();c.globalAlpha*=a;c.strokeStyle=dn?C.g:C.faint;c.lineWidth=2;rr(c,24,y+15,20,20,5);c.stroke();c.restore();if(dn)tx(c,'✓',34,y+26,{s:13,w:800,a:'center',c:C.g,al:a});icon(c,l[1]==='AmazonInspector'?'Inspector':l[1],70,y+25,28,a);tx(c,l[0],94,y+25,{s:12,w:700,f:FD,al:a})});
   var fa=E.back(P(t,.6+6*.55+.4,.5));if(fa>0)chip(c,'¿Y si mañana el atacante vuelve? Que se estrelle. 🛡️',280,428,C.p,'#e8f3f9',Math.min(1,fa),{s:12,f:FD})};
+/* ===== flechas de flujo animadas ===== */
+function flow(c,pts,col,t,o){o=o||{};var a=o.a==null?1:o.a;if(a<=0||pts.length<2)return;var lw=o.lw||2.5,sp=o.sp||20,spd=o.speed||48,L=[],T=0;
+  for(var i=1;i<pts.length;i++){var d=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);L.push(d);T+=d}
+  var draw=o.prog==null?T:T*Math.max(0,Math.min(1,o.prog));
+  c.save();c.globalAlpha*=a*.35;c.strokeStyle=col;c.lineWidth=lw;c.lineCap='round';c.lineJoin='round';c.beginPath();c.moveTo(pts[0][0],pts[0][1]);var acc=0;
+  for(var j=0;j<L.length;j++){if(acc+L[j]<=draw){c.lineTo(pts[j+1][0],pts[j+1][1]);acc+=L[j]}else{var f=(draw-acc)/L[j];c.lineTo(pts[j][0]+(pts[j+1][0]-pts[j][0])*f,pts[j][1]+(pts[j+1][1]-pts[j][1])*f);break}}c.stroke();c.restore();
+  function at(g){var s=0;for(var k=0;k<L.length;k++){if(g<=s+L[k]){var f=(g-s)/L[k];return[pts[k][0]+(pts[k+1][0]-pts[k][0])*f,pts[k][1]+(pts[k+1][1]-pts[k][1])*f,Math.atan2(pts[k+1][1]-pts[k][1],pts[k+1][0]-pts[k][0])]}s+=L[k]}var n=pts.length-1;return[pts[n][0],pts[n][1],Math.atan2(pts[n][1]-pts[n-1][1],pts[n][0]-pts[n-1][0])]}
+  var off=(t*spd)%sp;c.save();c.fillStyle=col;for(var g=off;g<draw-10;g+=sp){var p=at(g),fade=Math.min(1,g/30,(draw-g)/30);c.globalAlpha=a*.9*Math.max(0,fade);c.save();c.translate(p[0],p[1]);c.rotate(p[2]);c.beginPath();c.moveTo(4,0);c.lineTo(-3,-4.2);c.lineTo(-1,0);c.lineTo(-3,4.2);c.closePath();c.fill();c.restore()}c.restore();
+  if(draw>=T-1&&!o.noHead){var e=at(T);c.save();c.globalAlpha=a;c.fillStyle=col;c.translate(e[0],e[1]);c.rotate(e[2]);c.beginPath();c.moveTo(0,0);c.lineTo(-10,-6);c.lineTo(-10,6);c.closePath();c.fill();c.restore()}
+  if(o.label){var m=at(draw*(o.lp||.5));chip(c,o.label,m[0]+(o.lx||0),m[1]+(o.ly||-14),col,'#fff',a,{s:9})}}
+function pre(name,fn){var orig=S[name];S[name]=function(c,t,s){fn(c,t,s);orig(c,t,s)}}
+function post(name,fn){var orig=S[name];S[name]=function(c,t,s){orig(c,t,s);fn(c,t,s)}}
+
+/* tienda: clientes → CloudFront → EC2 → RDS / DynamoDB */
+pre('tienda',function(c,t){var st=t<.8?-1:Math.min(5,Math.floor((t-.8)/2.4));
+  if(st>=2){flow(c,[[300,50],[410,50],[410,86]],C.t,t,{label:'HTTPS',lp:.3});flow(c,[[348,130],[212,130]],C.t,t,{label:'pide la página'});flow(c,[[410,174],[410,194]],'#7aa116',t,{noHead:false})}
+  if(st>=1)flow(c,[[150,174],[150,194]],'#7aa116',t,{});
+  if(st>=3)flow(c,[[88,120],[70,120],[70,346],[86,346]],C.p,t,{label:'pedidos',lp:.5,lx:0});
+  if(st>=4)flow(c,[[212,156],[280,156],[280,346],[346,346]],'#c925d1',t,{label:'carritos',lp:.5});});
+
+/* superficie de ataque: flechas de los bots a las puertas */
+post('blanco',function(c,t){if(t<1.6)return;var cx=280,cy=214,T=[[-150,-40],[0,-40],[150,-40],[-150,62],[0,62],[150,62]],B=[[20,30],[540,30],[20,250],[540,250],[90,440],[280,446],[470,440]],hit=Math.floor(t*1.6)%6,tg=T[hit],x=cx+tg[0],y=cy+tg[1];
+  B.slice(0,4).forEach(function(b,i){if((i+Math.floor(t))%2)return;var ex=x+(b[0]<cx?-66:66),ey=y+(b[1]<cy?-30:30);flow(c,[[b[0]+(b[0]<cx?14:-14),b[1]],[ex,ey]],C.red,t,{lw:2,a:.9})})});
+
+/* KMS: flujos de cada paso */
+post('kms2',function(c,t){var r=stp(t,5,2.8),st=r[0],u=r[1];if(t<.8)return;
+  if(st===1)flow(c,[[89,112],[89,166]],C.g,t,{label:'escribe cifrado',lx:58,ly:0});
+  if(st===2)flow(c,[[118,236],[260,236],[330,300]],C.o,t,{prog:E.io(Math.min(1,u*1.4)),label:'compartido por error',lp:.4});
+  if(st===3)flow(c,[[400,272],[400,192]],C.red,t,{prog:E.io(Math.min(1,u*2))});
+  if(st===4)flow(c,[[136,70],[300,70],[368,100]],C.g,t,{prog:E.io(Math.min(1,u*2))})});
+
+/* WAF: carriles de entrada y salida */
+pre('waf2',function(c,t){[100,170,240].forEach(function(y){flow(c,[[20,y],[240,y]],C.faint,t,{lw:2,noHead:false,a:.7})});flow(c,[[300,181],[438,181]],C.g,t,{label:'solo lo limpio',ly:-16});flow(c,[[275,326],[275,334]],C.red,t,{a:0})});
+
+/* Security Hub: hallazgos fluyen al tablero */
+pre('hub',function(c,t){if(t<.8+3)return;[80,170,260,350].forEach(function(y,i){flow(c,[[120,y],[170,y],[170,180],[218,180]].slice(0),i%2?C.o:'#dd344c',t+i*.2,{lw:2})})});
+
+/* GuardDuty: las fuentes alimentan el análisis */
+post('guard',function(c,t){[[60,358],[230,358],[400,358]].forEach(function(p,i){flow(c,[[p[0],p[1]-18],[p[0],310]],C.t,t+i*.3,{lw:2,a:.8})})});
+
+/* CloudTrail: del historial al bucket de registros */
+post('trail',function(c,t){if(t<.8+3)return;flow(c,[[130,288],[130,300]],'#7aa116',t,{lw:2})});
+
+/* SG/NACL: rutas con dirección */
+post('sgnacl',function(c,t){var r=stp(t,4,2.8),st=r[0],u=r[1];if(t<.8)return;
+  if(st===0)flow(c,[[76,240],[188,240]],C.t,t,{prog:E.io(u)});if(st===1)flow(c,[[212,240],[330,262],[372,262]],C.t,t,{prog:E.io(u)});
+  if(st===2)flow(c,[[398,284],[330,292],[212,282],[78,256]],C.g,t,{prog:E.io(u)});if(st===3)flow(c,[[76,240],[186,240]],C.red,t,{prog:Math.min(1,E.io(u*1.4))})});
+
+/* moraleja: cada ataque como flecha hacia su anillo */
+post('moraleja',function(c,t){var cx=280,cy=236,RG=[160,128,96,66,38],AT=[[3,180],[3,225],[2,-40],[4,135],[2,20],[1,-90]],per=1.6,n=Math.floor(Math.max(0,t-.8)/per);
+  AT.forEach(function(a,i){if(i!==n)return;var ang=a[1]*Math.PI/180,R=RG[a[0]];flow(c,[[cx+Math.cos(ang)*250,cy+Math.sin(ang)*250],[cx+Math.cos(ang)*(R+8),cy+Math.sin(ang)*(R+8)]],C.red,t,{lw:3,prog:Math.min(1,((t-.8)%per)/per*1.6)})})});
+
+/* secretos: la app pide el secreto */
+post('secretos',function(c,t){var r=stp(t,4,3),st=r[0];if(t<.8)return;if(st===2)flow(c,[[418,160],[418,188]],C.g,t,{lw:3});if(st===1)flow(c,[[143,160],[143,196]],C.red,t,{lw:3})});
+
+/* ===== diagramas de los 4 laboratorios ===== */
+/* LAB 1 · hash */
+S.dhash=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,4,3),st=t<.8?-1:r[0],u=r[1],bad=st>=2;
+  box(c,10,14,540,74,{r:14,f:'#0E2841',s:false,al:A});tx(c,'PS C:\\tienda>',26,40,{s:11,w:700,f:FM,c:'#7cc4ff',al:A});tx(c,st<1?'"camiseta,45" > precio.txt':st<2?'Get-FileHash precio.txt':st<3?'"camiseta,4" > precio.txt':'Get-FileHash precio.txt',130,40,{s:11,w:600,f:FM,c:'#e6edf3',al:A});tx(c,'tu PC · PowerShell',530,70,{s:9.5,w:700,a:'right',f:FM,c:'#7f9bb5',al:A});
+  box(c,20,120,150,110,{r:14,f:bad?'#fff0f0':'#fff',s:bad?C.red:C.line,lw:bad?2:1.2,al:A});gx(c,'seal',46,146,20,bad?C.red:C.t,A);tx(c,'precio.txt',66,146,{s:12,w:800,f:FM,al:A});tx(c,bad?'camiseta,4':'camiseta,45',95,190,{s:15,w:800,a:'center',f:FM,c:bad?C.red:C.ink,al:A});
+  box(c,226,128,108,94,{r:14,f:'#0E2841',s:false,al:A});c.save();c.translate(280,164);var sp=(st===1||st===3)&&u<.5;c.rotate(sp?t*8:0);gl(c,'gear',0,0,28,'#39c8e8',A);c.restore();tx(c,'SHA-256',280,204,{s:10,w:800,a:'center',f:FM,c:'#fff',al:A});
+  flow(c,[[170,175],[224,175]],bad?C.red:C.t,t,{a:A});flow(c,[[336,175],[388,175]],bad?C.red:C.t,t,{a:A*(st===1||st>=3||st<0?1:.3)});
+  var h1='8F1C…B07A',h2='C03A…19E2';box(c,390,120,160,110,{r:14,f:'#eef6fb',s:C.t,al:A});tx(c,'huella',470,142,{s:10,w:700,a:'center',f:FM,c:C.mut,al:A});tx(c,st>=3?h2:(st>=1||st<0?h1:'—'),470,180,{s:15,w:800,a:'center',f:FM,c:st>=3?C.red:C.t,al:A});
+  box(c,20,256,530,140,{r:14,f:C.soft,s:false,al:A});tx(c,'huella publicada por la tienda (la verdadera):',36,282,{s:11,w:700,f:FD,c:C.mut,al:A});chip(c,h1,140,312,C.t,'#fff',A,{s:12});
+  if(st>=1||st<0){flow(c,[[470,232],[470,312],[230,312]],st>=3?C.red:C.g,t,{a:A,label:'comparar',lp:.3,lx:30,ly:0})}
+  var ok=st===1||st<0,ko=st>=3;if(ok)chip(c,'✓ coinciden: el archivo es auténtico',290,362,C.g,'#ecfbf3',1,{s:11,f:FD});if(ko)chip(c,'✕ no coinciden: alguien lo alteró',290,362,C.red,'#fff0f0',1,{s:11,f:FD});if(st===2)chip(c,'alguien cambia una sola cifra…',290,362,C.o,'#fff4ec',1,{s:11,f:FD});
+  if(t>.8)band(c,['1 · Creas precio.txt con “camiseta,45”','2 · Get-FileHash saca su huella: coincide con la publicada ✓','3 · Alguien cambia una sola cifra: 45 → 4','4 · La huella cambia por completo: el archivo fue alterado ✕'],st,A,u)};
+
+/* LAB 2 · Session Manager: cero puertos abiertos */
+S.dssm=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,4,3.2),st=t<.8?-1:r[0],u=r[1],closed=st>=3;
+  box(c,6,40,112,110,{r:14,al:A});icon(c,'R_Client',62,78,34,A);tx(c,'tu PC',62,108,{s:11,w:800,a:'center',f:FD,al:A});tx(c,'navegador',62,126,{s:9.5,w:600,a:'center',f:FM,c:C.mut,al:A});
+  box(c,6,300,112,96,{r:14,f:'#fff6f4',s:rgba(C.red,.4),al:A});gx(c,'bug',62,334,28,C.red,A);tx(c,'bots',62,366,{s:10.5,w:800,a:'center',f:FD,c:C.red,al:A});
+  grp(c,130,10,420,396,'#242f3e','AWS Cloud','G_AWSCloudlogo',{al:A});
+  box(c,150,40,170,100,{r:14,f:'#fdf6f3',s:rgba('#dd344c',.5),al:A});icon(c,'AWSIdentityandAccessManagement',176,66,26,A);tx(c,'rol ec2-ssm',196,62,{s:11.5,w:800,f:FD,al:A});tx(c,'AmazonSSMManaged…Core',164,94,{s:9,w:600,f:FM,c:C.mut,al:A});tx(c,'“la EC2 puede hablar con SSM”',164,114,{s:9,w:600,f:FM,c:C.mut,al:A});
+  box(c,360,40,170,100,{r:14,f:'#fff',s:rgba('#e7157b',.5),al:A});icon(c,'AWSSystemsManager',388,70,28,A);tx(c,'Systems Manager',408,64,{s:11,w:800,f:FD,al:A});tx(c,'Session Manager',408,82,{s:9.5,w:700,f:FM,c:'#e7157b',al:A});
+  grp(c,150,170,380,224,'#7aa116','subred pública','G_Publicsubnet',{al:A,fill:'#f2f6e8'});
+  c.save();c.globalAlpha*=A;c.strokeStyle=closed?C.g:C.o;c.lineWidth=3;c.setLineDash([6,4]);rr(c,260,212,170,150,16);c.stroke();c.restore();icon(c,'EC2',345,270,44,A);tx(c,'tu EC2',345,306,{s:11,w:800,a:'center',f:FD,al:A});chip(c,'agente SSM',345,330,'#e7157b','#fff',A,{s:9});
+  chip(c,closed?'SG entrada: 0 reglas 🔒':'SG entrada: 22 abierto',345,212,closed?C.g:C.o,closed?'#ecfbf3':'#fff4ec',A,{s:9.5});
+  if(st>=0&&st<3)flow(c,[[118,130],[136,130],[136,250],[258,250]],C.mut,t,{a:.7,label:'SSH :22',lp:.75,lx:0});
+  if(st>=0)flow(c,[[118,340],[258,320]],C.red,t,{a:closed?.4:.9,prog:closed?.82:1,noHead:closed});if(closed)tx(c,'✕',246,322,{s:20,w:800,a:'center',c:C.red});
+  if(st===0)flow(c,[[235,140],[235,180],[300,238]],'#dd344c',t,{label:'rol adjunto',lp:.25,lx:34});
+  if(st>=1)flow(c,[[380,232],[445,190],[445,142]],'#e7157b',t,{label:'el agente llama hacia afuera (HTTPS)',lp:.7,lx:-40,ly:-4});
+  if(st>=2)flow(c,[[118,80],[140,80],[140,158],[490,158],[490,142]],C.t,t,{label:'consola → Conectar',lp:.55});
+  if(st>=2)chip(c,'sh-5.2$ whoami → ssm-user',345,384,C.t,'#0E2841',A,{s:9.5,tc:'#7ee2a8'});
+  if(t>.8)band(c,['1 · Le pones a la EC2 un rol IAM para Systems Manager','2 · El agente SSM llama hacia afuera por HTTPS: nada entra','3 · Entras desde la consola: una terminal en el navegador','4 · Cierras el 22: los bots rebotan y tú sigues entrando'],st,A,u)};
+
+/* LAB 3 · GuardDuty con hallazgos de ejemplo */
+S.dguard=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,4,3.2),st=t<.8?-1:r[0],u=r[1];
+  [['AWSCloudTrail','CloudTrail',70],['VirtualPrivateCloud','tráfico de red',170],['R_Alert','consultas DNS',270]].forEach(function(s,i){box(c,10,s[2]-36,130,72,{r:12,al:A});icon(c,s[0],40,s[2],26,A);tx(c,s[1],60,s[2],{s:10.5,w:800,f:FD,al:A});if(st>=0)flow(c,[[140,s[2]],[200,s[2]],[200,170],[228,170]],C.t,t+i*.3,{lw:2,a:A,noHead:i!==1})});
+  box(c,230,110,120,120,{r:16,f:'#fff',s:C.t,lw:2,al:A,sh:'rgba(15,158,213,.2)'});icon(c,'GuardDuty',290,150,40,A);tx(c,'GuardDuty',290,190,{s:12,w:800,a:'center',f:FD,al:A});tx(c,st>=0?'activo ✓':'apagado',290,210,{s:9.5,w:700,a:'center',f:FM,c:st>=0?C.g:C.faint,al:A});
+  if(st>=1){box(c,230,250,120,40,{r:10,f:'#fff4ec',s:C.o,al:A});tx(c,'▶ generar ejemplos',290,270,{s:10,w:800,a:'center',f:FD,c:C.o,al:A});flow(c,[[290,250],[290,232]],C.o,t,{lw:2})}
+  var F=[['ALTA','[SAMPLE] credenciales usadas desde IP maliciosa',C.red],['ALTA','[SAMPLE] EC2 hablando con un servidor de minería',C.red],['MEDIA','[SAMPLE] escaneo de puertos desde tu red',C.o],['BAJA','[SAMPLE] política de S3 cambiada',C.t]];
+  if(st>=1){flow(c,[[350,170],[372,170]],C.red,t,{lw:2.5});F.forEach(function(f,i){var a=st>=2||st<0?1:E.out(P(u,.3+i*.15,.2));if(a<=0)return;var y=60+i*58;box(c,374,y,176,50,{r:10,f:'#fff',s:rgba(f[2],.5),al:a});chip(c,f[0],402,y+14,f[2],rgba(f[2],.1),a,{s:8.5});wrap(c,f[1],386,y+34,158,11,{s:9,w:600,f:FD,al:a})})}
+  if(st===2){c.save();rr(c,372,58,180,54,12);c.strokeStyle=C.red;c.lineWidth=3;c.stroke();c.restore();chip(c,'detalle: qué, dónde, cuándo y qué hacer',462,330,C.red,'#fff0f0',1,{s:9.5,f:FD})}
+  if(st===3){chip(c,'Configuración → Suspender / Desactivar',290,340,C.g,'#ecfbf3',1,{s:10.5,f:FD});tx(c,'la prueba gratis dura 30 días: apágalo al terminar',290,370,{s:10.5,w:700,a:'center',f:FD,c:C.mut})}
+  if(t>.8)band(c,['1 · Activas GuardDuty: empieza a leer CloudTrail, la red y el DNS','2 · “Generar hallazgos de ejemplo”: amenazas simuladas, sin atacar a nadie','3 · Abres uno de severidad ALTA: qué pasó, dónde y qué hacer','4 · Al terminar lo suspendes: la prueba gratis dura 30 días'],st,A,u)};
+
+/* LAB 4 · rojo vs. azul (flechas) */
+post('dwaf',function(c,t){var st=Math.floor(Math.max(0,t-1.2)/2.8)%4,u=(Math.max(0,t-1.2)%2.8)/2.8,on=t>1.2,blk=on&&st>=2;if(!on)return;var red=st===1||st===3;
+  flow(c,[[124,100],[150,100],[150,220],[168,220]],C.red,t,{lw:2.5,a:red?1:.25,label:red?(blk?'ráfaga → 403':'ráfaga'):'',lp:.15,lx:24});flow(c,[[124,360],[150,360],[150,250],[168,250]],C.g,t,{lw:2.5,a:red?.25:1,label:red?'':'cliente',lp:.2,lx:24});
+  flow(c,[[280,235],[308,235]],C.g,t,{lw:2});flow(c,[[410,235],[428,235]],'#7aa116',t,{lw:2})});
 
 /* motor: corre la escena de la diapositiva visible */
 var raf=0,cur=null,TOFF=parseFloat((location.search.match(/[?&]mt=([\d.]+)/)||[])[1])||0;function tick(){return document.hidden?setTimeout(function(){frame(performance.now())},33):requestAnimationFrame(frame)}
