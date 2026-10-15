@@ -73,10 +73,10 @@ terraform apply
 
 ## LAB 3 · Equipo rojo
 
-- $W = tu tu_web_https → cópialo de la salida de terraform apply
+- $W = tu tu_web_https real → ⚠ reemplaza dxxxxxxxxxx por el tuyo (sale en terraform apply)
 - Una petición normal → 200 ✓
 - La ráfaga: 150 peticiones seguidas → todas 200: el WAF está en observar
-- Consola → busca WAF → AWS WAF → Web ACLs (o Protection packs) · arriba elige Global (CloudFront) → escudo-tienda → Solicitudes de muestra: ves limite-por-ip en COUNT (tarda 1–3 min) 📸
+- Consola → WAF y Shield → Paquetes de protección (ACL web) → selecciona escudo-tienda → a la derecha: Ver el panel, los registros y las solicitudes de muestra → limite-por-ip en COUNT (1–3 min) 📸
 - El WAF ya vio el ataque → pero todavía no lo frena
 
 **en la terminal de VS Code (PowerShell)**
