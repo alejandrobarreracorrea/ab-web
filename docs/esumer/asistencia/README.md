@@ -18,6 +18,7 @@ Se filtra por **Grupo** + **N° de clase** + **Marca temporal** (la hora delata 
 | 8 | 2026-10-01 | Cierre de networking (IGW + EC2) + virtualización: data centers, hipervisor/Nitro, Docker, x86/ARM, snapshot y AMI | 33 | 10 | [RED-01/clase-08.md](RED-01/clase-08.md) |
 | 9 | 2026-10-06 | Despliegue moderno: API, CLI de AWS, llave IAM, Terraform (init/plan/apply/destroy) y LAB pyme-vpc + EC2 desde código | 33 | 10 | [RED-01/clase-09.md](RED-01/clase-09.md) |
 | 10 | 2026-10-08 | Almacenamiento: bloque, archivos y objetos (EBS, EFS, FSx, S3, Glacier) y web en S3 por consola y Terraform | 32 | 11 | [RED-01/clase-10.md](RED-01/clase-10.md) |
+| 11 | 2026-10-13 | Pendiente S3 + CloudFront (Terraform) + bases de datos: SGBD, ACID, SQL vs. NoSQL, bases de AWS y LAB MariaDB en la EC2 | 33 | 10 | [RED-01/clase-11.md](RED-01/clase-11.md) |
 
 ## RED-02 (Mié/Vie)
 | Clase | Fecha | Tema | Pres. | Aus. | Registro |
@@ -31,6 +32,7 @@ Se filtra por **Grupo** + **N° de clase** + **Marca temporal** (la hora delata 
 | 8 | 2026-10-02 | Terraform: API, CLI de AWS, llave IAM, init/plan/apply/destroy y LAB pyme-vpc + EC2 desde código | 17 | 7 | [RED-02/clase-08.md](RED-02/clase-08.md) |
 | 9 | 2026-10-07 | Almacenamiento: bloque, archivos y objetos (EBS, EFS, FSx, S3, Glacier) y web en S3 por consola y Terraform | 17 | 7 | [RED-02/clase-09.md](RED-02/clase-09.md) |
 | 10 | 2026-10-09 | Bases de datos: SGBD, ACID, SQL vs. NoSQL, bases de AWS (RDS, DynamoDB…) y LABs MySQL en EC2, RDS y DynamoDB | 16 | 8 | [RED-02/clase-10.md](RED-02/clase-10.md) |
+| 11 | 2026-10-14 | Ciberseguridad: la noche en que atacaron la tienda de Laura (IAM, cifrado, KMS, WAF, detección) y LABs hash, Session Manager y rojo vs. azul con WAF | 16 | 8 | [RED-02/clase-11.md](RED-02/clase-11.md) |
 
 ## Convenciones
 - Presentes por **# de roster**; ausentes por # + nombre. **Sin correos** (repo público).
