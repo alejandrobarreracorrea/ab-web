@@ -287,6 +287,23 @@ ul.clean li:first-child { border-top:0; }
   </ul>
 </section>
 
+<style>
+  .snips{display:flex;flex-direction:column;gap:10px;max-height:58vh;overflow:auto}
+  .snip{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#0b1a2b}
+  .snip .top{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#10243a;padding:6px 10px;font-size:.78rem;color:#9fd8f0;font-weight:700}
+  .snip button{font:700 .76rem Poppins,sans-serif;border:0;border-radius:999px;padding:5px 12px;background:#ff9900;color:#0e2841;cursor:pointer;white-space:nowrap}
+  .snip button.ok{background:#34c38f;color:#fff}
+  .snip button:focus-visible{outline:2px solid #FFC928;outline-offset:2px}
+  .snip pre{margin:0;padding:8px 10px;font:500 clamp(.6rem,.8vw,.74rem)/1.45 var(--mono);color:#e6edf3;white-space:pre;overflow:auto;max-height:26vh;font-variant-ligatures:none}
+</style>
+<script>
+window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').forEach(function(sn){var b=sn.querySelector('button'),txt=sn.querySelector('pre').textContent;
+  sn.addEventListener('click',function(e){e.stopPropagation();});
+  b.onclick=function(){function ok(){b.textContent='✓ Copiado';b.classList.add('ok');setTimeout(function(){b.textContent='📋 Copiar';b.classList.remove('ok');},1800);}
+    function fb(){var ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(_){}ta.remove();ok();}
+    if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(txt).then(ok,fb);else fb();};});};
+</script>
+
 <section class="slide mu dark sep">
   <div>
     <div class="mtag" style="color:#7f9bb5"><b>Pendiente</b>de la clase 11</div>
@@ -957,22 +974,7 @@ function isLand(lon,lat){for(var k=0;k<LAND.length;k++)if(inPoly(lon,lat,LAND[k]
 
 
 
-<style>
-  .snips{display:flex;flex-direction:column;gap:10px;max-height:58vh;overflow:auto}
-  .snip{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#0b1a2b}
-  .snip .top{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#10243a;padding:6px 10px;font-size:.78rem;color:#9fd8f0;font-weight:700}
-  .snip button{font:700 .76rem Poppins,sans-serif;border:0;border-radius:999px;padding:5px 12px;background:#ff9900;color:#0e2841;cursor:pointer;white-space:nowrap}
-  .snip button.ok{background:#34c38f;color:#fff}
-  .snip button:focus-visible{outline:2px solid #FFC928;outline-offset:2px}
-  .snip pre{margin:0;padding:8px 10px;font:500 clamp(.6rem,.8vw,.74rem)/1.45 var(--mono);color:#e6edf3;white-space:pre;overflow:auto;max-height:26vh;font-variant-ligatures:none}
-</style>
-<script>
-window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').forEach(function(sn){var b=sn.querySelector('button'),txt=sn.querySelector('pre').textContent;
-  sn.addEventListener('click',function(e){e.stopPropagation();});
-  b.onclick=function(){function ok(){b.textContent='✓ Copiado';b.classList.add('ok');setTimeout(function(){b.textContent='📋 Copiar';b.classList.remove('ok');},1800);}
-    function fb(){var ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(_){}ta.remove();ok();}
-    if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(txt).then(ok,fb);else fb();};});};
-</script>
+
 
 <section class="slide mu dark sep">
   <div>
@@ -1714,7 +1716,7 @@ terraform destroy</pre></div></div>
   </div>
 </section>
 
-<script>['labHash','labSsm0','labSsm1','labW0','labW1','labW2'].forEach(function(id){wireSnips(document.getElementById(id))});</script>
+<script>['labA0','labA1','labA2','labHash','labSsm0','labSsm1','labW0','labW1','labW2'].forEach(function(id){wireSnips(document.getElementById(id))});</script>
 
 <!-- 15 · CIERRE -->
 <section class="slide">
