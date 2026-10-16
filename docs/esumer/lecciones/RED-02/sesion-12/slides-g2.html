@@ -3658,6 +3658,24 @@ S.espectro=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,4,3.2),st=t<.8?-1:r[0],
   box(c,10,344,540,60,{r:12,f:'#0E2841',s:false,al:A});var M=['EC2: cuidas 6 cosas, desde Linux hasta tu código','ECS + EC2: el contenedor ayuda, pero las EC2 siguen siendo tuyas','ECS + Fargate: solo tu contenedor; AWS pone las máquinas','Lambda: solo tu código · Laura usa Lambda para pedidos y Fargate para un chat en vivo'];tx(c,M[Math.max(0,st<0?3:st)],280,374,{s:11.5,w:800,a:'center',f:FD,c:'#fff',al:A});
   if(t>.8)band(c,['EC2: todo el control… y todo el trabajo','ECS sobre EC2: contenedores, pero sigues cuidando las máquinas','ECS sobre Fargate: contenedores sin servidores, pagas por segundo','Lambda: solo tu código, por evento y por milisegundo'],st,A)};
 
+/* eventos: cada evento con su ejemplo de la tienda, de punta a punta */
+S.evento=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,4,3.4),st=t<.8?-1:r[0],u=r[1],
+  EV=[['R_Client','Camila guarda un pedido','en la web',C.t,'DynamoDB','guarda el pedido'],['SimpleStorageService','Laura sube una foto','a S3',C.g,'SimpleStorageService','crea la miniatura'],['EventBridge','son las 7:00 a. m.','reloj de EventBridge',C.o,'R_Email','manda el reporte'],['SimpleQueueService','llega un mensaje','a la cola SQS','#8a5cf6','DynamoDB','procesa el mensaje']];
+  EV.forEach(function(e,i){var y=34+i*76,on=st===i;box(c,10,y-28,170,58,{r:12,f:on?rgba(e[3],.1):'#fff',s:on?e[3]:C.line,lw:on?2:1.2,al:A});icon(c,e[0],34,y,24,A);tx(c,e[1],52,y-6,{s:10,w:800,f:FD,al:A});tx(c,e[2],52,y+10,{s:8.5,w:700,f:FM,c:C.mut,al:A})});
+  /* la función */
+  var awake=st>=0&&u>.25&&u<.85,k=st>=0?E.out(P(u,.2,.1))*(1-P(u,.85,.1)):0;
+  box(c,222,110,124,104,{r:16,f:awake?'#fff7ed':C.soft,s:awake?C.o:C.line,lw:awake?2.4:1.2,al:A});icon(c,'AWSLambda',284,146,36,A*(awake?1:.45));
+  tx(c,awake?'despierta y trabaja':'dormida 💤',284,186,{s:10,w:800,a:'center',f:FD,c:awake?C.o:C.faint,al:A});
+  if(awake){c.save();c.globalAlpha*=A;rr(c,236,198,96,6,3);c.fillStyle='#ffe7d6';c.fill();rr(c,236,198,96*P(u,.3,.5),6,3);c.fillStyle=C.o;c.fill();c.restore()}
+  if(st>=0){var e=EV[st],y=34+st*76;flow(c,[[180,y],[200,y],[200,162],[222,162]],e[3],t,{lw:2.4,prog:Math.min(1,u*4),label:'evento'});
+    if(u>.55){box(c,388,110,162,104,{r:14,f:'#ecfbf3',s:C.g,lw:1.8,al:A*E.out(P(u,.55,.15))});icon(c,e[4],420,146,30,A*E.out(P(u,.55,.15)));tx(c,e[5],469,186,{s:10,w:800,a:'center',f:FD,c:'#0b6b3a',al:A*E.out(P(u,.55,.15))});flow(c,[[346,162],[388,162]],C.g,t,{lw:2.4,prog:P(u,.55,.15)})}}
+  /* línea de tiempo del día */
+  box(c,10,330,540,74,{r:12,f:'#0E2841',s:false,al:A});tx(c,'un día de la función',26,348,{s:10,w:800,f:FD,c:'#b4c8da',al:A});
+  c.save();c.globalAlpha*=A;rr(c,26,362,508,14,7);c.fillStyle='#15304d';c.fill();c.restore();
+  var runs=[1.2,3,7,7.3,9,11.5,12,12.2,15,18,19.5,19.7,20,21];runs.forEach(function(h,i){var on=t>.8+i*.6;if(on){c.save();c.globalAlpha*=A;c.fillStyle=C.o;c.fillRect(26+h/24*508,362,4,14);c.restore()}});
+  tx(c,'naranja = trabajó unos milisegundos · el resto del día: dormida y $0',280,392,{s:9.5,w:700,a:'center',f:FM,c:'#ffb86b',al:A});
+  if(t>.8)band(c,['Camila guarda un pedido → la Lambda despierta y lo guarda en DynamoDB','Laura sube una foto a S3 → la Lambda despierta y crea la miniatura','Son las 7:00 a. m. → EventBridge despierta la Lambda, que manda el reporte','Llega un mensaje a SQS → la Lambda lo procesa y se vuelve a dormir'],st,A)};
+
 /* 3.5 · el viaje de un pedido (diapositiva ancha 1100×520) */
 function bandW(c,T,st,A,w,y){box(c,10,y,w-20,50,{r:12,f:'#0E2841',s:false,al:A});tx(c,T[st]||'',w/2,y+21,{s:13.5,w:700,a:'center',f:FD,c:'#fff',al:A});for(var i=0;i<T.length;i++)dot(c,w/2-(T.length-1)*9+i*18,y+40,i===st?4.5:3,i===st?C.o:'#2b4f74',A)}
 S.viaje=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,7,3),st=t<.8?-1:r[0],u=r[1];
