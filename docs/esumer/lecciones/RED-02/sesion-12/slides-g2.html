@@ -896,14 +896,14 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
   <div class="mviz"><canvas data-mu="ruta" data-part="4" aria-label="Ruta de la clase: parte 4 de 5"></canvas></div>
 </section>
 
-<section class="slide mu">
+<section class="slide mu wide">
   <div>
     <div class="mtag"><b>4.1</b>la tienda · front y back<b></b></div>
-    <h2>Front y back: <span class="g">el salón y la cocina</span></h2>
-    <div class="mnote"><span>// como</span> un restaurante: el cliente ve el salón y la carta; la comida se hace en la cocina</div>
-    <p class="msub">Toda aplicación tiene dos mitades. El <b>front</b> es lo que Camila ve y toca: la página, hecha con HTML, CSS y JavaScript, que corre <b>en su navegador</b>. El <b>back</b> es la cocina: corre <b>en la nube</b>, valida, aplica las reglas del negocio y guarda en la <b>base de datos</b>. Se hablan por una <b>API</b>, como un mesero que lleva pedidos y trae platos.</p><p class="muse">👉 <b>¿Y dónde vive cada mitad en AWS?</b></p>
+    <h2>Front y back: <span class="g">la arquitectura de la tienda</span></h2>
+    
+    <p class="msub"><b>Front</b>: lo que se descarga y se ve en el navegador · <b>back</b>: lo que corre en la nube y nadie ve. Escoge un paso o avanza con →.</p>
   </div>
-  <div class="mviz"><canvas data-mu="frontback" aria-label="El front en el navegador de Camila manda un pedido por la API al back en la nube, que guarda en la base y responde"></canvas></div>
+  <div class="mviz"><canvas data-mu="fbarq" data-w="1100" data-h="520" data-maxh=".66" aria-label="Arquitectura de la tienda con la zona front (navegador, CloudFront, S3) y la zona back (API Gateway, Lambda, IAM, DynamoDB), paso a paso"></canvas></div>
 </section>
 
 <section class="slide mu">
@@ -3675,6 +3675,57 @@ S.evento=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,4,3.4),st=t<.8?-1:r[0],u=
   var runs=[1.2,3,7,7.3,9,11.5,12,12.2,15,18,19.5,19.7,20,21];runs.forEach(function(h,i){var on=t>.8+i*.6;if(on){c.save();c.globalAlpha*=A;c.fillStyle=C.o;c.fillRect(26+h/24*508,362,4,14);c.restore()}});
   tx(c,'naranja = trabajó unos milisegundos · el resto del día: dormida y $0',280,392,{s:9.5,w:700,a:'center',f:FM,c:'#ffb86b',al:A});
   if(t>.8)band(c,['Camila guarda un pedido → la Lambda despierta y lo guarda en DynamoDB','Laura sube una foto a S3 → la Lambda despierta y crea la miniatura','Son las 7:00 a. m. → EventBridge despierta la Lambda, que manda el reporte','Llega un mensaje a SQS → la Lambda lo procesa y se vuelve a dormir'],st,A)};
+
+/* ===== diagramas de arquitectura anchos e interactivos (1100×520) ===== */
+function pillsW(c,sec,EV,ev,A,y){sec.__pills=[];var n=EV.length,w=Math.min(122,1060/n-6);for(var j=0;j<n;j++){var px=20+j*(w+6),on=j===ev;box(c,px,y,w,34,{r:8,f:on?C.o:(j<ev?'#1d3d5e':'#15304d'),s:on?'#fff':'#2b4f74',al:A});tx(c,(j+1)+' · '+EV[j].k,px+w/2,y+17,{s:9.5,w:800,a:'center',f:FD,c:'#fff',al:A});sec.__pills.push([px,y,w,34])}}
+function narrW(c,EV,ev,u,A){box(c,10,424,1080,36,{r:10,f:'#0E2841',s:false,al:A});if(ev>=0){tx(c,EV[ev].t,550,442,{s:13,w:800,a:'center',f:FD,c:'#fff',al:A});c.save();c.globalAlpha*=A;rr(c,20,455,1060*u,3,2);c.fillStyle=C.o;c.fill();c.restore()}else tx(c,'Escoge un paso 👇  o avanza con → / clic',550,442,{s:12.5,w:800,a:'center',f:FD,c:'#fff',al:A})}
+function nodeW(c,n,x,y,lab,sub,on,col){box(c,x-62,y-46,124,96,{r:14,f:on?'#fff':'rgba(255,255,255,.92)',s:on?(col||C.o):C.line,lw:on?2.6:1.2,al:1,sh:on?'rgba(233,113,50,.25)':'rgba(14,40,65,.06)'});lic(c,n,x,y-12,38,lab,1,null,sub)}
+function evW(sec,t,N){if(t<.05)sec.__evt=-1;var ev=sec.__evt==null?-1:sec.__evt;return[ev,ev<0?0:Math.min(1,(performance.now()-(sec.__evt0||0))/1000/4.5)]}
+function wireW(name,N){document.querySelectorAll('canvas[data-mu="'+name+'"]').forEach(function(cv){var sec=cv.closest('section');cv.style.cursor='pointer';
+  cv.addEventListener('click',function(e){var r=cv.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*1100,y=(e.clientY-r.top)/r.height*520;(sec.__pills||[]).forEach(function(p,i){if(x>p[0]&&x<p[0]+p[2]&&y>p[1]&&y<p[1]+p[3]){sec.__evt=i;sec.__evt0=performance.now();e.stopPropagation()}})});
+  sec.__next=function(){var n=sec.__evt==null?-1:sec.__evt;if(n>=N-1)return false;sec.__evt=n+1;sec.__evt0=performance.now();return true}})}
+
+/* front y back en la arquitectura de la tienda */
+S.fbarq=function(c,t,sec){var A=E.out(P(t,.1,.6)),R=evW(sec,t),ev=R[0],u=R[1],all=ev<0;
+  var EV=[{k:'abrir la tienda',t:'Camila abre tu_tienda: su navegador le pide la página a CloudFront'},{k:'llegan los archivos',t:'CloudFront trae del bucket S3 los archivos del front: index.html, estilos.css y app.js'},{k:'se arma la página',t:'El navegador arma la página: HTML = estructura · CSS = diseño · JS = lo que reacciona'},{k:'guardar pedido',t:'Camila pulsa Guardar: el JS manda un POST con JSON a API Gateway… del FRONT al BACK'},{k:'el back trabaja',t:'API Gateway despierta a Lambda: el back valida y aplica las reglas del negocio'},{k:'guardar en la base',t:'Lambda, con el permiso de su rol de IAM, guarda el pedido en DynamoDB'},{k:'la respuesta',t:'La respuesta (200 + JSON) vuelve al navegador y el front muestra ✅ pedido guardado'},{k:'regla de oro',t:'El código del front lo puede ver cualquiera (F12); claves, reglas y la base viven solo en el back'}];
+  /* zonas */
+  grp(c,290,14,800,400,'#232F3E','AWS Cloud','G_AWSCloudlogo',{al:A});
+  var fOn=all||ev<=2||ev===7,bOn=all||ev>=3;
+  grp(c,306,48,250,356,C.p2,'FRONT · se descarga y lo ve todo el mundo','',{al:A,fill:fOn?'rgba(15,158,213,.07)':'rgba(15,158,213,.02)',lw:fOn?2:1});
+  grp(c,572,48,506,356,C.o,'BACK · corre en la nube y nadie lo ve','',{al:A,fill:bOn?'rgba(233,113,50,.07)':'rgba(233,113,50,.02)',lw:bOn?2:1});
+  grp(c,900,64,166,180,'#8a5cf6','DATOS · la despensa','',{al:A,dash:[5,4]});
+  if(ev===7){tx(c,'🔒',1052,62,{s:18,a:'center',al:A})}
+  /* navegador de Camila */
+  box(c,12,70,262,300,{r:14,f:'#fff',s:ev===2||ev===6?C.p2:C.line,lw:ev===2||ev===6?2.4:1.2,al:A,sh:'rgba(14,40,65,.08)'});c.save();c.globalAlpha*=A;rr(c,12,70,262,24,14);c.fillStyle='#eef3fb';c.fill();c.restore();[C.red,'#febc2e','#28c840'].forEach(function(cc,i){dot(c,28+i*12,82,4,cc,A)});tx(c,'tu_tienda.cloudfront.net',170,82,{s:9,w:600,a:'center',f:FM,c:C.mut,al:A});
+  tx(c,'navegador de Camila (su PC o celular)',143,386,{s:10,w:800,a:'center',f:FD,c:C.p,al:A});
+  var loaded=all||ev>=2;
+  if(!loaded){tx(c,ev===1&&u>.6?'cargando…':'(página en blanco)',143,200,{s:11,w:700,a:'center',f:FM,c:C.faint,al:A})}
+  else{var lay=ev===2?Math.floor(u*3.4):3;
+    if(ev===2){var LL=[['HTML','la estructura: textos, cajas y botones',C.o],['CSS','el diseño: colores, letras y tamaños',C.p2],['JS','lo que reacciona al clic y habla con el back',C.g]];LL.forEach(function(l,i){if(i>=lay)return;box(c,26,108+i*44,234,38,{r:8,f:rgba(l[2],.12),s:l[2],al:A});tx(c,l[0],40,127+i*44,{s:12,w:800,f:FM,c:l[2],al:A});tx(c,l[1],86,127+i*44,{s:9,w:700,f:FD,al:A})});if(lay>=3)tx(c,'= la página que Camila ve',143,252,{s:11,w:800,a:'center',f:FD,c:C.p,al:A})}
+    else{tx(c,'🛍️ Tienda de Laura',30,116,{s:13,w:800,f:FD,c:C.p,al:A});box(c,30,132,150,26,{r:6,f:'#fff',s:C.line,al:A});tx(c,'camila',40,145,{s:10,w:600,f:FM,al:A});box(c,30,166,150,26,{r:6,f:'#fff',s:C.line,al:A});tx(c,'gorra · talla L',40,179,{s:10,w:600,f:FM,al:A});
+      var press=ev===3&&u<.25;box(c,30,202,130,30,{r:7,f:press?C.o:C.p,s:false,al:A});tx(c,'Guardar pedido',95,217,{s:10.5,w:800,a:'center',f:FD,c:'#fff',al:A});
+      if(ev===6&&u>.55||all){box(c,30,246,226,34,{r:8,f:'#ecfbf3',s:rgba(C.g,.6),al:A});tx(c,'✅ pedido guardado · gorra L',42,263,{s:10.5,w:800,f:FD,c:'#0b6b3a',al:A})}
+      if(ev===7){box(c,30,290,226,64,{r:8,f:'#0b1a2b',s:false,al:A});tx(c,'F12 → app.js (visible)',40,306,{s:9,w:800,f:FM,c:'#9fd8f0',al:A});tx(c,'fetch(API + "/", {method:"POST"…',40,324,{s:8.5,w:500,f:FM,c:'#e6edf3',al:A});tx(c,'❌ aquí nunca: claves ni reglas',40,342,{s:8.5,w:800,f:FM,c:'#ff8a8d',al:A})}}}
+  /* nodos */
+  var NP={cf:[431,130],s3:[431,300],api:[660,150],lam:[800,150],iam:[800,320],ddb:[983,150]};
+  function on(k){return all||{cf:[0,1],s3:[1],api:[3,6],lam:[4,5,6],iam:[5,7],ddb:[5]}[k].indexOf(ev)>=0}
+  c.save();c.globalAlpha*=A;nodeW(c,'CloudFront',NP.cf[0],NP.cf[1],'CloudFront','entrega con HTTPS',on('cf')&&!all,C.p2);nodeW(c,'SimpleStorageService',NP.s3[0],NP.s3[1],'S3 (privado)','los archivos',on('s3')&&!all,C.p2);
+  nodeW(c,'APIGateway',NP.api[0],NP.api[1],'API Gateway','la puerta (el mesero)',on('api')&&!all);nodeW(c,'AWSLambda',NP.lam[0],NP.lam[1],'Lambda','app.py · la cocina',on('lam')&&!all);nodeW(c,'AWSIdentityandAccessManagement',NP.iam[0],NP.iam[1],'rol de IAM','permisos y secretos',on('iam')&&!all);nodeW(c,'DynamoDB',NP.ddb[0],NP.ddb[1],'DynamoDB','tienda-pedidos',on('ddb')&&!all,'#8a5cf6');c.restore();
+  /* archivos en S3 */
+  ['index.html','estilos.css','app.js'].forEach(function(f,i){chip(c,f,NP.s3[0]+(i-1)*70,NP.s3[1]+68,C.p2,'#fff',A*(on('s3')||all?1:.5),{s:8.5})});
+  /* lista del back */
+  if(ev===4||all){['✔ ¿viene el cliente?','✔ talla válida','✔ precio y reglas'].forEach(function(l,i){var k=ev===4?E.out(P(u,.3+i*.15,.2)):1;tx(c,l,NP.lam[0]-58,NP.lam[1]+66+i*16,{s:9.5,w:800,f:FD,c:C.o,al:A*k})})}
+  /* flujos (tenues) */
+  var dim=function(k){return all?.55:k?1:.12};
+  var PTH={get:[[274,130],[369,130]],files:[[431,176],[431,254]],down:[[369,140],[274,150]],post:[[274,217],[290,217],[290,394],[598,394],[598,150]],wake:[[722,150],[738,150]],put:[[862,150],[921,150]],role:[[800,198],[800,272]],resp:[[598,190],[578,190],[578,226],[274,226]]};
+  flow(c,PTH.get,C.p2,t,{lw:2.4,a:A*dim(ev===0)});flow(c,PTH.files,C.p2,t,{lw:2.4,a:A*dim(ev===1)});flow(c,PTH.down,C.p2,t,{lw:2.4,a:A*dim(ev===1)});
+  flow(c,PTH.post,C.o,t,{lw:2.6,a:A*dim(ev===3)});flow(c,PTH.wake,C.o,t,{lw:2.6,a:A*dim(ev===4)});flow(c,PTH.put,'#8a5cf6',t,{lw:2.6,a:A*dim(ev===5)});poly(c,PTH.role,rgba(C.o,.7),1.6,[4,4],A*dim(ev===5||ev===7));flow(c,PTH.resp,C.g,t,{lw:2.2,a:A*dim(ev===6)});
+  /* paquete que viaja */
+  var PK={0:[PTH.get,'GET /',C.p2],1:[PTH.down,'📄 html · css · js',C.p2],3:[PTH.post,'POST {"cliente":"camila"}',C.o],4:[PTH.wake,'evento',C.o],5:[PTH.put,'PutItem',C.p],6:[PTH.resp,'200 {"ok":true}',C.g]}[ev];
+  if(PK){var q=along(c,PK[0],E.io(Math.min(1,u*1.3)));chip(c,PK[1],q[0],q[1]-16,PK[2],'#fff',1,{s:9.5})}
+  if(ev===3&&u>.3)chip(c,'cruza de FRONT a BACK',650,394,C.o,'#fff7ed',1,{s:9.5});
+  narrW(c,EV,ev,u,A);pillsW(c,sec,EV,ev,A,470)};
+wireW('fbarq',8);
 
 /* 3.5 · el viaje de un pedido (diapositiva ancha 1100×520) */
 function bandW(c,T,st,A,w,y){box(c,10,y,w-20,50,{r:12,f:'#0E2841',s:false,al:A});tx(c,T[st]||'',w/2,y+21,{s:13.5,w:700,a:'center',f:FD,c:'#fff',al:A});for(var i=0;i<T.length;i++)dot(c,w/2-(T.length-1)*9+i*18,y+40,i===st?4.5:3,i===st?C.o:'#2b4f74',A)}
