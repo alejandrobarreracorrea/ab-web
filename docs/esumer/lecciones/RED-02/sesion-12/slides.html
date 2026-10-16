@@ -609,14 +609,14 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
   <div class="mviz"><canvas data-mu="sbdef" aria-label="Qué es server-based: una EC2 que escoges por tamaño, donde instalas todo, prendida 24/7 y que se multiplica a mano o con Auto Scaling"></canvas></div>
 </section>
 
-<section class="slide mu">
+<section class="slide mu wide">
   <div>
     <div class="mtag"><b>1.2</b>server-based · un día<b></b></div>
-    <h2>Un día <span class="g">con servidor</span></h2>
-    <div class="mnote"><span>// como</span> un local abierto 24 horas, con o sin clientes</div>
-    <p class="msub">La EC2 de Laura no se apaga nunca. A las 3:00 a. m. no hay nadie comprando… y AWS le cobra igual cada hora. A las 8:00 p. m. llegan todos al tiempo y la EC2 <b>no da abasto</b>. Con un servidor pagas por <b>tenerlo prendido</b>, no por lo que usas.</p><p class="muse">👉 <b>Y además, el servidor da trabajo</b></p>
+    <h2>Un día de la tienda <span class="g">con un servidor</span></h2>
+    
+    <p class="msub">La EC2 está prendida las 24 horas, con o sin clientes. Escoge una hora o avanza con →.</p>
   </div>
-  <div class="mviz"><canvas data-mu="svdia" aria-label="Clientes por hora durante un día frente a la capacidad fija de una EC2 y su costo por hora"></canvas></div>
+  <div class="mviz"><canvas data-mu="diaarq" data-w="1100" data-h="520" data-maxh=".64" aria-label="Un día hora por hora: clientes, CPU de la EC2, errores 503 y el costo acumulado frente a la gráfica del día"></canvas></div>
 </section>
 
 <section class="slide mu">
@@ -906,14 +906,14 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
   <div class="mviz"><canvas data-mu="fbarq" data-w="1100" data-h="520" data-maxh=".64" aria-label="Arquitectura de la tienda con la zona front (navegador, CloudFront, S3) y la zona back (API Gateway, Lambda, IAM, DynamoDB), paso a paso"></canvas></div>
 </section>
 
-<section class="slide mu">
+<section class="slide mu wide">
   <div>
     <div class="mtag"><b>4.2</b>la tienda · front y back en AWS<b></b></div>
-    <h2>Cada mitad, <span class="g">su servicio de AWS</span></h2>
-    <div class="mnote"><span>// como</span> de un local donde todo está junto a un centro comercial con un local para cada cosa</div>
-    <p class="msub">Antes, todo vivía en una EC2: NGINX servía la página, ahí corría el código y hasta la base. En serverless cada mitad tiene su servicio: el <b>front</b> en <b>S3 + CloudFront</b>, la <b>puerta</b> en <b>API Gateway</b>, el <b>back</b> en <b>Lambda</b> y los <b>datos</b> en <b>DynamoDB</b>. Cada pieza escala y se cobra por separado.</p><p class="muse">👉 <b>¿Y qué puedo correr en cada servicio?</b></p>
+    <h2>De una EC2 a <span class="g">una pieza para cada cosa</span></h2>
+    
+    <p class="msub">Antes una EC2 hacía todo; hoy cada parte vive en su servicio: front, puerta, back y datos. Escoge un paso o avanza con →.</p>
   </div>
-  <div class="mviz"><canvas data-mu="fbaws" aria-label="Cada capa de la EC2 de antes se separa en su servicio: front en S3 y CloudFront, puerta en API Gateway, back en Lambda y datos en DynamoDB"></canvas></div>
+  <div class="mviz"><canvas data-mu="fbawsarq" data-w="1100" data-h="520" data-maxh=".64" aria-label="Cada capa de la EC2 de antes sale hacia su servicio serverless: front, puerta, back y datos"></canvas></div>
 </section>
 
 <section class="slide mu">
@@ -971,9 +971,9 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
     <div class="mtag"><b>4.8</b>la arquitectura de hoy<b></b></div>
     <h2>El viaje <span class="g">de un pedido</span></h2>
     
-    <p class="msub">La vitrina sale de S3 por CloudFront; el pedido entra por API Gateway, la Lambda lo procesa y DynamoDB lo guarda.</p>
+    <p class="msub">Lo que van a construir hoy en el LAB 2. Escoge un paso o avanza con →.</p>
   </div>
-  <div class="mviz"><canvas data-mu="viaje" data-w="1100" data-h="520" data-maxh=".72" aria-label="Arquitectura completa: navegador, CloudFront, S3, API Gateway, Lambda, DynamoDB, CloudWatch y el rol de IAM, paso a paso"></canvas></div>
+  <div class="mviz"><canvas data-mu="viaje" data-w="1100" data-h="520" data-maxh=".64" aria-label="Arquitectura completa del viaje de un pedido, paso a paso"></canvas></div>
 </section>
 
 <section class="slide mu dark sep">
@@ -3885,6 +3885,74 @@ S.arqsv=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,5,3),st=t<.8?-1:r[0],u=r[1
 document.querySelectorAll('canvas[data-mu="cuando"]').forEach(function(cv){var sec=cv.closest('section');
   function nx(){var n=sec.__cs==null?-1:sec.__cs;if(n>=CASOS.length-1)return false;sec.__cs=n+1;sec.__cs0=performance.now();return true}
   sec.__next=nx;cv.style.cursor='pointer';cv.addEventListener('click',function(e){if(nx())e.stopPropagation()})});
+
+/* el viaje de un pedido, interactivo (1100×520) */
+S.viaje=function(c,t,sec){var A=E.out(P(t,.1,.6)),R=evW(sec,t),ev=R[0],u=R[1],all=ev<0;
+  var EV=[{k:'pide la página',t:'Camila abre la tienda: el navegador le pide la página a CloudFront, con HTTPS'},{k:'S3 privado',t:'CloudFront la trae del bucket S3 privado: solo él tiene permiso de leerlo (OAC)'},{k:'POST pedido',t:'Camila guarda un pedido: la página hace un POST a la URL de API Gateway'},{k:'despierta',t:'API Gateway despierta a la Lambda; su rol de IAM solo le deja tocar la tabla'},{k:'PutItem',t:'La Lambda guarda el pedido en DynamoDB con PutItem'},{k:'logs',t:'Todo lo que imprime la Lambda queda en CloudWatch Logs'},{k:'respuesta',t:'La respuesta vuelve en milisegundos… y nada quedó prendido esperando'}];
+  grp(c,250,14,836,392,'#232F3E','AWS Cloud','G_AWSCloudlogo',{al:A});grp(c,270,46,800,346,'#00A4A6','us-east-1','G_Region',{al:A,dash:[5,4]});
+  box(c,20,150,196,150,{r:16,f:'#fff',s:ev===0||ev===2||ev===6?C.t:C.line,lw:1.8,al:A,sh:'rgba(14,40,65,.07)'});icon(c,'R_Client',118,190,42,A);tx(c,'navegador de Camila',118,230,{s:12,w:800,a:'center',f:FD,al:A});tx(c,ev===6&&u>.6?'✅ pedido guardado':'la tienda abierta',118,252,{s:9.5,w:800,a:'center',f:FM,c:ev===6&&u>.6?C.g:C.mut,al:A});
+  var NP={cf:[360,120],s3:[600,120],api:[360,300],lam:[600,300],ddb:[840,300],cw:[840,120],iam:[1000,210]};
+  function on(k){return !all&&{cf:[0,1],s3:[1],api:[2,3],lam:[3,4,5],ddb:[4],cw:[5],iam:[3]}[k].indexOf(ev)>=0}
+  c.save();c.globalAlpha*=A;nodeW(c,'CloudFront',NP.cf[0],NP.cf[1],'CloudFront','HTTPS',on('cf'),C.p2);nodeW(c,'SimpleStorageService',NP.s3[0],NP.s3[1],'S3 (privado)','index.html',on('s3'),C.p2);nodeW(c,'APIGateway',NP.api[0],NP.api[1],'API Gateway','la puerta',on('api'));nodeW(c,'AWSLambda',NP.lam[0],NP.lam[1],'Lambda','app.py',on('lam'));nodeW(c,'DynamoDB',NP.ddb[0],NP.ddb[1],'DynamoDB','tienda-pedidos',on('ddb'),'#8a5cf6');nodeW(c,'CloudWatch',NP.cw[0],NP.cw[1],'CloudWatch','logs',on('cw'),'#e0457b');nodeW(c,'AWSIdentityandAccessManagement',NP.iam[0],NP.iam[1],'rol IAM','solo esa tabla',on('iam'));c.restore();
+  var d=function(k){return all?.5:k?1:.1};
+  var PT=[[[216,190],[260,190],[260,120],[298,120]],[[422,120],[538,120]],[[216,260],[260,260],[260,300],[298,300]],[[422,300],[538,300]],[[662,300],[778,300]],[[600,254],[600,210],[700,210],[700,120],[778,120]],[[600,350],[600,384],[118,384],[118,300]]];
+  var CO=[C.g,C.g,C.o,C.o,C.p,'#e0457b',C.g],LB=['GET la página','OAC','POST pedido','despierta','PutItem','print','200 + JSON'];
+  PT.forEach(function(p,i){flow(c,p,CO[i],t,{lw:2.6,a:A*d(ev===i),label:all||ev===i?(i+1)+' · '+LB[i]:'',lp:i===6?.5:.5,ly:i===2?18:-16})});
+  poly(c,[[662,280],[938,220]],rgba(C.o,.5),1.5,[4,4],A*d(ev===3));
+  if(ev>=0){var lbl=['index.html','index.html','{cliente:"camila"}','evento','pedido','log','✓ guardado'][ev],q=along(c,PT[ev],E.io(Math.min(1,u*1.4)));chip(c,lbl,q[0],q[1]-18,'#0E2841','#fff',1,{s:9.5})}
+  if(ev===6){var ms=Math.round(40+u*60);tx(c,'⏱ '+ms+' ms en total',840,400,{s:11,w:800,a:'center',f:FM,c:C.g,al:A})}
+  narrW(c,EV,ev,u,A);pillsW(c,sec,EV,ev,A,470)};
+wireW('viaje',7);
+
+/* de una EC2 a una pieza para cada cosa (1100×520) */
+S.fbawsarq=function(c,t,sec){var A=E.out(P(t,.1,.6)),R=evW(sec,t),ev=R[0],u=R[1],all=ev<0;
+  var EV=[{k:'todo en una EC2',t:'Antes (clases 5 y 10): una EC2 hacía todo: NGINX entregaba la página, ahí corría el código y hasta la base'},{k:'punto único',t:'Si esa EC2 se caía o se llenaba, se caía TODO: la página, el código y los datos'},{k:'el FRONT sale',t:'Hoy el FRONT sale de la EC2: S3 guarda los archivos y CloudFront los entrega con HTTPS'},{k:'la PUERTA',t:'La PUERTA: API Gateway recibe las peticiones que manda el front'},{k:'el BACK',t:'El BACK: Lambda corre el código solo cuando llega un pedido (o Fargate, si es un contenedor)'},{k:'los DATOS',t:'Los DATOS: DynamoDB (o Aurora Serverless) guarda los pedidos'},{k:'cada uno solo',t:'Cada pieza escala y se cobra por separado… y si una falla, las otras siguen'}];
+  /* antes */
+  grp(c,14,14,330,392,'#232F3E','antes · server-based','G_AWSCloudlogo',{al:A,fill:'rgba(233,113,50,.03)'});
+  icon(c,'R_Users',178,58,30,A);tx(c,'clientes',214,58,{s:10,w:800,f:FD,al:A});
+  var down=ev===1,sh=down?Math.sin(t*30)*3:0;
+  box(c,44+sh,96,270,290,{r:14,f:down?'#fff1f1':'#fff7ed',s:down?C.red:C.o,lw:2.2,al:A});icon(c,'EC2',70+sh,120,24,A);tx(c,'una sola EC2, prendida 24/7',92+sh,120,{s:10.5,w:800,f:FD,c:down?C.red:C.o,al:A});
+  flow(c,[[178,74],[178,96]],C.t,t,{lw:2.4,a:A});
+  var LY=[['FRONT','NGINX entrega index.html',C.p2,2,[460,120]],['PUERTA','NGINX en el puerto 80',C.o,3,[460,270]],['BACK','tu código (app.py)',C.o2,4,[680,270]],['DATOS','MariaDB en el disco',C.p,5,[900,270]]];
+  LY.forEach(function(l,i){var y=150+i*56,moved=all||ev>l[3]||ev===6,moving=ev===l[3];
+    if(!moved&&!moving){box(c,60+sh,y,238,46,{r:8,f:'#fff',s:l[2],lw:1.5,al:A});tx(c,l[0],72+sh,y+16,{s:10.5,w:800,f:FD,c:l[2],al:A});tx(c,l[1],72+sh,y+33,{s:9,w:700,f:FM,c:C.mut,al:A})}
+    else{c.save();c.globalAlpha*=A*.5;c.setLineDash([4,4]);c.strokeStyle=C.faint;rr(c,60,y,238,46,8);c.stroke();c.restore();tx(c,'→ ya no vive aquí',179,y+23,{s:9,w:700,a:'center',f:FM,c:C.faint,al:A})}
+    if(moving){var k=E.io(Math.min(1,u*1.6)),x=60+(l[4][0]-60-60)*k,yy=y+(l[4][1]-y-30)*k;box(c,x,yy,180,40,{r:8,f:'#fff',s:l[2],lw:2,al:A,sh:'rgba(14,40,65,.2)'});tx(c,l[0],x+12,yy+20,{s:11,w:800,f:FD,c:l[2],al:A})}});
+  if(down){chip(c,'💥 se cae todo',179,392,C.red,'#fff1f1',1,{s:10.5})}
+  /* hoy */
+  grp(c,362,14,724,392,'#232F3E','hoy · serverless: una pieza para cada cosa','G_AWSCloudlogo',{al:A,fill:'rgba(15,158,213,.03)'});
+  var vis=function(n){return all||ev>=n};
+  if(vis(2)){var a2=ev===2?E.out(P(u,.5,.3)):1;grp(c,382,52,320,140,C.p2,'FRONT','',{al:A*a2,fill:'rgba(15,158,213,.06)'});c.save();c.globalAlpha*=A*a2;nodeW(c,'SimpleStorageService',460,124,'S3','guarda los archivos',ev===2,C.p2);nodeW(c,'CloudFront',624,124,'CloudFront','entrega con HTTPS',ev===2,C.p2);c.restore();flow(c,[[522,124],[562,124]],C.p2,t,{lw:2,a:A*a2})}
+  if(vis(3)){var a3=ev===3?E.out(P(u,.5,.3)):1;c.save();c.globalAlpha*=A*a3;nodeW(c,'APIGateway',460,300,'API Gateway','la puerta',ev===3);c.restore()}
+  if(vis(4)){var a4=ev===4?E.out(P(u,.5,.3)):1;grp(c,602,214,240,176,C.o,'BACK','',{al:A*a4,fill:'rgba(233,113,50,.05)'});c.save();c.globalAlpha*=A*a4;nodeW(c,'AWSLambda',680,300,'Lambda','por petición',ev===4);c.restore();icon(c,'AWSFargate',786,276,26,A*a4*.85);tx(c,'o Fargate',786,302,{s:9,w:800,a:'center',f:FD,c:C.mut,al:A*a4});flow(c,[[522,300],[618,300]],C.o,t,{lw:2.2,a:A*a4})}
+  if(vis(5)){var a5=ev===5?E.out(P(u,.5,.3)):1;grp(c,858,214,212,176,'#8a5cf6','DATOS','',{al:A*a5,fill:'rgba(138,92,246,.05)'});c.save();c.globalAlpha*=A*a5;nodeW(c,'DynamoDB',930,300,'DynamoDB','o Aurora Serverless',ev===5,'#8a5cf6');c.restore();flow(c,[[742,300],[868,300]],'#8a5cf6',t,{lw:2.2,a:A*a5})}
+  if(vis(3)&&vis(2))flow(c,[[460,172],[460,252]],C.t,t,{lw:1.6,a:A*.6,label:'la página llama',lp:.5});
+  if(ev===6){var rows=[['S3 + CloudFront','escala solo · paga por GB'],['API Gateway','por millón de peticiones'],['Lambda','por petición y ms'],['DynamoDB','por lectura y escritura']];box(c,880,52,196,150,{r:12,f:'#0E2841',s:false,al:A});tx(c,'cada pieza, su cuenta',978,72,{s:10,w:800,a:'center',f:FD,c:'#ffb86b',al:A});rows.forEach(function(r2,i){tx(c,r2[0],894,96+i*26,{s:9,w:800,f:FD,c:'#fff',al:A});tx(c,r2[1],894,108+i*26,{s:7.5,w:600,f:FM,c:'#b4c8da',al:A})})}
+  narrW(c,EV,ev,u,A);pillsW(c,sec,EV,ev,A,470)};
+wireW('fbawsarq',7);
+
+/* un día de la tienda, hora por hora (1100×520) */
+S.diaarq=function(c,t,sec){var A=E.out(P(t,.1,.6)),R=evW(sec,t),ev=R[0],u=R[1],all=ev<0;
+  var EV=[{k:'00:00',h:0,t:'Medianoche: casi nadie compra… y la EC2 sigue prendida'},{k:'03:00',h:3,t:'3:00 a. m.: cero clientes. La EC2 está al 2 % de CPU y AWS cobra la hora igual'},{k:'08:00',h:8,t:'8:00 a. m.: empiezan a llegar clientes; la EC2 trabaja tranquila'},{k:'12:00',h:12,t:'Mediodía: buen movimiento, y la EC2 alcanza de sobra'},{k:'18:00',h:18,t:'6:00 p. m.: la gente sale del trabajo y la CPU sube'},{k:'20:00',h:20,t:'8:00 p. m.: el pico. La EC2 llega al 100 % y algunos clientes reciben 503'},{k:'23:59',h:24,t:'Fin del día: pagaste 24 horas completas, aunque la EC2 trabajó duro solo 3'}];
+  var h=all?20:EV[ev].h+(ev===6?0:u*.9),hi=Math.min(23,Math.floor(h)),cl=CLI[hi]||0,cap=26,cpu=Math.min(100,Math.round(cl/cap*100)+2),over=cl>cap;
+  /* arquitectura */
+  grp(c,14,14,470,392,'#232F3E','AWS Cloud · us-east-1','G_AWSCloudlogo',{al:A});grp(c,150,60,320,320,'#8C4FFF','VPC','G_VirtualprivatecloudVPC',{al:A});
+  icon(c,'R_Users',74,180,40,A);tx(c,cl+' clientes',74,218,{s:12,w:800,a:'center',f:FM,c:over?C.red:C.ink,al:A});tx(c,'esta hora',74,236,{s:9,w:700,a:'center',f:FM,c:C.mut,al:A});
+  for(var i=0;i<Math.min(cl,30);i++){var k=((t*.5)+i*.071)%1,y=150+(i*37)%70;dot(c,100+k*96,y,3.5,over&&i%3===0?C.red:C.t,A*(1-k*.3),5)}
+  var sh=over?Math.sin(t*30)*2:0;box(c,216+sh,110,200,220,{r:16,f:over?'#fff1f1':'#fff7ed',s:over?C.red:C.o,lw:2.4,al:A});icon(c,'EC2',316+sh,150,44,A);tx(c,'EC2 de la tienda',316,190,{s:12,w:800,a:'center',f:FD,al:A});tx(c,'t3.micro · prendida',316,208,{s:9,w:700,a:'center',f:FM,c:C.mut,al:A});
+  c.save();c.globalAlpha*=A;rr(c,236,226,160,14,7);c.fillStyle=C.soft;c.fill();rr(c,236,226,160*cpu/100,14,7);c.fillStyle=cpu>85?C.red:cpu>50?C.o:C.g;c.fill();c.restore();tx(c,'CPU '+cpu+' %',316,258,{s:15,w:800,a:'center',f:FM,c:cpu>85?C.red:C.ink,al:A});
+  tx(c,over?'⚠ 503 a algunos clientes':cl===0?'💤 nadie… pero cobrando':'✓ atiende bien',316,286,{s:10.5,w:800,a:'center',f:FD,c:over?C.red:cl===0?C.o:C.g,al:A});
+  box(c,216,342,200,52,{r:12,f:'#0E2841',s:false,al:A});tx(c,'💵 pagado hoy',230,358,{s:9.5,w:800,f:FD,c:'#b4c8da',al:A});tx(c,'US$ '+(0.0104*h).toFixed(3)+' · '+Math.floor(h)+' h',230,378,{s:12,w:800,f:FM,c:'#ffb86b',al:A});
+  /* gráfica del día */
+  var x0=540,x1=1070,y0=60,y1=330,mx=40;function X(hh){return x0+(x1-x0)*hh/24}function Y(v){return y1-(y1-y0)*v/mx}
+  box(c,500,14,586,392,{r:16,f:'#fff',s:C.line,al:A});tx(c,'clientes por hora vs. lo que aguanta 1 EC2',520,36,{s:11,w:800,f:FD,c:C.mut,al:A});
+  for(var hh=0;hh<24;hh++){var v=CLI[hh],bx=X(hh)+3,bw=(x1-x0)/24-6,past=hh<=h;c.save();c.globalAlpha*=A*(past?1:.22);rr(c,bx,Y(Math.min(v,cap)),bw,y1-Y(Math.min(v,cap)),3);c.fillStyle=hh===hi&&!all?C.o:C.t;c.fill();if(v>cap){rr(c,bx,Y(v),bw,Y(cap)-Y(v),3);c.fillStyle=C.red;c.fill()}c.restore()}
+  poly(c,[[x0,Y(cap)],[x1,Y(cap)]],C.o,2.4,[7,5],A);box(c,x0+6,Y(cap)-30,150,22,{r:8,f:'#fff7ed',s:rgba(C.o,.5),al:A});tx(c,'lo que aguanta 1 EC2',x0+16,Y(cap)-19,{s:9.5,w:800,f:FD,c:C.o,al:A});
+  var cx=X(Math.min(24,h));poly(c,[[cx,y0],[cx,y1]],C.ink,1.5,[3,3],A);dot(c,cx,y0,5,C.ink,A);
+  [0,3,6,9,12,15,18,21,24].forEach(function(q){tx(c,(q<10?'0':'')+q+':00',X(q),y1+16,{s:9,w:600,a:'center',f:FM,c:C.faint,al:A})});
+  box(c,520,362,546,34,{r:10,f:C.soft,s:false,al:A});tx(c,'la EC2 cobra las 24 barras igual: con 0 clientes o con 38',793,379,{s:10.5,w:800,a:'center',f:FD,c:C.p,al:A});
+  narrW(c,EV,ev,u,A);pillsW(c,sec,EV,ev,A,470)};
+wireW('diaarq',7);
 
 /* motor: corre la escena de la diapositiva visible */
 var raf=0,cur=null,TOFF=parseFloat((location.search.match(/[?&]mt=([\d.]+)/)||[])[1])||0;function tick(){return document.hidden?setTimeout(function(){frame(performance.now())},33):requestAnimationFrame(frame)}
