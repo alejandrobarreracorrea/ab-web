@@ -956,14 +956,14 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
   <div class="mviz"><canvas data-mu="aurora" aria-label="Carga de la base durante un día frente a la capacidad fija de RDS y la capacidad variable en ACU de Aurora Serverless v2"></canvas></div>
 </section>
 
-<section class="slide mu">
+<section class="slide mu wide">
   <div>
     <div class="mtag"><b>4.7</b>la familia serverless<b></b></div>
-    <h2>La familia <span class="g">serverless</span></h2>
-    <div class="mnote"><span>// como</span> cada pieza tiene un oficio</div>
-    <p class="msub">Además de Lambda, API Gateway y DynamoDB: <b>S3</b> y <b>CloudFront</b> para la vitrina; <b>SQS</b>, <b>SNS</b> y <b>EventBridge</b> para mensajes y eventos; <b>Step Functions</b> para encadenar pasos; <b>Cognito</b> para el login de los clientes y <b>Fargate</b> para contenedores sin servidores.</p><p class="muse">👉 <b>Juntemos las piezas: el viaje de un pedido</b></p>
+    <h2>La familia serverless <span class="g">en la tienda de Laura</span></h2>
+    
+    <p class="msub">Cada servicio con su oficio en la misma tienda: vitrina, login, pedidos, cola, avisos, pagos, reportes y chat. Escoge un paso o avanza con →.</p>
   </div>
-  <div class="mviz"><canvas data-mu="familia" aria-label="Mapa de los servicios serverless de AWS agrupados por su oficio"></canvas></div>
+  <div class="mviz"><canvas data-mu="familia" data-w="1100" data-h="520" data-maxh=".64" aria-label="Arquitectura completa de la tienda con S3, CloudFront, Cognito, API Gateway, Lambda, DynamoDB, SQS, SNS, Step Functions, EventBridge y Fargate"></canvas></div>
 </section>
 
 <section class="slide mu wide">
@@ -3953,6 +3953,22 @@ S.diaarq=function(c,t,sec){var A=E.out(P(t,.1,.6)),R=evW(sec,t),ev=R[0],u=R[1],a
   box(c,520,362,546,34,{r:10,f:C.soft,s:false,al:A});tx(c,'la EC2 cobra las 24 barras igual: con 0 clientes o con 38',793,379,{s:10.5,w:800,a:'center',f:FD,c:C.p,al:A});
   narrW(c,EV,ev,u,A);pillsW(c,sec,EV,ev,A,470)};
 wireW('diaarq',7);
+
+/* la familia serverless en la tienda de Laura (1100×520) */
+S.familia=function(c,t,sec){var A=E.out(P(t,.1,.6)),R=evW(sec,t),ev=R[0],u=R[1],all=ev<0;
+  var EV=[{k:'vitrina',t:'Vitrina: S3 guarda la página y CloudFront la entrega rápido y con HTTPS en todo el mundo'},{k:'login',t:'Usuarios: Cognito maneja el registro y el login de los clientes (Camila inicia sesión)'},{k:'pedido',t:'Puerta + cerebro + memoria: API Gateway → Lambda → DynamoDB guardan el pedido'},{k:'cola',t:'Mensajes: el pedido entra a una cola SQS; otra Lambda lo procesa sin afán (aunque haya mil)'},{k:'aviso',t:'Avisos: SNS le manda a Laura un correo: “nuevo pedido de Camila”'},{k:'el pago',t:'Orquesta: Step Functions encadena los pasos del pago: cobrar → confirmar → despachar'},{k:'a las 7 a. m.',t:'Eventos: EventBridge despierta una Lambda cada lunes a las 7:00 a. m. para el reporte'},{k:'chat en vivo',t:'Contenedores sin servidores: el chat en vivo corre en Fargate, siempre conectado'}];
+  grp(c,170,14,916,400,'#232F3E','AWS Cloud · la tienda serverless de Laura','G_AWSCloudlogo',{al:A});
+  box(c,14,160,138,110,{r:12,f:'#fff',s:C.t,lw:1.6,al:A});icon(c,'R_Client',83,196,34,A);tx(c,'Camila',83,232,{s:11,w:800,a:'center',f:FD,al:A});tx(c,ev===1&&u>.5?'✓ sesión iniciada':'',83,252,{s:8.5,w:800,a:'center',f:FM,c:C.g,al:A});
+  box(c,14,300,138,96,{r:12,f:'#fff',s:ev===4?C.o:C.line,lw:1.6,al:A});icon(c,'R_Email',83,330,28,A);tx(c,'Laura',83,360,{s:11,w:800,a:'center',f:FD,al:A});if(ev===4&&u>.6)chip(c,'📩 nuevo pedido',83,384,C.o,'#fff7ed',1,{s:8.5});
+  var NP={cf:[270,90,'CloudFront','CloudFront','vitrina',0],s3:[270,230,'SimpleStorageService','S3','la página',0],cog:[420,90,'Cognito','Cognito','login',1],api:[420,230,'APIGateway','API Gateway','la puerta',2],lam:[570,230,'AWSLambda','Lambda','pedidos',2],ddb:[720,230,'DynamoDB','DynamoDB','pedidos',2],sqs:[570,360,'SimpleQueueService','SQS','la cola',3],lam2:[720,360,'AWSLambda','Lambda','procesa',3],sns:[870,360,'SimpleNotificationService','SNS','avisa',4],sf:[870,230,'AWSStepFunctions','Step Functions','el pago',5],eb:[720,90,'EventBridge','EventBridge','7:00 a. m.',6],lam3:[870,90,'AWSLambda','Lambda','reporte',6],far:[1010,230,'AWSFargate','Fargate','chat en vivo',7]};
+  Object.keys(NP).forEach(function(k){var n=NP[k],on=ev===n[5],a=all||ev>=n[5]?1:.3;c.save();c.globalAlpha*=A*a;box(c,n[0]-56,n[1]-44,112,90,{r:12,f:'#fff',s:on?C.o:C.line,lw:on?2.6:1.2,sh:on?'rgba(233,113,50,.25)':'rgba(14,40,65,.05)'});lic(c,n[2],n[0],n[1]-12,32,n[3],1,null,n[4]);c.restore()});
+  var d=function(k){return all?.45:k?1:.08};
+  var F=[[[[152,190],[200,190],[200,90],[214,90]],0,C.p2],[[[270,134],[270,186]],0,C.p2],[[[152,180],[190,180],[190,60],[420,60],[420,46]],1,C.p2],[[[152,215],[364,230]],2,C.o],[[[476,230],[514,230]],2,C.o],[[[626,230],[664,230]],2,'#8a5cf6'],[[[570,274],[570,316]],3,'#e0457b'],[[[626,360],[664,360]],3,'#e0457b'],[[[776,360],[814,360]],4,'#e0457b'],[[[870,404],[870,410],[83,410],[83,396]],4,C.o],[[[570,186],[570,166],[870,166],[870,186]],5,C.o],[[[776,90],[814,90]],6,C.o],[[[152,170],[180,170],[180,20],[1010,20],[1010,186]],7,C.g]];
+  F.forEach(function(f){flow(c,f[0],f[2],t,{lw:2.2,a:A*d(ev===f[1])})});
+  if(ev===3&&u>.2){for(var i=0;i<6;i++){var kk=((t*.8)+i*.16)%1;box(c,520+kk*30-6,348+i*0,10,24,{r:3,f:'#e0457b',s:false,al:A*(1-kk)})}}
+  if(ev===5){['cobrar','confirmar','despachar'].forEach(function(s2,i){var on=u>i*.3;chip(c,(on?'✓ ':'')+s2,870,284+i*0+0,C.o,'#fff',0,{});chip(c,(on?'✓ ':'')+s2,960,150+i*26,on?C.g:C.faint,'#fff',A,{s:9})})}
+  narrW(c,EV,ev,u,A);pillsW(c,sec,EV,ev,A,470)};
+wireW('familia',8);
 
 /* motor: corre la escena de la diapositiva visible */
 var raf=0,cur=null,TOFF=parseFloat((location.search.match(/[?&]mt=([\d.]+)/)||[])[1])||0;function tick(){return document.hidden?setTimeout(function(){frame(performance.now())},33):requestAnimationFrame(frame)}
