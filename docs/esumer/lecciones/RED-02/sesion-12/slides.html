@@ -278,9 +278,10 @@ ul.clean li:first-child { border-top:0; }
   <span class="k">El plan de hoy · clase {{SESION}}</span>
   <h2>Objetivo de hoy: <span class="grad">una tienda que no necesita servidores</span>.</h2>
   <ul class="rows">
-    <li><span class="t">Lo tradicional<small>un día de la tienda con una EC2 prendida · lo que da trabajo un servidor · el Black Friday</small></span><span class="m">historia</span></li>
-    <li><span class="t">¿Qué es serverless?<small>carro propio vs. taxi · quién se encarga de qué · eventos · escalado solo · pagar por uso · arranque en frío · límites</small></span><span class="m">concepto</span></li>
-    <li><span class="t">Serverless en AWS<small>Lambda (el cerebro) · API Gateway (la puerta) · DynamoDB (la memoria) · la familia serverless · el viaje de un pedido</small></span><span class="m">servicios</span></li>
+    <li><span class="t">Lo tradicional<small>un día con una EC2 prendida · lo que da trabajo un servidor · el Black Friday · EC2 Auto Scaling y lo que no resuelve</small></span><span class="m">historia</span></li>
+    <li><span class="t">¿Qué es serverless?<small>carro propio vs. taxi · quién se encarga de qué · eventos · escala sola · Auto Scaling vs. Lambda · pagar por uso</small></span><span class="m">concepto</span></li>
+    <li><span class="t">Por dentro<small>la flota y las microVM · capacidad compartida · la vida de una instancia · por qué es automático · arranque en frío · límites</small></span><span class="m">a fondo</span></li>
+    <li><span class="t">Serverless en AWS<small>Lambda · API Gateway · DynamoDB · RDS serverless (Aurora Serverless v2) · la familia serverless · el viaje de un pedido</small></span><span class="m">servicios</span></li>
     <li><span class="t">Laboratorio · 2 retos<small>tu primera Lambda a clics · la tienda completa con Terraform: S3 + CloudFront + API Gateway + Lambda + DynamoDB</small></span><span class="m">lab</span></li>
   </ul>
 </section>
@@ -591,11 +592,11 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu dark sep">
   <div>
-    <div class="mtag" style="color:#7f9bb5"><b>Parte 1</b>de 4</div>
+    <div class="mtag" style="color:#7f9bb5"><b>Parte 1</b>de 5</div>
     <h2 style="max-width:15ch">Lo tradicional: <span class="g">un servidor prendido</span></h2>
     <p class="msub">Hasta hoy, la tienda de Laura vive en una EC2: un computador en la nube, prendido día y noche, esperando clientes.</p>
   </div>
-  <div class="mviz"><canvas data-mu="ruta" data-part="1" aria-label="Ruta de la clase: parte 1 de 4"></canvas></div>
+  <div class="mviz"><canvas data-mu="ruta" data-part="1" aria-label="Ruta de la clase: parte 1 de 5"></canvas></div>
 </section>
 
 <section class="slide mu">
@@ -623,18 +624,38 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
     <div class="mtag"><b>1.3</b>lo tradicional · el pico<b></b></div>
     <h2>El Black Friday <span class="g">de Laura</span></h2>
     <div class="mnote"><span>// como</span> una sola caja registradora el día de la gran promoción</div>
-    <p class="msub">Laura anuncia descuentos y llegan <b>20 veces</b> más clientes. La EC2 llega al 100 % de CPU, la página se pone lenta y empieza a responder <b>503</b>. Cuando Laura logra crear otra EC2, los clientes ya se fueron a otra tienda.</p><p class="muse">👉 <b>¿Y si no tuviera que pensar en servidores?</b></p>
+    <p class="msub">Laura anuncia descuentos y llegan <b>20 veces</b> más clientes. La EC2 llega al 100 % de CPU, la página se pone lenta y empieza a responder <b>503</b>. Cuando Laura logra crear otra EC2, los clientes ya se fueron a otra tienda.</p><p class="muse">👉 <b>¿Y si la EC2 creciera sola?</b></p>
   </div>
   <div class="mviz"><canvas data-mu="blackfriday" aria-label="Llegan veinte veces más clientes, la EC2 llega al cien por ciento de CPU y responde 503"></canvas></div>
 </section>
 
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>1.4</b>lo tradicional · la primera solución<b></b></div>
+    <h2>Auto Scaling: <span class="g">la EC2 que se multiplica</span></h2>
+    <div class="mnote"><span>// como</span> contratar cajeros temporales cuando se llena la tienda</div>
+    <p class="msub">Después del susto, Laura pone su tienda detrás de un <b>balanceador</b> (ALB) y arma un <b>grupo de Auto Scaling</b>: mínimo 2 EC2, máximo 6. <b>CloudWatch</b> vigila la CPU; si pasa del 70 %, Auto Scaling <b>prende EC2 nuevas</b> y el balanceador les reparte clientes. Cuando baja, las apaga.</p><p class="muse">👉 <b>¿Problema resuelto? Casi…</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="asg" aria-label="Un grupo de Auto Scaling detrás de un balanceador: CloudWatch ve la CPU alta y se prenden dos EC2 nuevas"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>1.5</b>lo tradicional · lo que falta<b></b></div>
+    <h2>Lo que Auto Scaling <span class="g">no resuelve</span></h2>
+    <div class="mnote"><span>// como</span> cajeros temporales que tardan media hora en llegar</div>
+    <p class="msub">Auto Scaling es una gran herramienta (y se usa muchísimo), pero tiene límites: <b>reacciona en minutos</b>, el <b>mínimo se paga siempre</b>, crece de a <b>un servidor completo</b> y los servidores <b>siguen siendo de Laura</b>: parches, imagen, discos.</p><p class="muse">👉 <b>¿Y si no tuviera que pensar en servidores?</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="asgno" aria-label="Cuatro límites de Auto Scaling: reacciona en minutos, mínimo pagado, crece por servidor completo y servidores propios"></canvas></div>
+</section>
+
 <section class="slide mu dark sep">
   <div>
-    <div class="mtag" style="color:#7f9bb5"><b>Parte 2</b>de 4</div>
+    <div class="mtag" style="color:#7f9bb5"><b>Parte 2</b>de 5</div>
     <h2 style="max-width:15ch">¿Qué es <span class="g">serverless</span>?</h2>
     <p class="msub">Serverless (“sin servidor”) no significa que no haya servidores: significa que dejan de ser tu problema.</p>
   </div>
-  <div class="mviz"><canvas data-mu="ruta" data-part="2" aria-label="Ruta de la clase: parte 2 de 4"></canvas></div>
+  <div class="mviz"><canvas data-mu="ruta" data-part="2" aria-label="Ruta de la clase: parte 2 de 5"></canvas></div>
 </section>
 
 <section class="slide mu">
@@ -672,24 +693,83 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
     <div class="mtag"><b>2.4</b>cómo funciona · escalado<b></b></div>
     <h2>Uno o mil: <span class="g">da igual</span></h2>
     <div class="mnote"><span>// como</span> abrir 20 cajas registradoras en un segundo</div>
-    <p class="msub">Si llegan 1.000 pedidos al tiempo, AWS prende <b>muchas copias</b> de la función en paralelo, sin que Laura toque nada. Cuando pasa el pico, las apaga. Eso es <b>escalado automático</b>, y es la gran diferencia con el Black Friday de la EC2.</p><p class="muse">👉 <b>¿Y cuánto cuesta eso?</b></p>
+    <p class="msub">Si llegan 1.000 pedidos al tiempo, AWS prende <b>muchas copias</b> de la función en paralelo, sin que Laura toque nada. Cuando pasa el pico, las apaga. Eso es <b>escalado automático</b>, y es la gran diferencia con el Black Friday de la EC2.</p><p class="muse">👉 <b>¿Y no era eso lo que hacía Auto Scaling?</b></p>
   </div>
   <div class="mviz"><canvas data-mu="escala" aria-label="Una EC2 saturada con pedidos en fila frente a muchas copias de Lambda atendiendo en paralelo"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>2.5</b>cómo funciona · costo<b></b></div>
-    <h2>Pagar <span class="g">por uso</span></h2>
-    <div class="mnote"><span>// como</span> la factura del agua: pagas los litros que gastas</div>
-    <p class="msub">Una EC2 pequeña cuesta lo mismo con 0 o con 10.000 pedidos. Lambda cobra por <b>petición</b> y por <b>milisegundo</b> de trabajo, y su capa gratuita regala <b>1 millón de peticiones al mes</b>, siempre. Para una tienda pequeña, la cuenta da casi <b>cero</b>.</p><div class="mfacts"><span><i>Lambda gratis</i>1 millón de peticiones/mes</span><span><i>1 EC2 t3.micro</i>≈ US$7,6/mes prendida</span></div><p class="muse">👉 <b>¿Todo es perfecto? No tanto…</b></p>
+    <div class="mtag"><b>2.5</b>cómo funciona · el mismo pico<b></b></div>
+    <h2>Auto Scaling <span class="g">vs. Lambda</span></h2>
+    <div class="mnote"><span>// como</span> escalera contra rampa</div>
+    <p class="msub">En el mismo pico de 60 minutos, Auto Scaling sube <b>en escalera</b>: mide, espera y prende EC2 completas, y mientras tanto hay clientes esperando. Lambda <b>sigue la curva</b>: cada petición nueva tiene su propia copia en milisegundos. Y fuera del pico, Auto Scaling sigue pagando su mínimo; Lambda, <b>nada</b>.</p><p class="muse">👉 <b>¿Y cuánto cuesta eso?</b></p>
   </div>
-  <div class="mviz"><canvas data-mu="costo" aria-label="Costo mensual de una EC2 fija frente al costo de serverless según la cantidad de pedidos"></canvas></div>
+  <div class="mviz"><canvas data-mu="asgvs" aria-label="Capacidad de Auto Scaling en escalera frente a Lambda que sigue la curva de clientes en un pico de sesenta minutos"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>2.6</b>lo que hay que saber · arranque en frío<b></b></div>
+    <div class="mtag"><b>2.6</b>cómo funciona · costo<b></b></div>
+    <h2>Pagar <span class="g">por uso</span></h2>
+    <div class="mnote"><span>// como</span> la factura del agua: pagas los litros que gastas</div>
+    <p class="msub">Una EC2 pequeña cuesta lo mismo con 0 o con 10.000 pedidos. Lambda cobra por <b>petición</b> y por <b>milisegundo</b> de trabajo, y su capa gratuita regala <b>1 millón de peticiones al mes</b>, siempre. Para una tienda pequeña, la cuenta da casi <b>cero</b>.</p><div class="mfacts"><span><i>Lambda gratis</i>1 millón de peticiones/mes</span><span><i>1 EC2 t3.micro</i>≈ US$7,6/mes prendida</span></div><p class="muse">👉 <b>¿Cómo logra AWS hacer eso? Miremos por dentro</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="costo" aria-label="Costo mensual de una EC2 fija frente al costo de serverless según la cantidad de pedidos"></canvas></div>
+</section>
+
+<section class="slide mu dark sep">
+  <div>
+    <div class="mtag" style="color:#7f9bb5"><b>Parte 3</b>de 5</div>
+    <h2 style="max-width:15ch">Por dentro: <span class="g">cómo funciona</span></h2>
+    <p class="msub">Si no hay un servidor de Laura, ¿dónde corre su código? ¿Y cómo consigue espacio en milisegundos?</p>
+  </div>
+  <div class="mviz"><canvas data-mu="ruta" data-part="3" aria-label="Ruta de la clase: parte 3 de 5"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>3.1</b>por dentro · la flota<b></b></div>
+    <h2>Sí hay servidores… <span class="g">de todos</span></h2>
+    <div class="mnote"><span>// como</span> un edificio de oficinas por horas: nadie es dueño de un piso</div>
+    <p class="msub">Lambda corre en <b>miles de servidores físicos</b> de AWS. Cada uno se divide en espacios pequeñísimos llamados <b>microVM</b> (con una tecnología de AWS llamada <b>Firecracker</b>), que arrancan en milisegundos y están <b>aisladas</b>: la función de Laura y la de un banco pueden correr en el mismo servidor sin verse jamás.</p><p class="muse">👉 <b>¿Y cómo alcanza para todos?</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="flota" aria-label="Servidores físicos de AWS llenos de microVM de distintos clientes que aparecen y desaparecen"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>3.2</b>por dentro · capacidad compartida<b></b></div>
+    <h2>Una capacidad <span class="g">compartida</span></h2>
+    <div class="mnote"><span>// como</span> un parqueadero por horas: nadie compra el suyo</div>
+    <p class="msub">Cada cliente tiene su pico a una hora distinta: el colegio en la mañana, el banco al mediodía, la tienda de Laura en la noche. Si cada uno comprara servidores para su pico, sobraría casi todo el día. <b>Juntos</b>, los picos se reparten y una sola flota alcanza para todos. Esa flota <b>ya está prendida</b>: por eso tu función consigue espacio al instante.</p><p class="muse">👉 <b>¿Y qué pasa con mi función cuando llega una petición?</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="compartir" aria-label="Demanda apilada de cuatro clientes durante el día frente a la capacidad compartida de la flota"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>3.3</b>por dentro · la vida de una instancia<b></b></div>
+    <h2>Nace, trabaja, <span class="g">espera y se recicla</span></h2>
+    <div class="mnote"><span>// como</span> el cajero que abre la caja una vez y atiende a muchos</div>
+    <p class="msub">Cada copia de tu Lambda vive en un <b>entorno de ejecución</b>: nace (<b>INIT</b>), atiende una petición (<b>INVOKE</b>), queda <b>congelada y caliente</b> esperando la siguiente y, tras unos minutos sin uso, AWS la <b>recicla</b>. Regla de oro: una instancia atiende <b>una petición a la vez</b>.</p><p class="muse">👉 <b>¿Y quién decide cuántas instancias hay?</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="ciclo" aria-label="Fases de una instancia de Lambda: INIT, INVOKE, congelada, INVOKE y apagada; una petición por instancia"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>3.4</b>por dentro · por qué es automático<b></b></div>
+    <h2>Nadie decide: <span class="g">cada petición decide</span></h2>
+    <div class="mnote"><span>// como</span> la fila del banco: si no hay cajero libre, se abre otra caja</div>
+    <p class="msub">Con EC2, Auto Scaling mira una métrica, espera y prende servidores. En Lambda no hay que decidir: cada petición llega al servicio de Lambda, que pregunta <b>“¿hay una instancia libre y caliente?”</b>. Si la hay, la usa; si no, crea una en la flota compartida; si nadie llama, se reciclan solas. Por eso escala <b>sola y a cero</b>.</p><p class="muse">👉 <b>Ese “crear una nueva” tiene un costo: el arranque en frío</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="enrutador" aria-label="El servicio de Lambda decide por cada petición si usa una instancia caliente o crea una nueva"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>3.5</b>lo que hay que saber · arranque en frío<b></b></div>
     <h2>El arranque <span class="g">en frío</span></h2>
     <div class="mnote"><span>// como</span> la cafetera de la mañana: el primer café tarda porque tiene que calentarse</div>
     <p class="msub">La primera petición, o la que llega tras un rato sin uso, espera a que AWS <b>prenda</b> una instancia y cargue tu código (unos cientos de milisegundos). Las siguientes encuentran la instancia <b>caliente</b> y son rapidísimas. Hoy lo van a ver en su propia tienda: 🥶 o 🔥.</p><p class="muse">👉 <b>Y hay cosas que serverless no hace</b></p>
@@ -699,7 +779,7 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>2.7</b>lo que hay que saber · límites<b></b></div>
+    <div class="mtag"><b>3.6</b>lo que hay que saber · límites<b></b></div>
     <h2>Lo que serverless <span class="g">no hace</span></h2>
     <div class="mnote"><span>// como</span> el taxi no sirve para hacer un trasteo</div>
     <p class="msub">Una Lambda vive máximo <b>15 minutos</b> por ejecución, no guarda nada entre una petición y otra (<b>sin estado</b>: los datos van a DynamoDB o S3), no está siempre prendida y te ata a la forma de trabajar de AWS. Para procesos largos o programas siempre conectados, sigue mandando el servidor.</p><p class="muse">👉 <b>Resumamos en una tabla</b></p>
@@ -709,7 +789,7 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>2.8</b>el resumen<b></b></div>
+    <div class="mtag"><b>3.7</b>el resumen<b></b></div>
     <h2>Tradicional <span class="g">vs. serverless</span></h2>
     <div class="mnote"><span>// como</span> dos herramientas, no un ganador</div>
     <p class="msub">Ninguno es mejor siempre. El servidor gana en trabajos largos, siempre prendidos o con software instalado; serverless gana en peticiones cortas, por eventos y con picos. Muchas empresas usan <b>los dos</b> en la misma aplicación.</p><p class="muse">👉 <b>Ahora te toca a ti decidir</b></p>
@@ -719,7 +799,7 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>2.9</b>juego<b></b></div>
+    <div class="mtag"><b>3.8</b>juego<b></b></div>
     <h2>¿Servidor <span class="g">o serverless?</span></h2>
     
     <p class="msub">Seis casos reales. Piensa la respuesta antes de avanzar con → (o haz clic): cada tarjeta se voltea y muestra cuál conviene y por qué.</p><p class="muse">👉 <b>Ya sabemos qué es. ¿Con qué piezas se arma en AWS?</b></p>
@@ -729,16 +809,16 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu dark sep">
   <div>
-    <div class="mtag" style="color:#7f9bb5"><b>Parte 3</b>de 4</div>
+    <div class="mtag" style="color:#7f9bb5"><b>Parte 4</b>de 5</div>
     <h2 style="max-width:15ch">Serverless <span class="g">en AWS</span></h2>
-    <p class="msub">Las piezas con las que Laura arma su tienda sin servidores: una vitrina, una puerta, un cerebro y una memoria.</p>
+    <p class="msub">Las piezas con las que Laura arma su tienda sin servidores: una vitrina, una puerta, un cerebro y una memoria que también crece sola.</p>
   </div>
-  <div class="mviz"><canvas data-mu="ruta" data-part="3" aria-label="Ruta de la clase: parte 3 de 4"></canvas></div>
+  <div class="mviz"><canvas data-mu="ruta" data-part="4" aria-label="Ruta de la clase: parte 4 de 5"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>3.1</b>el cerebro · AWS Lambda<b></b></div>
+    <div class="mtag"><b>4.1</b>el cerebro · AWS Lambda<b></b></div>
     <h2>AWS Lambda: <span class="g">el cerebro</span></h2>
     <div class="mnote"><span>// como</span> una receta: le das los ingredientes y te entrega el plato</div>
     <p class="msub">Una Lambda es <b>una función</b>: recibe un <b>evento</b> (los datos del pedido), ejecuta tu código (el <code>handler</code>) y devuelve una <b>respuesta</b>. Tú eliges el lenguaje (Python), la memoria y el tiempo máximo; su <b>rol de IAM</b> dice qué puede tocar. Todo lo que imprime queda en <b>CloudWatch Logs</b>.</p><p class="muse">👉 <b>Pero el navegador no puede hablarle directo a la Lambda…</b></p>
@@ -748,7 +828,7 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>3.2</b>la puerta · API Gateway<b></b></div>
+    <div class="mtag"><b>4.2</b>la puerta · API Gateway<b></b></div>
     <h2>API Gateway: <span class="g">la puerta</span></h2>
     <div class="mnote"><span>// como</span> el portero de un edificio que lleva cada visita al apartamento correcto</div>
     <p class="msub">La página no llama a la Lambda directamente: llama a una <b>URL</b> de <b>API Gateway</b>. La puerta revisa la <b>ruta</b> (GET para leer, POST para guardar), el permiso de la página que llama (<b>CORS</b>) y el límite de peticiones, y despierta a la Lambda correcta.</p><p class="muse">👉 <b>¿Y dónde quedan guardados los pedidos?</b></p>
@@ -758,17 +838,27 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>3.3</b>la memoria · DynamoDB<b></b></div>
+    <div class="mtag"><b>4.3</b>la memoria · DynamoDB<b></b></div>
     <h2>DynamoDB: <span class="g">la memoria</span></h2>
     <div class="mnote"><span>// como</span> el archivador que crece solo</div>
-    <p class="msub">La Lambda olvida todo al terminar, así que los pedidos se guardan en <b>DynamoDB</b>, que también es serverless: sin servidor que prender y, en modo <b>on-demand</b>, cobra por petición. Ya la conocen: llave de partición (<b>cliente</b>) y de orden (<b>fecha</b>).</p><p class="muse">👉 <b>Y hay más piezas en la familia</b></p>
+    <p class="msub">La Lambda olvida todo al terminar, así que los pedidos se guardan en <b>DynamoDB</b>, que también es serverless: sin servidor que prender y, en modo <b>on-demand</b>, cobra por petición. Ya la conocen: llave de partición (<b>cliente</b>) y de orden (<b>fecha</b>).</p><p class="muse">👉 <b>¿Y si Laura quiere seguir con SQL, como en RDS?</b></p>
   </div>
   <div class="mviz"><canvas data-mu="dynsv" aria-label="La Lambda guarda pedidos en la tabla tienda-pedidos y los lee con Query y con Scan"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>3.4</b>la familia serverless<b></b></div>
+    <div class="mtag"><b>4.4</b>la memoria · RDS serverless<b></b></div>
+    <h2>RDS serverless: <span class="g">Aurora Serverless v2</span></h2>
+    <div class="mnote"><span>// como</span> un restaurante que agrega y quita mesas según llegue la gente</div>
+    <p class="msub">La base de pedidos también tiene madrugadas y picos. Un <b>RDS normal</b> tiene un tamaño fijo, como una EC2. <b>Aurora Serverless v2</b> (MySQL o PostgreSQL) mide su capacidad en <b>ACU</b> y la sube o baja <b>en segundos</b> según la carga; si nadie la usa, puede <b>pausarse en 0</b>. Es SQL de siempre, con capacidad serverless. (No entra en la capa gratuita: hoy usamos DynamoDB.)</p><p class="muse">👉 <b>Y hay más piezas en la familia</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="aurora" aria-label="Carga de la base durante un día frente a la capacidad fija de RDS y la capacidad variable en ACU de Aurora Serverless v2"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>4.5</b>la familia serverless<b></b></div>
     <h2>La familia <span class="g">serverless</span></h2>
     <div class="mnote"><span>// como</span> cada pieza tiene un oficio</div>
     <p class="msub">Además de Lambda, API Gateway y DynamoDB: <b>S3</b> y <b>CloudFront</b> para la vitrina; <b>SQS</b>, <b>SNS</b> y <b>EventBridge</b> para mensajes y eventos; <b>Step Functions</b> para encadenar pasos; <b>Cognito</b> para el login de los clientes y <b>Fargate</b> para contenedores sin servidores.</p><p class="muse">👉 <b>Juntemos las piezas: el viaje de un pedido</b></p>
@@ -778,7 +868,7 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu wide">
   <div>
-    <div class="mtag"><b>3.5</b>la arquitectura de hoy<b></b></div>
+    <div class="mtag"><b>4.6</b>la arquitectura de hoy<b></b></div>
     <h2>El viaje <span class="g">de un pedido</span></h2>
     
     <p class="msub">La vitrina sale de S3 por CloudFront; el pedido entra por API Gateway, la Lambda lo procesa y DynamoDB lo guarda.</p>
@@ -788,16 +878,16 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu dark sep">
   <div>
-    <div class="mtag" style="color:#7f9bb5"><b>Parte 4</b>de 4</div>
+    <div class="mtag" style="color:#7f9bb5"><b>Parte 5</b>de 5</div>
     <h2 style="max-width:15ch">Laboratorio: <span class="g">la tienda sin servidores</span></h2>
     <p class="msub">Primero tu primera Lambda a clics, para entenderla. Después, la tienda completa con Terraform: vitrina, puerta, cerebro y memoria.</p>
   </div>
-  <div class="mviz"><canvas data-mu="ruta" data-part="4" aria-label="Ruta de la clase: parte 4 de 4"></canvas></div>
+  <div class="mviz"><canvas data-mu="ruta" data-part="5" aria-label="Ruta de la clase: parte 5 de 5"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>4.1</b>LAB 1 · el diagrama<b></b></div>
+    <div class="mtag"><b>5.1</b>LAB 1 · el diagrama<b></b></div>
     <h2>LAB 1: <span class="g">tu primera Lambda</span></h2>
     
     <p class="msub"><ol class="msteps"><li><span>1</span><p>Creas la función <b>hola-laura</b> en la consola (Python 3.12) y pegas el código.</p></li><li><span>2</span><p>El botón <b>Test</b> le manda un evento: <code>{"cliente": "camila"}</code>.</p></li><li><span>3</span><p>Tu código responde: <b>“Hola, camila. Tu gorra va en camino”</b>.</p></li><li><span>4</span><p>Lo que imprimió aparece en <b>CloudWatch Logs</b>.</p></li></ol></p><p class="msub">Sin Terraform ni servidores · gratis · al final la borras</p>
@@ -840,7 +930,7 @@ def lambda_handler(event, context):
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>4.2</b>LAB 2 · el diagrama<b></b></div>
+    <div class="mtag"><b>5.2</b>LAB 2 · el diagrama<b></b></div>
     <h2>LAB 2: <span class="g">la tienda serverless</span></h2>
     
     <p class="msub"><ol class="msteps"><li><span>1</span><p><b>terraform apply</b> crea 13 recursos: tabla, rol, Lambda, API, bucket privado y CloudFront.</p></li><li><span>2</span><p>Abres <b>tu_tienda</b>: CloudFront te entrega la página desde el S3 privado.</p></li><li><span>3</span><p><b>Guardar pedido</b>: POST a API Gateway → Lambda → PutItem en DynamoDB.</p></li><li><span>4</span><p>La <b>ráfaga</b> de 20 pedidos: ¿cuántas instancias prende AWS?</p></li><li><span>5</span><p>Miras por dentro: pedidos en DynamoDB y logs en CloudWatch.</p></li></ol></p><p class="msub">≈ 4 min de apply · capa gratuita · al final: <b>terraform destroy</b></p>
@@ -1235,13 +1325,21 @@ def handler(event, context):
     if (!p.cliente) { p.cliente = &quot;rafaga&quot;; }
     estado.textContent = &quot;⚡ enviando 20 pedidos al mismo tiempo…&quot;;
     var envios = [];
-    for (var i = 0; i &lt; 20; i++) { envios.push(guardar(p)); }
+    for (var i = 0; i &lt; 20; i++) {
+      envios.push(fetch(API + &quot;/&quot;, { method: &quot;POST&quot;, headers: { &quot;content-type&quot;: &quot;application/json&quot; }, body: JSON.stringify(p) })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .catch(function () { return null; }));
+    }
     Promise.all(envios).then(function (rs) {
-      var inst = {}, frios = 0;
-      rs.forEach(function (r) { inst[r.instancia] = (inst[r.instancia] || 0) + 1; if (r.frio) { frios++; } });
+      var inst = {}, frios = 0, frenados = 0;
+      rs.forEach(function (r) {
+        if (!r || !r.instancia) { frenados++; return; }
+        inst[r.instancia] = (inst[r.instancia] || 0) + 1; if (r.frio) { frios++; }
+      });
       var n = Object.keys(inst).length;
-      estado.textContent = &quot;⚡ 20 pedidos guardados. AWS prendió &quot; + n + &quot; instancia(s) de la Lambda (&quot; + frios + &quot; arranque(s) en frío)\n&quot; +
-        Object.keys(inst).map(function (k) { return &quot;instancia &quot; + k + &quot; → &quot; + inst[k] + &quot; pedido(s)&quot;; }).join(&quot;\n&quot;);
+      estado.textContent = &quot;⚡ &quot; + (20 - frenados) + &quot; de 20 pedidos guardados. AWS prendió &quot; + n + &quot; instancia(s) de la Lambda (&quot; + frios + &quot; arranque(s) en frío)\n&quot; +
+        Object.keys(inst).map(function (k) { return &quot;instancia &quot; + k + &quot; → &quot; + inst[k] + &quot; pedido(s)&quot;; }).join(&quot;\n&quot;) +
+        (frenados ? &quot;\n🚦 &quot; + frenados + &quot; frenado(s) por el límite de concurrencia de tu cuenta (las cuentas nuevas pueden empezar con 10)&quot; : &quot;&quot;);
       return fetch(API + &quot;/&quot;).then(function (r) { return r.json(); }).then(function (r) {
         document.getElementById(&quot;lista&quot;).innerHTML = r.pedidos.map(function (x) {
           return &quot;&lt;tr&gt;&lt;td&gt;&quot; + esc(x.cliente) + &quot;&lt;/td&gt;&lt;td&gt;&quot; + esc(String(x.fecha).split(&quot;#&quot;)[0]) + &quot;&lt;/td&gt;&lt;td&gt;&quot; + esc(x.producto) + &quot;&lt;/td&gt;&lt;td&gt;&quot; + esc(x.talla) + &quot;&lt;/td&gt;&lt;td&gt;&lt;span class=&#x27;inst&#x27;&gt;&quot; + esc(x.instancia) + &quot;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&quot;;
@@ -2275,7 +2373,7 @@ S.dwaf=function(c,t){var A=E.out(P(t,.1,.5)),st=Math.floor(Math.max(0,t-1.2)/2.8
   box(c,150,350,390,100,{r:12,f:'#0E2841',s:false,al:A});wrap(c,on?T[st]:'',166,376,360,18,{s:12.5,w:700,f:FD,c:'#fff',al:A})};
 /* ===== Historia: la noche en que atacaron la tienda de Laura ===== */
 function clock(c,x,y,txt,col,a){box(c,x-34,y-13,68,26,{r:13,f:'#0E2841',s:false,al:a});tx(c,'🕘 '+txt,x,y+1,{s:10.5,w:800,a:'center',f:FM,c:col||'#fff',al:a})}
-S.ruta=function(c,t,sec){var cur=+(sec.querySelector('canvas[data-mu]').dataset.part||1),L=[['1','Lo tradicional: un servidor'],['2','¿Qué es serverless?'],['3','Serverless en AWS'],['4','Lab: la tienda sin servidores']],n=L.length,x=70,y0=40,dy=400/(n-1);
+S.ruta=function(c,t,sec){var cur=+(sec.querySelector('canvas[data-mu]').dataset.part||1),L=[['1','Lo tradicional: un servidor'],['2','¿Qué es serverless?'],['3','Por dentro: cómo funciona'],['4','Serverless en AWS'],['5','Lab: la tienda sin servidores']],n=L.length,x=70,y0=40,dy=400/(n-1);
   var g=c.createLinearGradient(0,y0,0,y0+dy*(n-1));g.addColorStop(0,'#0F9ED5');g.addColorStop(1,'#39c8e8');
   c.save();c.strokeStyle='rgba(180,200,218,.25)';c.lineWidth=4;c.beginPath();c.moveTo(x,y0);c.lineTo(x,y0+dy*(n-1));c.stroke();var k=E.io(P(t,.2,1));c.strokeStyle=g;c.beginPath();c.moveTo(x,y0);c.lineTo(x,y0+dy*(cur-1)*k);c.stroke();c.restore();
   L.forEach(function(l,i){var y=y0+i*dy,on=i+1===cur,done=i+1<cur,a=E.out(P(t,.1+i*.08,.5)),pl=on?1+.06*Math.sin(t*3):1;
@@ -3040,6 +3138,142 @@ S.familia=function(c,t){var A=E.out(P(t,.1,.5)),G=[['vitrina','la página',[['Si
     var m=g[2].length;g[2].forEach(function(s,j){var ix=x+86+(j-(m-1)/2)*54;icon(c,s[0],ix,y+72,30,al);tx(c,s[1],ix,y+102,{s:9,w:700,a:'center',f:FD,al:al})})});
   tx(c,'hoy usamos: S3 · CloudFront · API Gateway · Lambda · DynamoDB',280,428,{s:11,w:800,a:'center',f:FD,c:C.p,al:A*(t<.8?1:0)});
   if(t>.8)band(c,['Vitrina: S3 guarda la página y CloudFront la entrega con HTTPS','Puerta: API Gateway recibe las peticiones de la página','Cerebro: Lambda corre tu código (y Fargate, contenedores sin servidores)','Memoria: DynamoDB y S3 guardan datos sin servidores','Mensajes: SQS encola, SNS avisa, EventBridge dispara a una hora o por un evento','Orquesta: Step Functions encadena varias Lambdas como una receta','Usuarios: Cognito maneja el registro y el login de los clientes'],Math.max(0,n),A)};
+
+/* 1.4 · EC2 Auto Scaling: la primera solución de Laura */
+S.asg=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,5,3.2),st=t<.8?-1:r[0],u=r[1];
+  var cpu=st<0?45:st===0?40:st===1?40+50*E.io(u):st===2?(u<.7?90:90-30*E.io(P(u,.7,.3))):st===3?60-15*E.io(u):st===4?45-30*E.io(u):45,
+      n=st<0?2:st===0?2:st===1?2:st===2?(u<.7?2:2+Math.round(2*E.io(P(u,.7,.3)))):st===3?4:st===4?(u<.5?4:2):2,booting=st===2&&u>.15&&u<.7;
+  /* clientes */
+  icon(c,'R_Users',40,70,30,A);tx(c,'clientes',40,98,{s:10,w:800,a:'center',f:FD,al:A});
+  /* balanceador */
+  box(c,92,40,110,76,{r:12,f:'#f5f0ff',s:'#8a5cf6',al:A});tx(c,'balanceador',147,64,{s:11,w:800,a:'center',f:FD,c:'#8a5cf6',al:A});tx(c,'(ALB)',147,82,{s:9.5,w:700,a:'center',f:FM,c:C.mut,al:A});tx(c,'reparte',147,100,{s:9,w:600,a:'center',f:FM,c:C.mut,al:A});
+  flow(c,[[58,72],[92,72]],C.t,t,{lw:2.2,a:A});
+  /* grupo de autoescalado */
+  grp(c,224,24,326,206,C.o,'grupo de Auto Scaling','',{al:A,dash:[6,4]});
+  tx(c,'mín 2 · deseado '+n+' · máx 6',536,42,{s:10,w:800,a:'right',f:FM,c:C.o,al:A});
+  for(var i=0;i<6;i++){var x=262+(i%3)*96,y=96+Math.floor(i/3)*82,on=i<n,bt=booting&&(i===2||i===3);
+    if(on){box(c,x-36,y-30,72,62,{r:10,f:'#fff7ed',s:C.o,al:A});icon(c,'EC2',x,y-6,28,A);tx(c,'EC2 '+(i+1),x,y+20,{s:9,w:800,a:'center',f:FM,al:A});flow(c,[[202,78],[x-36,y]],C.p,t,{lw:1.4,a:A*.6,noHead:true})}
+    else if(bt){var k=P(u,.15,.55);box(c,x-36,y-30,72,62,{r:10,f:'#fff',s:C.o,lw:1.5,al:A*.8});c.save();c.globalAlpha*=A;c.setLineDash([4,4]);c.strokeStyle=C.o;rr(c,x-36,y-30,72,62,10);c.stroke();c.restore();
+      tx(c,'prendiendo…',x,y-8,{s:9,w:800,a:'center',f:FM,c:C.o,al:A});c.save();c.globalAlpha*=A;rr(c,x-26,y+8,52,6,3);c.fillStyle=C.soft;c.fill();rr(c,x-26,y+8,52*k,6,3);c.fillStyle=C.o;c.fill();c.restore();tx(c,Math.round(k*4)+' de 4 min',x,y+24,{s:8.5,w:700,a:'center',f:FM,c:C.mut,al:A})}
+    else{c.save();c.globalAlpha*=A*.6;c.setLineDash([3,4]);c.strokeStyle=C.faint;rr(c,x-36,y-30,72,62,10);c.stroke();c.restore()}}
+  /* CloudWatch */
+  box(c,10,250,260,150,{r:14,al:A});icon(c,'CloudWatch',40,276,26,A);tx(c,'CloudWatch mide la CPU',62,276,{s:11,w:800,f:FD,al:A});
+  c.save();c.globalAlpha*=A;rr(c,28,310,224,18,9);c.fillStyle=C.soft;c.fill();rr(c,28,310,224*cpu/100,18,9);c.fillStyle=cpu>70?C.red:cpu>50?C.o:C.g;c.fill();c.restore();
+  poly(c,[[28+224*.7,302],[28+224*.7,336]],C.red,2,[3,3],A);tx(c,'alarma: 70 %',28+224*.7,346,{s:9,w:800,a:'center',f:FM,c:C.red,al:A});tx(c,Math.round(cpu)+' %',140,372,{s:20,w:800,a:'center',f:FM,c:cpu>70?C.red:C.ink,al:A});
+  /* regla */
+  box(c,290,250,260,150,{r:14,f:'#0E2841',s:false,al:A});tx(c,'la regla de Laura',306,272,{s:11,w:800,f:FD,c:'#ffb86b',al:A});
+  [['si la CPU pasa de 70 %','→ agrega 2 EC2'],['si baja de 30 %','→ quita EC2'],['nunca menos de 2','nunca más de 6']].forEach(function(l,i){var on=(st===1||st===2)&&i===0||st===4&&i===1;tx(c,l[0],306,302+i*30,{s:10.5,w:700,f:FD,c:on?'#fff':'#b4c8da',al:A});tx(c,l[1],536,302+i*30,{s:10.5,w:800,a:'right',f:FM,c:on?'#7be0a6':'#7f9bb5',al:A})});
+  if(t>.8)band(c,['Laura arma un grupo de Auto Scaling: mínimo 2 EC2 detrás de un balanceador','Llega el pico: CloudWatch ve la CPU por encima del 70 % y dispara la alarma','Auto Scaling prende 2 EC2 nuevas… que tardan minutos en arrancar','Ya con 4 EC2, el balanceador reparte y la CPU baja','Pasa el pico: Auto Scaling apaga las que sobran (pero nunca menos de 2)'],st,A)};
+
+/* 1.5 · lo que Auto Scaling no resuelve */
+S.asgno=function(c,t){var A=E.out(P(t,.1,.5)),L=[['⏳','reacciona en minutos','medir 1–5 min + prender la EC2 2–4 min: los primeros clientes del pico igual esperan',C.o],['🌙','el mínimo se paga siempre','2 EC2 prendidas a las 3:00 a. m. para cero clientes',C.p],['🧱','crece de a un servidor entero','para 1 cliente más, prende una EC2 completa',C.p2],['🔧','siguen siendo tus servidores','parches, imagen (AMI), discos y reglas: todo sigue siendo de Laura',C.red]],per=2.6,n=t<.8?-1:Math.min(3,Math.floor((t-.8)/per));
+  L.forEach(function(l,i){var a=E.back(P(t,.3+i*.2,.5));if(a<=0)return;var al=Math.min(1,a),x=10+(i%2)*274,y=14+Math.floor(i/2)*196,on=i===n;
+    box(c,x,y,266,186,{r:16,f:on?rgba(l[3],.07):'#fff',s:on?l[3]:C.line,lw:on?2.2:1.2,al:al,sh:'rgba(14,40,65,.06)'});tx(c,l[0],x+34,y+40,{s:28,a:'center',al:al});wrap(c,l[1],x+62,y+40,190,17,{s:13.5,w:800,f:FD,al:al});
+    wrap(c,l[2],x+20,y+104,226,16,{s:11,w:600,f:FD,c:C.mut,al:al*(on||n>i?1:.35)})});
+  if(t>.8)band(c,['Auto Scaling ayuda… pero reacciona en minutos, no en milisegundos','El mínimo de EC2 se paga las 24 horas, haya o no clientes','Crece de a un servidor completo: no puede prender “medio servidor”','Y los servidores siguen siendo de Laura: parches, imagen, discos'],Math.max(0,n),A)};
+
+/* 2.5 · el mismo pico: Auto Scaling vs Lambda */
+S.asgvs=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,4,3.4),st=t<.8?-1:r[0],u=r[1],x0=50,x1=540,y0=36,y1=290,TT=60;
+  function X(m){return x0+(x1-x0)*m/TT}function Y(v){return y1-(y1-y0)*v/10}
+  function dem(m){return m<10?1.2:m<14?1.2+7.8*(m-10)/4:m<34?9:m<40?9-7.6*(m-34)/6:1.4}
+  function asg(m){var cap=2;if(m>15)cap=4;if(m>20)cap=6;if(m>27)cap=8;if(m>32)cap=10;if(m>45)cap=6;if(m>52)cap=2;return cap}
+  box(c,10,14,540,312,{r:16,al:A,sh:'rgba(14,40,65,.07)'});tx(c,'capacidad vs. clientes en un pico de 60 minutos',24,30,{s:10.5,w:800,f:FD,c:C.mut,al:A});
+  var lim=st<0?TT:st===0?TT*E.io(u):TT;
+  /* demanda */
+  var pd=[[X(0),y1]];for(var m=0;m<=lim;m+=.5)pd.push([X(m),Y(dem(m))]);pd.push([X(Math.min(lim,TT)),y1]);c.save();c.globalAlpha*=A*.35;c.beginPath();pd.forEach(function(p,i){i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1])});c.fillStyle=C.t;c.fill();c.restore();
+  /* Auto Scaling: escalera */
+  if(st===1||st===3||st<0){var pa=[];for(var m2=0;m2<=TT;m2+=.25)pa.push([X(m2),Y(asg(m2))]);poly(c,pa,C.o,3,null,A);
+    /* zona sin atender */
+    c.save();c.globalAlpha*=A*.5;c.fillStyle=C.red;for(var m3=0;m3<TT;m3+=.25){var d=dem(m3),a=asg(m3);if(d>a){c.fillRect(X(m3),Y(d),X(.25)-X(0)+.5,Y(a)-Y(d))}}c.restore();
+    tx(c,'Auto Scaling',X(56),Y(asg(56))-12,{s:10.5,w:800,a:'right',f:FD,c:C.o,al:A});if(st===1)chip(c,'clientes esperando o con error',X(22),Y(9.6),C.red,'#fff1f1',E.out(u),{s:9.5})}
+  /* Lambda: sigue la curva */
+  if(st===2||st===3||st<0){var pl=[];for(var m4=0;m4<=TT;m4+=.5)pl.push([X(m4),Y(dem(m4)+.15)]);poly(c,pl,C.p,3,null,A);tx(c,'Lambda',X(24),Y(9.15)-12,{s:10.5,w:800,a:'center',f:FD,c:C.p,al:A});if(st===2)chip(c,'sigue la curva en milisegundos',X(46),Y(5.2),C.p,'#e8f3f9',E.out(u),{s:9.5})}
+  if(st===3){c.save();c.globalAlpha*=A*.18;c.fillStyle=C.o;c.fillRect(X(0),Y(2),X(10)-X(0),Y(1.2)-Y(2));c.fillRect(X(52),Y(2),X(60)-X(52),Y(1.4)-Y(2));c.restore();chip(c,'pagando EC2 sin uso',X(5),Y(3.2),C.o,'#fff7ed',E.out(u),{s:9})}
+  c.save();c.globalAlpha*=A;c.strokeStyle=C.line;c.beginPath();c.moveTo(x0,y1);c.lineTo(x1,y1);c.stroke();c.restore();[0,10,20,30,40,50,60].forEach(function(m){tx(c,m+' min',X(m),y1+14,{s:9,w:600,a:'center',f:FM,c:C.faint,al:A})});
+  box(c,10,338,540,68,{r:14,f:C.soft,s:false,al:A});
+  [['unidad que crece','EC2 completa','1 petición'],['reacción','minutos','milisegundos'],['de noche','pagas el mínimo','$0']].forEach(function(k,i){var x=28+i*178;tx(c,k[0],x,356,{s:9.5,w:800,f:FD,c:C.mut,al:A});tx(c,k[1],x,378,{s:10.5,w:800,f:FM,c:C.o,al:A});tx(c,k[2],x,396,{s:10.5,w:800,f:FM,c:C.p,al:A})});
+  if(t>.8)band(c,['Un pico de 60 minutos: los clientes llegan de golpe y luego se van','Auto Scaling sube en escalera: cada escalón tarda minutos (en rojo, lo no atendido)','Lambda sigue la curva: cada petición nueva tiene su propia copia','Y fuera del pico, Auto Scaling sigue pagando su mínimo; Lambda, cero'],st,A)};
+
+/* 3.1 · dónde corre de verdad: la flota de AWS y las microVM */
+S.flota=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,4,3.2),st=t<.8?-1:r[0],u=r[1],CL=[['Laura',C.o],['otra tienda',C.p2],['un banco','#8a5cf6'],['una app',C.g],['un colegio','#e0457b']];
+  tx(c,'un centro de datos de AWS en us-east-1',280,22,{s:11,w:800,a:'center',f:FD,c:C.mut,al:A});
+  for(var h=0;h<6;h++){var hx=14+(h%3)*180,hy=36+Math.floor(h/3)*160,on=st>=1||st<0?h===1:false,zoom=st===1&&h===1;
+    box(c,hx,hy,170,150,{r:12,f:zoom?'#f2f8fc':'#fff',s:zoom?C.p:C.line,lw:zoom?2.2:1.2,al:A,sh:'rgba(14,40,65,.05)'});gx(c,'server',hx+18,hy+18,16,C.faint,A);tx(c,'servidor físico '+(h+1),hx+32,hy+18,{s:9.5,w:800,f:FM,c:C.mut,al:A});
+    for(var s2=0;s2<12;s2++){var sx=hx+12+(s2%4)*39,sy=hy+36+Math.floor(s2/4)*38,seed=(h*12+s2),life=(t*.22+seed*.137)%1,busy=st===0?false:(st<0||st>=1)&&life<.68,ci=(seed*7)%5;
+      if(st===0){box(c,sx,sy,33,32,{r:6,f:C.soft,s:false,al:A})}
+      else if(busy){var k=Math.min(1,life*10,(.68-life)*10);box(c,sx,sy,33,32,{r:6,f:rgba(CL[ci][1],.22),s:CL[ci][1],lw:1.2,al:A*k});if(st>=2||st<0)tx(c,'λ',sx+16.5,sy+17,{s:13,w:800,a:'center',f:FD,c:CL[ci][1],al:A*k})}
+      else box(c,sx,sy,33,32,{r:6,f:C.soft,s:false,al:A*.7})}}
+  /* leyenda */
+  CL.forEach(function(k,i){dot(c,34+i*106,394,6,k[1],A);tx(c,k[0],46+i*106,394,{s:10,w:700,f:FD,al:A})});
+  if(st===2)chip(c,'cada cuadrito = una microVM Firecracker: aislada, arranca en ~125 ms',280,366,C.p,'#e8f3f9',E.out(u),{s:9.5});
+  if(st===3)chip(c,'tu función no tiene servidor propio: alquila un pedacito por milisegundos',280,366,C.o,'#fff7ed',E.out(u),{s:9.5});
+  if(t>.8)band(c,['Serverless sí corre en servidores: miles, en los centros de datos de AWS','Cada servidor físico tiene muchos espacios pequeños para correr funciones','Cada función corre en una microVM (Firecracker): aislada de las de otros clientes','Laura, un banco y un colegio pueden compartir el mismo servidor sin verse'],st,A)};
+
+/* 3.2 · cómo se comparte la capacidad */
+S.compartir=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,4,3.4),st=t<.8?-1:r[0],u=r[1],x0=60,x1=530,y0=40,y1=250,H=24;
+  var CU=[['tienda de Laura',C.o,19,4],['un colegio','#e0457b',8,3],['un banco','#8a5cf6',12,2.5],['una app de domicilios',C.g,13,3.5]];
+  function d(i,h){var k=CU[i],z=(h-k[2])/k[3];return 1+9*Math.exp(-z*z)}
+  function X(h){return x0+(x1-x0)*h/H}function Y(v){return y1-(y1-y0)*v/40}
+  box(c,10,14,540,290,{r:16,al:A,sh:'rgba(14,40,65,.07)'});tx(c,'lo que pide cada cliente durante el día',24,30,{s:10.5,w:800,f:FD,c:C.mut,al:A});
+  var show=st<0?4:st===0?Math.min(4,1+Math.floor(u*4)):4;
+  /* apilado */
+  for(var hh=0;hh<H;hh+=.25){var acc=0;for(var i=0;i<show;i++){var v=d(i,hh);c.save();c.globalAlpha*=A*(st===1&&i!==0?.25:.85);c.fillStyle=CU[i][1];c.fillRect(X(hh),Y(acc+v),X(.25)-X(0)+.4,Y(acc)-Y(acc+v));c.restore();acc+=v}}
+  if(st===1){var pk=0;for(var h2=0;h2<H;h2+=.25){var s2=0;for(var j=0;j<4;j++)s2+=d(j,h2);pk=Math.max(pk,s2)}chip(c,'si cada uno comprara para SU pico: 4 × 10 = 40 unidades',280,Y(37),C.red,'#fff1f1',E.out(u),{s:9.5});poly(c,[[x0,Y(40)],[x1,Y(40)]],C.red,2,[5,4],E.out(u))}
+  if(st>=2||st<0){var mx=0;for(var h3=0;h3<H;h3+=.25){var s3=0;for(var q=0;q<4;q++)s3+=d(q,h3);mx=Math.max(mx,s3)}poly(c,[[x0,Y(mx)],[x1,Y(mx)]],C.p,2.5,[6,4],A);tx(c,'la flota compartida: ≈ '+Math.round(mx)+' unidades',x1,Y(mx)-12,{s:10,w:800,a:'right',f:FD,c:C.p,al:A})}
+  [0,6,12,18,24].forEach(function(h){tx(c,h+':00',X(h),y1+14,{s:9,w:600,a:'center',f:FM,c:C.faint,al:A})});
+  CU.forEach(function(k,i){if(i>=show)return;dot(c,30+i*134,286,5,k[1],A);tx(c,k[0],40+i*134,286,{s:9.5,w:700,f:FD,al:A})});
+  box(c,10,314,540,92,{r:14,f:C.soft,s:false,al:A});
+  var M=['los picos de unos caen en las horas tranquilas de otros','comprar por separado: cada uno paga su pico, ocioso casi todo el día','juntos, la misma flota alcanza para todos… y casi siempre trabaja','por eso AWS puede darte capacidad al instante: ya está prendida y repartida'];
+  tx(c,M[Math.max(0,st)],280,348,{s:12,w:800,a:'center',f:FD,c:C.p,al:A});tx(c,'como un edificio de parqueaderos por horas: nadie compra su propio parqueadero',280,376,{s:10,w:600,a:'center',f:FM,c:C.mut,al:A});
+  if(t>.8)band(c,['Cada cliente de AWS tiene su pico a una hora distinta','Si cada uno tuviera servidores para su pico, sobraría casi todo el día','Sumados, los picos se reparten: la flota compartida es mucho menor','Esa flota ya está prendida: por eso tu función consigue espacio en milisegundos'],st,A)};
+
+/* 3.3 · ciclo de vida de un entorno de ejecución */
+S.ciclo=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,5,3),st=t<.8?-1:r[0],u=r[1],
+  F=[['INIT','prende la microVM, baja tu código, arranca Python y corre lo de afuera del handler','#8B98A9'],['INVOKE','corre tu handler con el evento','#0F9ED5'],['CONGELADA','espera la próxima petición: lista y caliente',C.p2],['INVOKE','otra petición, sin INIT: rapidísimo','#0F9ED5'],['APAGADA','tras unos minutos sin uso, AWS la recicla',C.red]];
+  tx(c,'la vida de UNA instancia (entorno de ejecución) de tu Lambda',280,24,{s:11,w:800,a:'center',f:FD,c:C.mut,al:A});
+  var W=[120,80,110,80,80],x=20;
+  F.forEach(function(f,i){var a=st<0||i<=st?1:.18,on=i===st,w=W[i];box(c,x,48,w-6,70,{r:10,f:on?rgba(f[2],.2):rgba(f[2],.08),s:on?f[2]:false,lw:2,al:A*a});tx(c,f[0],x+(w-6)/2,72,{s:11,w:800,a:'center',f:FM,c:f[2],al:A*a});
+    if(on){var k=E.io(u);c.save();c.globalAlpha*=A;rr(c,x+8,94,(w-22)*k,6,3);c.fillStyle=f[2];c.fill();c.restore()}x+=w});
+  var cur=F[Math.max(0,st)];box(c,20,134,520,62,{r:12,f:'#fff',s:C.line,al:A});wrap(c,cur[1],36,156,490,16,{s:12,w:700,f:FD,c:C.ink,al:A});
+  /* regla: 1 petición por instancia */
+  box(c,20,212,520,190,{r:14,f:'#0E2841',s:false,al:A});tx(c,'la regla de oro: una instancia atiende UNA petición a la vez',280,234,{s:12,w:800,a:'center',f:FD,c:'#fff',al:A});
+  var q=Math.floor((t*1.1)%6);for(var i=0;i<4;i++){var y=268+i*32,bz=(i+q)%3===0;box(c,40,y-12,150,24,{r:7,f:bz?'#15304d':'#1d3d5e',s:bz?C.p2:false,al:A});tx(c,'instancia '+String.fromCharCode(65+i),52,y+1,{s:10,w:800,f:FM,c:'#fff',al:A});tx(c,bz?'ocupada':'libre',178,y+1,{s:9.5,w:700,a:'right',f:FM,c:bz?'#7fd3f2':'#7be0a6',al:A})}
+  wrap(c,'¿2 peticiones al mismo tiempo? 2 instancias. ¿1.000? AWS prende hasta 1.000 nuevas cada 10 segundos por función. Eso que cuentas es la “concurrencia”.',220,262,300,17,{s:11,w:600,f:FD,c:'#b4c8da',al:A});
+  if(t>.8)band(c,['INIT: AWS prende la microVM, baja tu código y arranca Python (el arranque en frío)','INVOKE: corre tu handler con el evento','Al terminar no se apaga: queda congelada y caliente esperando','La próxima petición la reutiliza sin INIT: por eso es tan rápida','Si nadie la usa por unos minutos, AWS la recicla para otro cliente'],st,A)};
+
+/* 3.4 · por qué es automático: el enrutador decide */
+S.enrutador=function(c,t,sec){var A=E.out(P(t,.1,.5)),r=stp(t,4,3.2),st=t<.8?-1:r[0],u=r[1];
+  icon(c,'APIGateway',50,90,34,A);tx(c,'petición',50,124,{s:10.5,w:800,a:'center',f:FD,al:A});
+  box(c,120,50,150,170,{r:14,f:'#0E2841',s:false,al:A});tx(c,'servicio de Lambda',195,72,{s:10.5,w:800,a:'center',f:FD,c:'#ffb86b',al:A});tx(c,'(el enrutador)',195,88,{s:9.5,w:700,a:'center',f:FM,c:'#b4c8da',al:A});
+  var Q=['¿hay una instancia','libre y caliente?'];tx(c,Q[0],195,128,{s:11,w:800,a:'center',f:FD,c:'#fff',al:A});tx(c,Q[1],195,146,{s:11,w:800,a:'center',f:FD,c:'#fff',al:A});
+  tx(c,st===1?'SÍ → úsala':st===2?'NO → crea una':st===3?'nadie llama → 0':'',195,186,{s:12,w:800,a:'center',f:FM,c:st===2?'#ffb86b':st===3?'#b4c8da':'#7be0a6',al:A});
+  flow(c,[[68,90],[120,110]],C.o,t,{lw:2.2,a:A*(st===3?.2:1)});
+  /* pool */
+  var n=st<0?3:st===0?3:st===1?3:st===2?3+Math.min(3,Math.floor(u*4)):Math.max(0,Math.round(3-3*E.io(u)));
+  box(c,300,30,250,250,{r:14,f:'#f2f8fc',s:C.p2,al:A});tx(c,'instancias de tu función',425,50,{s:10.5,w:800,a:'center',f:FD,c:C.p,al:A});
+  for(var i=0;i<6;i++){var x=340+(i%3)*86,y=100+Math.floor(i/3)*100;if(i<n){var nw=st===2&&i>=3,busy=st===1&&i===0||nw;box(c,x-34,y-34,68,76,{r:10,f:nw?'#fff7ed':'#fff',s:busy?C.o:C.line,lw:busy?2:1.2,al:A});icon(c,'R_AWSLambdaLambdaFunction',x,y-8,28,A);tx(c,nw?'🥶 nueva':busy?'🔥 atiende':'💤 libre',x,y+26,{s:9,w:800,a:'center',f:FM,c:nw?C.o:busy?C.p:C.faint,al:A})}
+    else{c.save();c.globalAlpha*=A*.5;c.setLineDash([3,4]);c.strokeStyle=C.faint;rr(c,x-34,y-34,68,76,10);c.stroke();c.restore()}}
+  if(st===1)flow(c,[[270,120],[306,74]],C.p,t,{lw:2.4});if(st===2)flow(c,[[270,150],[300,230]],C.o,t,{lw:2.4});
+  box(c,10,300,540,104,{r:14,f:C.soft,s:false,al:A});tx(c,'Nadie “decide” escalar: cada petición sigue la misma regla.',280,326,{s:12,w:800,a:'center',f:FD,c:C.p,al:A});
+  tx(c,'Con EC2, Auto Scaling mira una métrica, espera y prende servidores.',280,352,{s:10.5,w:600,a:'center',f:FD,c:C.mut,al:A});tx(c,'Con Lambda, la capacidad la decide cada petición, en el momento en que llega.',280,374,{s:10.5,w:700,a:'center',f:FD,c:C.ink,al:A});
+  if(t>.8)band(c,['Cada petición llega al servicio de Lambda, que se hace una sola pregunta','¿Hay una instancia libre y caliente? Sí: la usa (rápido)','¿No hay? Crea una nueva en la flota compartida (arranque en frío)','¿Nadie llama? Las instancias se reciclan solas: escala a cero'],st,A)};
+
+/* 4.4 · RDS serverless: Aurora Serverless v2 */
+S.aurora=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,5,3.2),st=t<.8?-1:r[0],u=r[1],x0=60,x1=530,y0=60,y1=260,H=24;
+  function dem(h){return h<6?.3:h<9?.3+2.5*(h-6)/3:h<18?3+1.5*Math.sin((h-9)/9*Math.PI):h<21?3+9*Math.sin((h-18)/3*Math.PI/2):h<23?12-10*(h-21)/2:1}
+  function X(h){return x0+(x1-x0)*h/H}function Y(v){return y1-(y1-y0)*v/16}
+  box(c,10,14,540,290,{r:16,al:A,sh:'rgba(14,40,65,.07)'});
+  var mode=st===1||st===2?'rds':st===3||st===4||st<0?'aur':'none';
+  tx(c,mode==='rds'?'RDS normal (db.t3.medium): tamaño fijo':mode==='aur'?'Aurora Serverless v2: crece y se encoge sola':'carga de la base de pedidos en un día',24,32,{s:11,w:800,f:FD,c:mode==='rds'?C.o:mode==='aur'?C.p:C.mut,al:A});
+  var lim=st===0?H*E.io(u):H,pd=[[X(0),y1]];for(var h=0;h<=lim;h+=.25)pd.push([X(h),Y(dem(h))]);pd.push([X(lim),y1]);c.save();c.globalAlpha*=A*.3;c.beginPath();pd.forEach(function(p,i){i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1])});c.fillStyle=C.t;c.fill();c.restore();
+  if(mode==='rds'){poly(c,[[x0,Y(6)],[x1,Y(6)]],C.o,3,null,A);tx(c,'capacidad fija',x0+6,Y(6)-12,{s:10,w:800,f:FD,c:C.o,al:A});if(st===2){c.save();c.globalAlpha*=A*.45;c.fillStyle=C.red;for(var h2=0;h2<H;h2+=.25){var v=dem(h2);if(v>6)c.fillRect(X(h2),Y(v),X(.25)-X(0)+.4,Y(6)-Y(v))}c.restore();chip(c,'se queda corta en el pico · sobra de madrugada',280,Y(14.5),C.red,'#fff1f1',E.out(u),{s:9.5})}}
+  if(mode==='aur'){var pa=[];for(var h3=0;h3<=H;h3+=.25){var cap=Math.max(st===4?0:.5,Math.ceil((dem(h3)*1.15)*2)/2);if(st===4&&h3<5.5)cap=0;pa.push([X(h3),Y(cap)])}poly(c,pa,C.p,3,null,A);tx(c,'ACU asignadas',X(19),Y(13.6)-10,{s:10,w:800,a:'center',f:FD,c:C.p,al:A});
+    if(st===4){c.save();c.globalAlpha*=A*.15;c.fillStyle=C.p;c.fillRect(X(0),Y(16),X(5.5)-X(0),y1-Y(16));c.restore();chip(c,'pausada: 0 ACU (se despierta en ~15 s)',X(3),Y(3.5),C.p,'#e8f3f9',E.out(u),{s:9})}}
+  [0,6,12,18,24].forEach(function(h){tx(c,h+':00',X(h),y1+14,{s:9,w:600,a:'center',f:FM,c:C.faint,al:A})});
+  box(c,10,314,540,92,{r:14,f:C.soft,s:false,al:A});
+  var Fx=[['ACU','1 ACU ≈ 2 GB de RAM + su CPU'],['rango','de 0 (pausa) a 256 ACU'],['crece','de a medio ACU, en segundos'],['motor','MySQL o PostgreSQL']];
+  Fx.forEach(function(f,i){var x=28+i*132;tx(c,f[0],x,336,{s:12,w:800,f:FD,c:mode==='aur'?C.p:C.ink,al:A});wrap(c,f[1],x,358,120,14,{s:10,w:600,f:FM,c:C.mut,al:A})});
+  if(t>.8)band(c,['La base de pedidos de Laura también tiene un día con madrugada y pico','RDS normal: eliges un tamaño (como una EC2) y se queda fijo','En el pico se queda corta; de madrugada paga capacidad que nadie usa','Aurora Serverless v2: la capacidad (ACU) sube y baja con la carga, en segundos','Y si nadie la usa, puede pausarse en 0 ACU y despertar cuando llega una consulta'],st,A)};
 
 /* 3.5 · el viaje de un pedido (diapositiva ancha 1100×520) */
 function bandW(c,T,st,A,w,y){box(c,10,y,w-20,50,{r:12,f:'#0E2841',s:false,al:A});tx(c,T[st]||'',w/2,y+21,{s:13.5,w:700,a:'center',f:FD,c:'#fff',al:A});for(var i=0;i<T.length;i++)dot(c,w/2-(T.length-1)*9+i*18,y+40,i===st?4.5:3,i===st?C.o:'#2b4f74',A)}

@@ -105,13 +105,21 @@
     if (!p.cliente) { p.cliente = "rafaga"; }
     estado.textContent = "⚡ enviando 20 pedidos al mismo tiempo…";
     var envios = [];
-    for (var i = 0; i < 20; i++) { envios.push(guardar(p)); }
+    for (var i = 0; i < 20; i++) {
+      envios.push(fetch(API + "/", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(p) })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .catch(function () { return null; }));
+    }
     Promise.all(envios).then(function (rs) {
-      var inst = {}, frios = 0;
-      rs.forEach(function (r) { inst[r.instancia] = (inst[r.instancia] || 0) + 1; if (r.frio) { frios++; } });
+      var inst = {}, frios = 0, frenados = 0;
+      rs.forEach(function (r) {
+        if (!r || !r.instancia) { frenados++; return; }
+        inst[r.instancia] = (inst[r.instancia] || 0) + 1; if (r.frio) { frios++; }
+      });
       var n = Object.keys(inst).length;
-      estado.textContent = "⚡ 20 pedidos guardados. AWS prendió " + n + " instancia(s) de la Lambda (" + frios + " arranque(s) en frío)\n" +
-        Object.keys(inst).map(function (k) { return "instancia " + k + " → " + inst[k] + " pedido(s)"; }).join("\n");
+      estado.textContent = "⚡ " + (20 - frenados) + " de 20 pedidos guardados. AWS prendió " + n + " instancia(s) de la Lambda (" + frios + " arranque(s) en frío)\n" +
+        Object.keys(inst).map(function (k) { return "instancia " + k + " → " + inst[k] + " pedido(s)"; }).join("\n") +
+        (frenados ? "\n🚦 " + frenados + " frenado(s) por el límite de concurrencia de tu cuenta (las cuentas nuevas pueden empezar con 10)" : "");
       return fetch(API + "/").then(function (r) { return r.json(); }).then(function (r) {
         document.getElementById("lista").innerHTML = r.pedidos.map(function (x) {
           return "<tr><td>" + esc(x.cliente) + "</td><td>" + esc(String(x.fecha).split("#")[0]) + "</td><td>" + esc(x.producto) + "</td><td>" + esc(x.talla) + "</td><td><span class='inst'>" + esc(x.instancia) + "</span></td></tr>";
