@@ -778,14 +778,14 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
   <div class="mviz"><canvas data-mu="ciclo" aria-label="Fases de una instancia de Lambda: INIT, INVOKE, congelada, INVOKE y apagada; una petición por instancia"></canvas></div>
 </section>
 
-<section class="slide mu">
+<section class="slide mu wide">
   <div>
-    <div class="mtag"><b>2.10</b>serverless por dentro · por qué es automático<b></b></div>
-    <h2>Nadie decide: <span class="g">cada petición decide</span></h2>
-    <div class="mnote"><span>// como</span> la fila del banco: si no hay cajero libre, se abre otra caja</div>
-    <p class="msub">Con EC2, Auto Scaling mira una métrica, espera y prende servidores. En Lambda no hay que decidir: cada petición llega al servicio de Lambda, que pregunta <b>“¿hay una instancia libre y caliente?”</b>. Si la hay, la usa; si no, crea una en la flota compartida; si nadie llama, se reciclan solas. Por eso escala <b>sola y a cero</b>.</p><p class="muse">👉 <b>Ese “crear una nueva” tiene un costo: el arranque en frío</b></p>
+    <div class="mtag"><b>2.10</b>serverless por dentro · todo junto<b></b></div>
+    <h2>Lambda por dentro: <span class="g">de la petición a la microVM</span></h2>
+    
+    <p class="msub">Nadie decide escalar: cada petición pregunta “¿hay una instancia libre y caliente?”. Si no la hay, se crea una en la flota; si nadie llama, se reciclan. Escoge un paso o avanza con →.</p>
   </div>
-  <div class="mviz"><canvas data-mu="enrutador" aria-label="El servicio de Lambda decide por cada petición si usa una instancia caliente o crea una nueva"></canvas></div>
+  <div class="mviz"><canvas data-mu="lamarq" data-w="1100" data-h="520" data-maxh=".64" aria-label="Arquitectura de Lambda por dentro: API Gateway, el enrutador, la flota con microVM, INIT, INVOKE, instancias calientes, escalado y vuelta a cero"></canvas></div>
 </section>
 
 <section class="slide mu">
@@ -3785,6 +3785,43 @@ S.ecsarq=function(c,t,sec){var A=E.out(P(t,.1,.6)),R=evW(sec,t),ev=R[0],u=R[1],a
   box(c,900,224,180,170,{r:14,f:ev===6?'#0E2841':C.soft,s:false,al:A});tx(c,'lo que Laura cuida',990,246,{s:10.5,w:800,a:'center',f:FD,c:ev===6?'#ffb86b':C.mut,al:A});['🔧 parches de las EC2','📐 cuántas y de qué tamaño','🧩 que quepan las tareas','💵 pagar las EC2 completas'].forEach(function(l,i){tx(c,l,912,274+i*26,{s:9.5,w:700,f:FD,c:ev===6?'#fff':C.ink,al:A})});
   narrW(c,EV,ev,u,A);pillsW(c,sec,EV,ev,A,470)};
 wireW('ecsarq',7);
+
+/* Lambda por dentro como arquitectura (1100×520) */
+S.lamarq=function(c,t,sec){var A=E.out(P(t,.1,.6)),R=evW(sec,t),ev=R[0],u=R[1],all=ev<0;
+  var EV=[{k:'llega la petición',t:'Camila pulsa Guardar: la petición llega a API Gateway'},{k:'el enrutador',t:'API Gateway llama al servicio de Lambda, que reparte las peticiones (el enrutador)'},{k:'¿hay caliente?',t:'El enrutador pregunta: ¿hay una instancia libre y caliente? No hay → pide espacio en la flota'},{k:'INIT (frío)',t:'En un servidor de la flota se arma una microVM: baja tu código y arranca Python = arranque en frío'},{k:'INVOKE',t:'Corre tu handler: guarda en DynamoDB y lo que imprime queda en CloudWatch Logs'},{k:'queda caliente',t:'La respuesta vuelve a Camila; la instancia queda congelada y caliente, esperando'},{k:'otra petición',t:'Llega otra petición: el enrutador la manda a la instancia caliente, sin INIT (rapidísimo)'},{k:'3 a la vez',t:'Llegan 3 al mismo tiempo: una instancia atiende una sola petición, así que se crean 2 más'},{k:'vuelta a cero',t:'Nadie llama por unos minutos: AWS recicla las instancias y la flota las usa para otros clientes'}];
+  /* Camila */
+  box(c,14,150,120,110,{r:12,f:'#fff',s:ev===0||ev===5||ev===6?C.t:C.line,lw:1.6,al:A});icon(c,'R_Client',74,186,34,A);tx(c,ev===7?'3 clientes':'Camila',74,222,{s:11,w:800,a:'center',f:FD,al:A});
+  var lat=ev===5?'respuesta en 420 ms 🥶':ev===6&&u>.5?'respuesta en 35 ms 🔥':'';if(lat)tx(c,lat,74,244,{s:8.5,w:800,a:'center',f:FM,c:ev===5?C.t:C.o,al:A});
+  grp(c,150,14,940,400,'#232F3E','AWS Cloud · us-east-1','G_AWSCloudlogo',{al:A});
+  nodeW(c,'APIGateway',240,205,'API Gateway','la puerta',ev===0||ev===1||ev===6,C.o);
+  /* enrutador */
+  box(c,320,140,150,134,{r:14,f:'#0E2841',s:ev>=1&&ev<=2||ev===6||ev===7?C.o:false,lw:2.4,al:A});icon(c,'AWSLambda',395,166,26,A);tx(c,'servicio de Lambda',395,194,{s:10,w:800,a:'center',f:FD,c:'#ffb86b',al:A});tx(c,'(el enrutador)',395,208,{s:8.5,w:700,a:'center',f:FM,c:'#b4c8da',al:A});
+  var q=ev===2?'¿hay caliente? NO':ev===6?'¿hay caliente? SÍ':ev===7?'¿3 calientes? NO':ev===8?'nadie llama…':'¿libre y caliente?';tx(c,q,395,238,{s:10,w:800,a:'center',f:FM,c:ev===2||ev===7?'#ffb86b':ev===6?'#7be0a6':'#fff',al:A});
+  /* flota */
+  grp(c,500,40,370,360,C.p2,'la flota de Lambda (servidores de AWS)','',{al:A,fill:'rgba(15,158,213,.04)'});
+  var HS=[[512,70],[512,236]],slots=[];HS.forEach(function(h,hi){box(c,h[0],h[1],346,150,{r:10,f:'#fff',s:C.line,al:A});gx(c,'server',h[0]+14,h[1]+14,12,C.faint,A);tx(c,'servidor físico '+(hi+1),h[0]+26,h[1]+14,{s:8.5,w:700,f:FM,c:C.mut,al:A});
+    for(var s=0;s<6;s++){var sx=h[0]+10+(s%3)*112,sy=h[1]+28+Math.floor(s/3)*60;slots.push([sx,sy,hi*6+s])}});
+  var MINE={4:0,8:1,10:2};/* slot index -> instancia */
+  var inst=[{st:'off'},{st:'off'},{st:'off'}];
+  if(all){inst[0].st='warm'}else{if(ev>=3&&ev<8)inst[0].st=ev===3?'init':ev===4?'run':ev===5?'warm':ev===6?(u<.5?'warm':'run'):'run';if(ev===7){inst[1].st=u<.5?'init':'run';inst[2].st=u<.5?'init':'run'}if(ev===8)inst=[{st:u<.6?'warm':'gone'},{st:u<.4?'warm':'gone'},{st:u<.5?'warm':'gone'}]}
+  slots.forEach(function(sl){var sx=sl[0],sy=sl[1],mi=MINE[sl[2]];
+    if(mi!=null&&inst[mi].st!=='off'&&inst[mi].st!=='gone'){var S2=inst[mi].st,col=S2==='init'?'#8B98A9':S2==='run'?C.o:C.p2;box(c,sx,sy,104,52,{r:8,f:S2==='init'?'#f4f6fa':S2==='run'?'#fff7ed':'#e8f3f9',s:col,lw:2.2,al:A});tx(c,'TU LAMBDA '+(mi+1),sx+52,sy+14,{s:8,w:800,a:'center',f:FM,c:col,al:A});
+      tx(c,S2==='init'?'INIT 🥶 cargando…':S2==='run'?'INVOKE ⚙️ trabajando':'💤 caliente, libre',sx+52,sy+32,{s:8.5,w:800,a:'center',f:FD,c:C.ink,al:A});if(S2==='init'){c.save();c.globalAlpha*=A;rr(c,sx+12,sy+42,80,4,2);c.fillStyle='#dfe5ee';c.fill();rr(c,sx+12,sy+42,80*((t*.8)%1),4,2);c.fillStyle='#8B98A9';c.fill();c.restore()}}
+    else if((sl[2]*7)%3!==0&&mi==null){box(c,sx,sy,104,52,{r:8,f:C.soft,s:false,al:A});tx(c,'microVM de',sx+52,sy+20,{s:7.5,w:700,a:'center',f:FM,c:C.faint,al:A});tx(c,'otro cliente',sx+52,sy+32,{s:7.5,w:700,a:'center',f:FM,c:C.faint,al:A})}
+    else{c.save();c.globalAlpha*=A*.5;c.setLineDash([3,4]);c.strokeStyle=mi!=null&&ev===8?C.g:C.faint;rr(c,sx,sy,104,52,8);c.stroke();c.restore();tx(c,mi!=null&&ev===8&&u>.6?'reciclada ♻':'libre',sx+52,sy+26,{s:8.5,w:700,a:'center',f:FM,c:mi!=null&&ev===8?C.g:C.faint,al:A})}});
+  /* destinos */
+  nodeW(c,'DynamoDB',980,130,'DynamoDB','tienda-pedidos',ev===4||ev===6&&u>.5,'#8a5cf6');nodeW(c,'CloudWatch',980,300,'CloudWatch','Logs',ev===4,'#e0457b');
+  /* flujos */
+  var d=function(k){return all?.45:k?1:.1};
+  flow(c,[[134,205],[178,205]],C.t,t,{lw:2.6,a:A*d(ev===0||ev===6||ev===7),label:ev===7?'×3':''});
+  flow(c,[[302,205],[320,205]],C.o,t,{lw:2.6,a:A*d(ev===1||ev===6||ev===7)});
+  var inX=slots[4][0],inY=slots[4][1]+26;
+  flow(c,[[470,200],[490,200],[490,inY],[inX,inY]],C.o,t,{lw:2.4,a:A*d(ev===2||ev===3||ev===6),label:ev===2?'crea una':ev===6?'a la caliente':'',lp:.6});
+  if(ev===7){[8,10].forEach(function(si){var y2=slots[si][1]+26;flow(c,[[470,230],[494,230],[494,y2],[slots[si][0],y2]],C.o,t,{lw:2.2})})}
+  flow(c,[[inX+104,inY-8],[918,130]],'#8a5cf6',t,{lw:2.2,a:A*d(ev===4),label:'PutItem',lp:.6});flow(c,[[inX+104,inY+8],[918,290]],'#e0457b',t,{lw:2.2,a:A*d(ev===4),label:'print → log',lp:.5});
+  flow(c,[[inX,inY+14],[480,262],[300,262],[134,240]],C.g,t,{lw:2.2,a:A*d(ev===5),label:'200 ✓',lp:.6});
+  narrW(c,EV,ev,u,A);pillsW(c,sec,EV,ev,A,470)};
+wireW('lamarq',9);
 
 /* 3.5 · el viaje de un pedido (diapositiva ancha 1100×520) */
 function bandW(c,T,st,A,w,y){box(c,10,y,w-20,50,{r:12,f:'#0E2841',s:false,al:A});tx(c,T[st]||'',w/2,y+21,{s:13.5,w:700,a:'center',f:FD,c:'#fff',al:A});for(var i=0;i<T.length;i++)dot(c,w/2-(T.length-1)*9+i*18,y+40,i===st?4.5:3,i===st?C.o:'#2b4f74',A)}
