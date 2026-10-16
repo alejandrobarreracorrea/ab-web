@@ -268,7 +268,7 @@ ul.clean li:first-child { border-top:0; }
   <div class="cover-txt">
     <span class="cover-k">Estud-IA · Ruta TI · 2026-2 · Sesión {{SESION}} · clase virtual · {{G_ID}}</span>
     <h1 class="cover-h">La tienda que se apaga sola</h1>
-    <p class="cover-s">Servidor tradicional vs. serverless: por qué la tienda de Laura paga aunque nadie compre, cómo funcionan Lambda, API Gateway y DynamoDB… y tu tienda completa sin un solo servidor prendido.<br>Alejandro Barrera · Cloud Architect</p>
+    <p class="cover-s">Basado en servidores vs. serverless: por qué la tienda de Laura paga aunque nadie compre, cómo funcionan Lambda, API Gateway y DynamoDB… y tu tienda completa sin un solo servidor prendido.<br>Alejandro Barrera · Cloud Architect</p>
   </div>
   <img class="cover-logo" src="../../../assets/estudia-blanco.png" alt="Estud-IA">
 </section>
@@ -278,9 +278,9 @@ ul.clean li:first-child { border-top:0; }
   <span class="k">El plan de hoy · clase {{SESION}}</span>
   <h2>Objetivo de hoy: <span class="grad">una tienda que no necesita servidores</span>.</h2>
   <ul class="rows">
-    <li><span class="t">Lo tradicional<small>un día con una EC2 prendida · el Black Friday · EC2 Auto Scaling y lo que no resuelve</small></span><span class="m">historia</span></li>
-    <li><span class="t">¿Qué es serverless?<small>carro propio vs. taxi · eventos · escala sola · Auto Scaling vs. Lambda · pagar por uso</small></span><span class="m">concepto</span></li>
-    <li><span class="t">Por dentro<small>la flota y las microVM · capacidad compartida · la vida de una instancia · por qué es automático · arranque en frío · límites</small></span><span class="m">a fondo</span></li>
+    <li><span class="t">Basado en servidores<small>un día con una EC2 prendida · el Black Friday · EC2 Auto Scaling y lo que no resuelve</small></span><span class="m">historia</span></li>
+    <li><span class="t">¿Qué es serverless?<small>serverless vs. basado en servidores · carro propio vs. taxi · eventos · escala sola · Auto Scaling vs. Lambda · pagar por uso</small></span><span class="m">concepto</span></li>
+    <li><span class="t">Por dentro<small>la flota y las microVM · capacidad compartida · la vida de una instancia · por qué es automático · arranque en frío · límites · stateful vs. stateless</small></span><span class="m">a fondo</span></li>
     <li><span class="t">Front, back y dónde corre cada uno<small>el salón y la cocina · Lambda · contenedores, ECS y Fargate · de EC2 a Lambda · qué corre dónde</small></span><span class="m">servicios</span></li>
     <li><span class="t">La tienda serverless en AWS<small>API Gateway · DynamoDB · RDS serverless (Aurora Serverless v2) · la familia serverless · el viaje de un pedido</small></span><span class="m">arquitectura</span></li>
     <li><span class="t">Laboratorio · 2 retos<small>tu primera Lambda a clics · la tienda completa con Terraform: S3 + CloudFront + API Gateway + Lambda + DynamoDB</small></span><span class="m">lab</span></li>
@@ -594,15 +594,15 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 <section class="slide mu dark sep">
   <div>
     <div class="mtag" style="color:#7f9bb5"><b>Parte 1</b>de 6</div>
-    <h2 style="max-width:15ch">Lo tradicional: <span class="g">un servidor prendido</span></h2>
-    <p class="msub">Hasta hoy, la tienda de Laura vive en una EC2: un computador en la nube, prendido día y noche, esperando clientes.</p>
+    <h2 style="max-width:15ch">Basado en servidores: <span class="g">un servidor prendido</span></h2>
+    <p class="msub">Hasta hoy, la tienda de Laura vive en una EC2: un computador en la nube, prendido día y noche, esperando clientes. A eso se le llama una arquitectura basada en servidores (server-based).</p>
   </div>
   <div class="mviz"><canvas data-mu="ruta" data-part="1" aria-label="Ruta de la clase: parte 1 de 6"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>1.1</b>lo tradicional · un día<b></b></div>
+    <div class="mtag"><b>1.1</b>basado en servidores · un día<b></b></div>
     <h2>Un día <span class="g">con servidor</span></h2>
     <div class="mnote"><span>// como</span> un local abierto 24 horas, con o sin clientes</div>
     <p class="msub">La EC2 de Laura no se apaga nunca. A las 3:00 a. m. no hay nadie comprando… y AWS le cobra igual cada hora. A las 8:00 p. m. llegan todos al tiempo y la EC2 <b>no da abasto</b>. Con un servidor pagas por <b>tenerlo prendido</b>, no por lo que usas.</p><p class="muse">👉 <b>Y además, el servidor da trabajo</b></p>
@@ -612,7 +612,7 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>1.2</b>lo tradicional · el trabajo<b></b></div>
+    <div class="mtag"><b>1.2</b>basado en servidores · el trabajo<b></b></div>
     <h2>Un servidor <span class="g">da trabajo</span></h2>
     <div class="mnote"><span>// como</span> tener carro propio: también hay que llevarlo al taller</div>
     <p class="msub">Con la EC2, Laura es dueña de todo lo que va <b>encima</b> del hardware: parchar Linux, instalar y actualizar NGINX y Python, vigilar el disco, reiniciar si se cuelga y, en los picos, crear más EC2 a mano. Es tiempo que no pasa vendiendo.</p><p class="muse">👉 <b>¿Y qué pasa en el Black Friday?</b></p>
@@ -622,7 +622,7 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>1.3</b>lo tradicional · el pico<b></b></div>
+    <div class="mtag"><b>1.3</b>basado en servidores · el pico<b></b></div>
     <h2>El Black Friday <span class="g">de Laura</span></h2>
     <div class="mnote"><span>// como</span> una sola caja registradora el día de la gran promoción</div>
     <p class="msub">Laura anuncia descuentos y llegan <b>20 veces</b> más clientes. La EC2 llega al 100 % de CPU, la página se pone lenta y empieza a responder <b>503</b>. Cuando Laura logra crear otra EC2, los clientes ya se fueron a otra tienda.</p><p class="muse">👉 <b>¿Y si la EC2 creciera sola?</b></p>
@@ -632,7 +632,7 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>1.4</b>lo tradicional · la primera solución<b></b></div>
+    <div class="mtag"><b>1.4</b>basado en servidores · la primera solución<b></b></div>
     <h2>Auto Scaling: <span class="g">la EC2 que se multiplica</span></h2>
     <div class="mnote"><span>// como</span> contratar cajeros temporales cuando se llena la tienda</div>
     <p class="msub">Después del susto, Laura pone su tienda detrás de un <b>balanceador</b> (ALB) y arma un <b>grupo de Auto Scaling</b>: mínimo 2 EC2, máximo 6. <b>CloudWatch</b> vigila la CPU; si pasa del 70 %, Auto Scaling <b>prende EC2 nuevas</b> y el balanceador les reparte clientes. Cuando baja, las apaga.</p><p class="muse">👉 <b>¿Problema resuelto? Casi…</b></p>
@@ -642,7 +642,7 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>1.5</b>lo tradicional · lo que falta<b></b></div>
+    <div class="mtag"><b>1.5</b>basado en servidores · lo que falta<b></b></div>
     <h2>Lo que Auto Scaling <span class="g">no resuelve</span></h2>
     <div class="mnote"><span>// como</span> cajeros temporales que tardan media hora en llegar</div>
     <p class="msub">Auto Scaling es una gran herramienta (y se usa muchísimo), pero tiene límites: <b>reacciona en minutos</b>, el <b>mínimo se paga siempre</b>, crece de a <b>un servidor completo</b> y los servidores <b>siguen siendo de Laura</b>: parches, imagen, discos.</p><p class="muse">👉 <b>¿Y si no tuviera que pensar en servidores?</b></p>
@@ -783,24 +783,44 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
     <div class="mtag"><b>3.6</b>lo que hay que saber · límites<b></b></div>
     <h2>Lo que serverless <span class="g">no hace</span></h2>
     <div class="mnote"><span>// como</span> el taxi no sirve para hacer un trasteo</div>
-    <p class="msub">Una Lambda vive máximo <b>15 minutos</b> por ejecución, no guarda nada entre una petición y otra (<b>sin estado</b>: los datos van a DynamoDB o S3), no está siempre prendida y te ata a la forma de trabajar de AWS. Para procesos largos o programas siempre conectados, sigue mandando el servidor.</p><p class="muse">👉 <b>Resumamos en una tabla</b></p>
+    <p class="msub">Una Lambda vive máximo <b>15 minutos</b> por ejecución, no guarda nada entre una petición y otra (es <b>stateless</b>, sin estado: los datos van a DynamoDB o S3), no está siempre prendida y te ata a la forma de trabajar de AWS. Para procesos largos o programas siempre conectados, sigue mandando el servidor.</p><p class="muse">👉 <b>Ojo: “sin estado” es otro concepto. ¿Qué es eso del estado?</b></p>
   </div>
-  <div class="mviz"><canvas data-mu="limites" aria-label="Cuatro límites de serverless: quince minutos, sin estado, por eventos y dependencia de AWS"></canvas></div>
+  <div class="mviz"><canvas data-mu="limites" aria-label="Cuatro límites de serverless: quince minutos, stateless, por eventos y dependencia de AWS"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>3.7</b>el resumen<b></b></div>
-    <h2>Tradicional <span class="g">vs. serverless</span></h2>
+    <div class="mtag"><b>3.7</b>por dentro · el estado<b></b></div>
+    <h2>Stateful <span class="g">vs. stateless</span></h2>
+    <div class="mnote"><span>// como</span> el cajero que se acuerda de tu pedido vs. el pedido anotado en el sistema</div>
+    <p class="msub">El <b>estado</b> es lo que una app recuerda entre una petición y otra: el carrito de Camila. Una app <b>stateful</b> (con estado) lo guarda en su propia memoria: si la siguiente petición cae en otra copia, o esa copia se apaga, el carrito se pierde. Una app <b>stateless</b> (sin estado) no recuerda nada y anota el carrito afuera, en una base: <b>cualquier copia</b> atiende a Camila.</p><p class="muse">👉 <b>Entonces, ¿serverless y stateless son lo mismo?</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="estado" aria-label="Comparación de una app stateful que pierde el carrito al cambiar o apagarse la copia y una stateless que lo guarda en DynamoDB"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>3.8</b>por dentro · dos preguntas distintas<b></b></div>
+    <h2>Serverless <span class="g">≠ stateless</span></h2>
+    <div class="mnote"><span>// como</span> una cosa es quién maneja el carro y otra qué llevas en la maleta</div>
+    <p class="msub">Son dos preguntas diferentes. <b>Serverless vs. basado en servidores</b>: ¿quién cuida los servidores? <b>Stateless vs. stateful</b>: ¿la app guarda estado? Lambda es serverless <b>y</b> stateless; DynamoDB es serverless <b>y</b> stateful (su trabajo es guardar). La receta de la nube: código stateless + estado en un servicio administrado.</p><p class="muse">👉 <b>Resumamos en una tabla</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="matriz" aria-label="Matriz de dos por dos: basado en servidores o serverless contra stateful o stateless, con un ejemplo de AWS en cada cuadro"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>3.9</b>el resumen<b></b></div>
+    <h2>Basado en servidores <span class="g">vs. serverless</span></h2>
     <div class="mnote"><span>// como</span> dos herramientas, no un ganador</div>
-    <p class="msub">Ninguno es mejor siempre. El servidor gana en trabajos largos, siempre prendidos o con software instalado; serverless gana en peticiones cortas, por eventos y con picos. Muchas empresas usan <b>los dos</b> en la misma aplicación.</p><p class="muse">👉 <b>Ahora te toca a ti decidir</b></p>
+    <p class="msub">Ninguno es mejor siempre. Lo basado en servidores gana en trabajos largos, siempre prendidos o con software instalado; serverless gana en peticiones cortas, por eventos y con picos. Muchas empresas usan <b>los dos</b> en la misma aplicación.</p><p class="muse">👉 <b>Ahora te toca a ti decidir</b></p>
   </div>
   <div class="mviz"><canvas data-mu="versus" aria-label="Tabla comparativa entre un servidor EC2 y Lambda en siete aspectos"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>3.8</b>juego<b></b></div>
+    <div class="mtag"><b>3.10</b>juego<b></b></div>
     <h2>¿Servidor <span class="g">o serverless?</span></h2>
     
     <p class="msub">Seis casos reales. Piensa la respuesta antes de avanzar con → (o haz clic): cada tarjeta se voltea y muestra cuál conviene y por qué.</p><p class="muse">👉 <b>Ya sabemos qué es. ¿Con qué piezas se arma en AWS?</b></p>
@@ -2453,7 +2473,7 @@ S.dwaf=function(c,t){var A=E.out(P(t,.1,.5)),st=Math.floor(Math.max(0,t-1.2)/2.8
   box(c,150,350,390,100,{r:12,f:'#0E2841',s:false,al:A});wrap(c,on?T[st]:'',166,376,360,18,{s:12.5,w:700,f:FD,c:'#fff',al:A})};
 /* ===== Historia: la noche en que atacaron la tienda de Laura ===== */
 function clock(c,x,y,txt,col,a){box(c,x-34,y-13,68,26,{r:13,f:'#0E2841',s:false,al:a});tx(c,'🕘 '+txt,x,y+1,{s:10.5,w:800,a:'center',f:FM,c:col||'#fff',al:a})}
-S.ruta=function(c,t,sec){var cur=+(sec.querySelector('canvas[data-mu]').dataset.part||1),L=[['1','Lo tradicional: un servidor'],['2','¿Qué es serverless?'],['3','Por dentro: cómo funciona'],['4','Front, back y dónde corren'],['5','La tienda serverless en AWS'],['6','Lab: la tienda sin servidores']],n=L.length,x=70,y0=40,dy=400/(n-1);
+S.ruta=function(c,t,sec){var cur=+(sec.querySelector('canvas[data-mu]').dataset.part||1),L=[['1','Basado en servidores'],['2','¿Qué es serverless?'],['3','Por dentro: cómo funciona'],['4','Front, back y dónde corren'],['5','La tienda serverless en AWS'],['6','Lab: la tienda sin servidores']],n=L.length,x=70,y0=40,dy=400/(n-1);
   var g=c.createLinearGradient(0,y0,0,y0+dy*(n-1));g.addColorStop(0,'#0F9ED5');g.addColorStop(1,'#39c8e8');
   c.save();c.strokeStyle='rgba(180,200,218,.25)';c.lineWidth=4;c.beginPath();c.moveTo(x,y0);c.lineTo(x,y0+dy*(n-1));c.stroke();var k=E.io(P(t,.2,1));c.strokeStyle=g;c.beginPath();c.moveTo(x,y0);c.lineTo(x,y0+dy*(cur-1)*k);c.stroke();c.restore();
   L.forEach(function(l,i){var y=y0+i*dy,on=i+1===cur,done=i+1<cur,a=E.out(P(t,.1+i*.08,.5)),pl=on?1+.06*Math.sin(t*3):1;
@@ -3139,15 +3159,15 @@ S.frio=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,4,3.4),st=t<.8?-1:r[0],u=r[
   if(t>.8)band(c,['La primera petición espera a que AWS prenda una instancia y cargue tu código','La segunda encuentra la instancia caliente: solo corre tu handler','Mientras sigan llegando pedidos, la instancia sigue caliente','Si nadie la usa un rato, AWS la apaga: la próxima vuelve a ser en frío'],st,A)};
 
 /* 2.7 · lo que serverless no hace */
-S.limites=function(c,t){var A=E.out(P(t,.1,.5)),L=[['⏱️','15 minutos máximo','por cada ejecución','un video de 2 horas para convertir → no cabe',C.o],['🧠','sin memoria entre peticiones','“sin estado”','los datos van a DynamoDB o S3, nunca al disco',C.p2],['🔌','no está siempre prendida','vive por eventos','un juego en línea con conexiones abiertas → servidor',C.p],['🔗','te ata a AWS','“vendor lock-in”','tu código usa servicios de AWS: mudarte cuesta',C.red]],per=2.6,n=t<.8?-1:Math.min(3,Math.floor((t-.8)/per));
+S.limites=function(c,t){var A=E.out(P(t,.1,.5)),L=[['⏱️','15 minutos máximo','por cada ejecución','un video de 2 horas para convertir → no cabe',C.o],['🧠','sin memoria entre peticiones','stateless: “sin estado”','los datos van a DynamoDB o S3, nunca al disco',C.p2],['🔌','no está siempre prendida','vive por eventos','un juego en línea con conexiones abiertas → servidor',C.p],['🔗','te ata a AWS','“vendor lock-in”','tu código usa servicios de AWS: mudarte cuesta',C.red]],per=2.6,n=t<.8?-1:Math.min(3,Math.floor((t-.8)/per));
   L.forEach(function(l,i){var a=E.back(P(t,.3+i*.2,.5));if(a<=0)return;var al=Math.min(1,a),x=10+(i%2)*274,y=14+Math.floor(i/2)*196,on=i===n;
     box(c,x,y,266,186,{r:16,f:on?rgba(l[4],.07):'#fff',s:on?l[4]:C.line,lw:on?2.2:1.2,al:al,sh:'rgba(14,40,65,.06)'});tx(c,l[0],x+36,y+40,{s:28,a:'center',al:al});tx(c,l[1],x+66,y+34,{s:13.5,w:800,f:FD,al:al});tx(c,l[2],x+66,y+54,{s:10,w:700,f:FM,c:l[4],al:al});
     if(on||n>i)wrap(c,l[3],x+20,y+110,226,16,{s:11,w:700,f:FD,c:C.mut,al:al*(on?E.out(P(t,.8+i*per,.5)):1)})});
   if(t>.8)band(c,['Una Lambda corre máximo 15 minutos por vez','No recuerda nada entre una petición y otra: guarda en una base','Despierta por eventos: no sirve para algo siempre conectado','Y tu solución queda amarrada a los servicios de AWS'],Math.max(0,n),A)};
 
 /* 2.8 · tradicional vs serverless */
-S.versus=function(c,t){var A=E.out(P(t,.1,.5)),R=[['¿Está prendido?','siempre, 24/7','solo cuando hay un evento'],['¿Cuánto pagas?','por hora, aunque no haya nadie','por petición y milisegundo'],['¿Cómo crece?','tú agregas servidores','AWS prende copias solo'],['¿Parches y Linux?','tuyos','de AWS'],['¿Tiempo máximo?','sin límite','15 minutos'],['¿Guarda estado?','sí, en su disco','no: usa una base'],['Ideal para…','programas largos o siempre conectados','APIs, formularios, tareas por evento, picos']],per=1.6,n=t<.8?-1:Math.min(R.length-1,Math.floor((t-.8)/per));
-  box(c,10,14,540,40,{r:12,f:'#0E2841',s:false,al:A});icon(c,'EC2',228,34,22,A);tx(c,'tradicional (EC2)',244,34,{s:11.5,w:800,f:FD,c:'#ffb86b',al:A});icon(c,'AWSLambda',402,34,22,A);tx(c,'serverless (Lambda)',418,34,{s:11.5,w:800,f:FD,c:'#7fd3f2',al:A});
+S.versus=function(c,t){var A=E.out(P(t,.1,.5)),R=[['¿Está prendido?','siempre, 24/7','solo cuando hay un evento'],['¿Cuánto pagas?','por hora, aunque no haya nadie','por petición y milisegundo'],['¿Cómo crece?','tú agregas servidores','AWS prende copias solo'],['¿Parches y Linux?','tuyos','de AWS'],['¿Tiempo máximo?','sin límite','15 minutos'],['¿Guarda estado?','puede (stateful)','no: es stateless'],['Ideal para…','programas largos o siempre conectados','APIs, formularios, tareas por evento, picos']],per=1.6,n=t<.8?-1:Math.min(R.length-1,Math.floor((t-.8)/per));
+  box(c,10,14,540,40,{r:12,f:'#0E2841',s:false,al:A});icon(c,'EC2',228,34,22,A);tx(c,'basado en servidores',244,34,{s:11.5,w:800,f:FD,c:'#ffb86b',al:A});icon(c,'AWSLambda',402,34,22,A);tx(c,'serverless (Lambda)',418,34,{s:11.5,w:800,f:FD,c:'#7fd3f2',al:A});
   R.forEach(function(rw,i){var a=E.out(P(t,.3+i*.12,.4));if(a<=0)return;var y=62+i*48,on=i===n;box(c,10,y,540,42,{r:10,f:on?'#f2f8fc':i%2?C.soft:'#fff',s:on?C.p2:false,lw:1.8,al:a});
     tx(c,rw[0],24,y+21,{s:11,w:800,f:FD,al:a});wrap(c,rw[1],218,y+(rw[1].length>30?14:21),160,13,{s:10.5,w:600,f:FD,c:C.ink,al:a});wrap(c,rw[2],392,y+(rw[2].length>28?14:21),150,13,{s:10.5,w:700,f:FD,c:C.p,al:a})});
   if(t>.8)band(c,R.map(function(rw){return rw[0]+' → servidor: '+rw[1]+' · serverless: '+rw[2]}),Math.max(0,n),A)};
@@ -3482,6 +3502,41 @@ S.quecorre=function(c,t){var A=E.out(P(t,.1,.5)),per=2.6,
     rw[3].forEach(function(m,j){var x=262+j*72,col=m==='✓'?C.g:m==='✗'?C.red:C.o,bg=m==='✓'?'#ecfbf3':m==='✗'?'#fff1f1':'#fff7ed';box(c,x-16,y+9,32,28,{r:8,f:bg,s:false,al:A*a});tx(c,m,x,y+24,{s:14,w:800,a:'center',f:FD,c:col,al:A*a})})});
   tx(c,'✓ ideal o muy bien · ~ se puede, con peros · ✗ no sirve',280,388,{s:9.5,w:700,a:'center',f:FM,c:C.mut,al:A});
   if(t>.8)band(c,ROW.map(function(rw){return rw[4]}),Math.max(0,n),A)};
+
+/* 3.7 · stateful vs stateless: el carrito de Camila */
+S.estado=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,6,3),st=t<.8?-1:r[0],u=r[1],L=st>=0&&st<=3,R=st>=4||st<0;
+  function inst(x,y,lab,cart,dead,hl,col){box(c,x-46,y-36,92,76,{r:10,f:dead?'#fff1f1':hl?rgba(col,.1):'#fff',s:dead?C.red:hl?col:C.line,lw:hl||dead?2:1.2,al:A});icon(c,'R_AWSLambdaLambdaFunction',x-24,y-14,20,A*(dead?.35:1));tx(c,lab,x+4,y-14,{s:9.5,w:800,f:FM,c:dead?C.red:C.ink,al:A});
+    if(cart)tx(c,'🛒 gorra L',x,y+16,{s:10,w:800,a:'center',f:FD,c:C.o,al:A});else tx(c,dead?'💥 apagada':'(memoria vacía)',x,y+16,{s:8.5,w:700,a:'center',f:FM,c:dead?C.red:C.faint,al:A})}
+  /* STATEFUL */
+  box(c,10,14,266,330,{r:16,f:L?'#fff7ed':'#fff',s:L?C.o:C.line,lw:L?2.2:1.2,al:A});tx(c,'STATEFUL · con estado',143,36,{s:12,w:800,a:'center',f:FD,c:C.o,al:A});tx(c,'la app recuerda dentro de sí',143,54,{s:9,w:700,a:'center',f:FM,c:C.mut,al:A});
+  av(c,143,92,18,C.t,A,'');tx(c,'Camila',176,92,{s:10,w:800,f:FD,al:A});
+  var deadA=st===3,cartA=st>=1&&st<=2||st<0;inst(80,190,'copia A',cartA,deadA,st===1,C.o);inst(206,190,'copia B',false,false,st===2,C.red);
+  if(st===1)flow(c,[[136,110],[90,152]],C.o,t,{lw:2.2,label:'agrega gorra',lx:-20});
+  if(st===2){flow(c,[[150,110],[200,152]],C.red,t,{lw:2.2,label:'ver carrito',lx:20});chip(c,'❌ “tu carrito está vacío”',143,268,C.red,'#fff1f1',E.out(u),{s:10})}
+  if(st===3)chip(c,'❌ el carrito se perdió con la copia A',143,268,C.red,'#fff1f1',E.out(u),{s:10});
+  if(st===0){box(c,26,250,234,80,{r:10,f:C.soft,s:false,al:A});wrap(c,'estado = lo que la app recuerda entre una petición y otra: el carrito, la sesión, el paso del formulario',38,270,212,15,{s:10,w:700,f:FD,c:C.ink,al:A})}
+  /* STATELESS */
+  box(c,284,14,266,330,{r:16,f:R?'#f2f8fc':'#fff',s:R?C.p:C.line,lw:R?2.2:1.2,al:A});tx(c,'STATELESS · sin estado',417,36,{s:12,w:800,a:'center',f:FD,c:C.p,al:A});tx(c,'la app no recuerda: anota afuera',417,54,{s:9,w:700,a:'center',f:FM,c:C.mut,al:A});
+  av(c,417,92,18,C.t,A,'');tx(c,'Camila',450,92,{s:10,w:800,f:FD,al:A});
+  var deadC=st===5&&u>.5;inst(354,180,'copia A',false,false,st===4,C.p);inst(480,180,deadC?'copia B':'copia B',false,deadC,st===5&&!deadC,C.p);
+  box(c,354,256,126,62,{r:10,f:'#eef6fb',s:C.p,lw:1.5,al:A});icon(c,'DynamoDB',380,280,24,A);tx(c,'carritos',418,276,{s:10,w:800,f:FD,al:A});tx(c,'🛒 camila: gorra L',418,296,{s:8.5,w:700,a:'center',f:FM,c:C.o,al:A*(st>=4||st<0?1:.3)});
+  if(st===4){flow(c,[[408,110],[360,142]],C.p,t,{lw:2.2});flow(c,[[360,218],[390,256]],C.p,t,{lw:2.2,label:'guarda'})}
+  if(st===5){flow(c,[[426,110],[474,142]],C.p,t,{lw:2.2});flow(c,[[470,218],[446,256]],C.g,t,{lw:2.2,label:'lee'});chip(c,'✅ cualquier copia la atiende',417,332,C.g,'#ecfbf3',E.out(u),{s:10})}
+  box(c,10,354,540,50,{r:12,f:'#0E2841',s:false,al:A});tx(c,st>=4||st<0?'Lambda es stateless: el estado va en DynamoDB, S3 o una base':'Con estado dentro de la app, cada copia es única… y frágil',280,379,{s:12,w:800,a:'center',f:FD,c:'#fff',al:A});
+  if(t>.8)band(c,['Estado: lo que la app recuerda entre una petición y otra, como el carrito de Camila','Stateful: la copia A guarda el carrito en SU memoria','La siguiente petición cae en la copia B… y el carrito no está','Y si la copia A se apaga, el carrito se pierde con ella','Stateless: ninguna copia recuerda nada; el carrito se anota en DynamoDB','Cualquier copia atiende a Camila, y se pueden prender o apagar sin perder nada'],st,A)};
+
+/* 3.8 · dos preguntas distintas: serverless ≠ stateless */
+S.matriz=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,5,3.2),st=t<.8?-1:r[0],u=r[1],x0=74,y0=40,W2=232,H2=150;
+  tx(c,'¿quién cuida los servidores?',x0+W2,24,{s:10.5,w:800,a:'center',f:FD,c:C.mut,al:A});
+  tx(c,'basado en servidores',x0+W2/2,y0+8,{s:10,w:800,a:'center',f:FM,c:C.o,al:A});tx(c,'serverless',x0+W2*1.5,y0+8,{s:10,w:800,a:'center',f:FM,c:C.p,al:A});
+  c.save();c.globalAlpha*=A;c.translate(24,y0+24+H2);c.rotate(-Math.PI/2);c.textAlign='center';c.font='800 10.5px '+FD;c.fillStyle=C.mut;c.fillText('¿la app guarda estado?',0,0);c.restore();
+  tx(c,'stateful',52,y0+24+H2/2,{s:9.5,w:800,a:'center',f:FM,c:C.o,al:A});tx(c,'stateless',52,y0+24+H2*1.5,{s:9.5,w:800,a:'center',f:FM,c:C.p,al:A});
+  var Q=[[0,0,'EC2 con MariaDB en su disco','la base de la clase 10 · un juego con la partida en memoria','EC2',C.o],[1,0,'servicios que guardan por ti','DynamoDB · S3 · Aurora Serverless: el estado, administrado','DynamoDB',C.p],[0,1,'EC2 detrás de Auto Scaling','cualquier EC2 atiende; los datos van en RDS','EC2',C.o2],[1,1,'Lambda · Fargate bien hecho','la tienda de hoy: el código no recuerda nada','AWSLambda',C.p2]];
+  Q.forEach(function(q,i){var x=x0+q[0]*W2,y=y0+24+q[1]*H2,on=st===i||(st===4&&i===3),a=E.out(P(t,.3+i*.15,.4));box(c,x+4,y+4,W2-8,H2-8,{r:14,f:on?rgba(q[5],.1):'#fff',s:on?q[5]:C.line,lw:on?2.4:1.2,al:A*a,sh:'rgba(14,40,65,.05)'});
+    icon(c,q[4],x+30,y+34,28,A*a);wrap(c,q[2],x+52,y+30,W2-66,15,{s:11.5,w:800,f:FD,al:A*a});wrap(c,q[3],x+18,y+84,W2-36,14,{s:9.5,w:600,f:FD,c:C.mut,al:A*a})});
+  if(st===4){var k=E.out(u);flow(c,[[x0+W2*1.5,y0+24+H2+20],[x0+W2*1.5,y0+24+H2-20]],C.g,t,{lw:2.6,a:k,label:'guarda en'});}
+  box(c,10,372,540,36,{r:10,f:st===4?'#ecfbf3':C.soft,s:st===4?C.g:false,lw:2,al:A});tx(c,'la receta de la nube: código stateless + estado en un servicio administrado',280,390,{s:11,w:800,a:'center',f:FD,c:st===4?'#0b6b3a':C.p,al:A});
+  if(t>.8)band(c,['Basado en servidores + stateful: una EC2 que guarda todo en su propio disco','Serverless + stateful: DynamoDB, S3 y Aurora Serverless guardan el estado por ti','Basado en servidores + stateless: las EC2 de Auto Scaling, todas intercambiables','Serverless + stateless: Lambda, como el back de la tienda de hoy','La receta: el código stateless (Lambda) guarda su estado en un servicio serverless (DynamoDB)'],st,A)};
 
 /* 3.5 · el viaje de un pedido (diapositiva ancha 1100×520) */
 function bandW(c,T,st,A,w,y){box(c,10,y,w-20,50,{r:12,f:'#0E2841',s:false,al:A});tx(c,T[st]||'',w/2,y+21,{s:13.5,w:700,a:'center',f:FD,c:'#fff',al:A});for(var i=0;i<T.length;i++)dot(c,w/2-(T.length-1)*9+i*18,y+40,i===st?4.5:3,i===st?C.o:'#2b4f74',A)}
