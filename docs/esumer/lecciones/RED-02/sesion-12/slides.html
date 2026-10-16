@@ -926,34 +926,34 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
   <div class="mviz"><canvas data-mu="quecorre" aria-label="Tabla de seis tipos de front y back y si corren en S3 con CloudFront, Lambda, Fargate o EC2"></canvas></div>
 </section>
 
-<section class="slide mu">
+<section class="slide mu wide">
   <div>
-    <div class="mtag"><b>4.4</b>la puerta · API Gateway<b></b></div>
-    <h2>API Gateway: <span class="g">la puerta</span></h2>
-    <div class="mnote"><span>// como</span> el portero de un edificio que lleva cada visita al apartamento correcto</div>
-    <p class="msub">La página no llama a la Lambda directamente: llama a una <b>URL</b> de <b>API Gateway</b>. La puerta revisa la <b>ruta</b> (GET para leer, POST para guardar), el permiso de la página que llama (<b>CORS</b>) y el límite de peticiones, y despierta a la Lambda correcta.</p><p class="muse">👉 <b>¿Y dónde quedan guardados los pedidos?</b></p>
+    <div class="mtag"><b>4.4</b>la tienda · la puerta<b></b></div>
+    <h2>API Gateway: <span class="g">la puerta, por dentro</span></h2>
+    
+    <p class="msub">La página no llama a la Lambda directo: llama a una URL de API Gateway, que revisa ruta, CORS y límites antes de despertarla. Escoge un paso o avanza con →.</p>
   </div>
-  <div class="mviz"><canvas data-mu="apigw" aria-label="Navegador, celular y otra app llaman a API Gateway, que revisa ruta, CORS y límites y despierta a la Lambda"></canvas></div>
+  <div class="mviz"><canvas data-mu="apigw" data-w="1100" data-h="520" data-maxh=".64" aria-label="API Gateway por dentro: rutas, CORS, límite de peticiones e integración con Lambda"></canvas></div>
 </section>
 
-<section class="slide mu">
+<section class="slide mu wide">
   <div>
-    <div class="mtag"><b>4.5</b>la memoria · DynamoDB<b></b></div>
-    <h2>DynamoDB: <span class="g">la memoria</span></h2>
-    <div class="mnote"><span>// como</span> el archivador que crece solo</div>
-    <p class="msub">La Lambda olvida todo al terminar, así que los pedidos se guardan en <b>DynamoDB</b>, que también es serverless: sin servidor que prender y, en modo <b>on-demand</b>, cobra por petición. Ya la conocen: llave de partición (<b>cliente</b>) y de orden (<b>fecha</b>).</p><p class="muse">👉 <b>¿Y si Laura quiere seguir con SQL, como en RDS?</b></p>
+    <div class="mtag"><b>4.5</b>la tienda · la memoria<b></b></div>
+    <h2>DynamoDB: <span class="g">particiones y zonas</span></h2>
+    
+    <p class="msub">La Lambda olvida todo al terminar; los pedidos viven en DynamoDB, repartidos por cliente en particiones copiadas en 3 zonas. Escoge un paso o avanza con →.</p>
   </div>
-  <div class="mviz"><canvas data-mu="dynsv" aria-label="La Lambda guarda pedidos en la tabla tienda-pedidos y los lee con Query y con Scan"></canvas></div>
+  <div class="mviz"><canvas data-mu="dynsv" data-w="1100" data-h="520" data-maxh=".64" aria-label="DynamoDB por dentro: ítems, particiones por cliente, copias en tres zonas, Query, Scan y crecimiento automático"></canvas></div>
 </section>
 
-<section class="slide mu">
+<section class="slide mu wide">
   <div>
-    <div class="mtag"><b>4.6</b>la memoria · RDS serverless<b></b></div>
-    <h2>RDS serverless: <span class="g">Aurora Serverless v2</span></h2>
-    <div class="mnote"><span>// como</span> un restaurante que agrega y quita mesas según llegue la gente</div>
-    <p class="msub">La base de pedidos también tiene madrugadas y picos. Un <b>RDS normal</b> tiene un tamaño fijo, como una EC2. <b>Aurora Serverless v2</b> (MySQL o PostgreSQL) mide su capacidad en <b>ACU</b> y la sube o baja <b>en segundos</b> según la carga; si nadie la usa, puede <b>pausarse en 0</b>. Es SQL de siempre, con capacidad serverless. (No entra en la capa gratuita: hoy usamos DynamoDB.)</p><p class="muse">👉 <b>Y hay más piezas en la familia</b></p>
+    <div class="mtag"><b>4.6</b>la tienda · RDS serverless<b></b></div>
+    <h2>Aurora Serverless v2: <span class="g">SQL que crece solo</span></h2>
+    
+    <p class="msub">SQL que sube y baja su capacidad (ACU) en segundos. No entra en la capa gratuita: hoy usamos DynamoDB. Escoge un paso o avanza con →.</p>
   </div>
-  <div class="mviz"><canvas data-mu="aurora" aria-label="Carga de la base durante un día frente a la capacidad fija de RDS y la capacidad variable en ACU de Aurora Serverless v2"></canvas></div>
+  <div class="mviz"><canvas data-mu="aurora" data-w="1100" data-h="520" data-maxh=".64" aria-label="Aurora Serverless v2 por dentro: endpoint, escritor y réplica que escalan en ACU, volumen con seis copias y comparación con RDS fijo"></canvas></div>
 </section>
 
 <section class="slide mu wide">
@@ -3969,6 +3969,74 @@ S.familia=function(c,t,sec){var A=E.out(P(t,.1,.6)),R=evW(sec,t),ev=R[0],u=R[1],
   if(ev===5){['cobrar','confirmar','despachar'].forEach(function(s2,i){var on=u>i*.3;chip(c,(on?'✓ ':'')+s2,870,284+i*0+0,C.o,'#fff',0,{});chip(c,(on?'✓ ':'')+s2,960,150+i*26,on?C.g:C.faint,'#fff',A,{s:9})})}
   narrW(c,EV,ev,u,A);pillsW(c,sec,EV,ev,A,470)};
 wireW('familia',8);
+
+/* API Gateway por dentro (1100×520) */
+S.apigw=function(c,t,sec){var A=E.out(P(t,.1,.6)),R=evW(sec,t),ev=R[0],u=R[1],all=ev<0;
+  var EV=[{k:'llaman',t:'Tres clientes llaman a la URL de la API: el navegador de Camila, un celular… y un bot'},{k:'la ruta',t:'Ruta: GET / para leer pedidos y POST / para guardar; otra ruta → 404'},{k:'CORS',t:'CORS: ¿la página que llama tiene permiso? La tienda de Laura sí; una página extraña, no'},{k:'el límite',t:'Límite: el bot manda miles por segundo y API Gateway le responde 429, protegiendo a la Lambda'},{k:'evento',t:'Integración: la puerta convierte la petición en un evento JSON y despierta a la Lambda'},{k:'respuesta',t:'La respuesta de la Lambda vuelve por la misma puerta al cliente: 200 + JSON'}];
+  var CL=[['R_Client','navegador de Camila','tu_tienda.cloudfront.net',110,C.t],['R_Mobileclient','celular','app de la tienda',230,C.g],['R_Users','bot desconocido','página-rara.com',350,C.red]];
+  CL.forEach(function(k){box(c,14,k[3]-44,170,88,{r:12,f:'#fff',s:k[4]===C.red&&(ev===2||ev===3)?C.red:C.line,lw:1.6,al:A});icon(c,k[0],44,k[3]-6,28,A);tx(c,k[1],66,k[3]-12,{s:10,w:800,f:FD,al:A});tx(c,k[2],66,k[3]+6,{s:8,w:700,f:FM,c:C.mut,al:A})});
+  grp(c,200,14,886,400,'#232F3E','AWS Cloud','G_AWSCloudlogo',{al:A});
+  box(c,240,40,470,360,{r:16,f:'#fff7f3',s:C.o,lw:2,al:A});icon(c,'APIGateway',272,70,30,A);tx(c,'API Gateway · tienda-serverless-api',296,64,{s:12,w:800,f:FD,al:A});tx(c,'https://abc123.execute-api.us-east-1.amazonaws.com',296,82,{s:8.5,w:600,f:FM,c:C.mut,al:A});
+  var PN=[['1 · ruta',['GET /  → Lambda','POST / → Lambda','PUT /admin → 404'],1],['2 · CORS',['tu_tienda… ✓','página-rara.com ✕'],2],['3 · límite',['máx. 100 por segundo','el bot: 3.000/s → 429'],3],['4 · integración',['petición → evento JSON','→ despierta la Lambda'],4]];
+  PN.forEach(function(p,i){var x=258+(i%2)*226,y=102+Math.floor(i/2)*146,on=ev===p[2]||ev===5&&i===3;box(c,x,y,212,132,{r:12,f:on?'#fff':'rgba(255,255,255,.7)',s:on?C.o:C.line,lw:on?2.4:1,al:A});tx(c,p[0],x+14,y+20,{s:11,w:800,f:FD,c:C.o,al:A});
+    p[1].forEach(function(l,j){var bad=l.indexOf('✕')>=0||l.indexOf('404')>=0||l.indexOf('429')>=0;tx(c,l,x+14,y+48+j*24,{s:10,w:700,f:FM,c:on&&bad?C.red:C.ink,al:A})})});
+  nodeW(c,'AWSLambda',820,200,'Lambda','app.py',ev===4||ev===5);nodeW(c,'DynamoDB',980,200,'DynamoDB','tienda-pedidos',false,'#8a5cf6');flow(c,[[882,200],[918,200]],'#8a5cf6',t,{lw:2,a:A*.4});
+  var d=function(k){return all?.45:k?1:.1};
+  flow(c,[[184,110],[240,150]],C.t,t,{lw:2.4,a:A*d(ev===0||ev===1||ev===2)});flow(c,[[184,230],[240,230]],C.g,t,{lw:2.4,a:A*d(ev===0||ev===1)});
+  if(ev===3){for(var i=0;i<8;i++){var k=((t*1.6)+i*.12)%1;dot(c,184+k*50,350-i*3,4,C.red,A,6)}chip(c,'429 Too Many Requests',140,404,C.red,'#fff1f1',1,{s:9.5})}else flow(c,[[184,350],[240,330]],C.red,t,{lw:2.4,a:A*d(ev===0||ev===2)});
+  if(ev===2&&u>.4)chip(c,'✕ bloqueado por CORS',120,404,C.red,'#fff1f1',1,{s:9.5});
+  flow(c,[[710,200],[758,200]],C.o,t,{lw:2.6,a:A*d(ev===4),label:ev===4?'evento':''});flow(c,[[758,226],[710,226]],C.g,t,{lw:2.4,a:A*d(ev===5),label:ev===5?'200 + JSON':'',ly:18});
+  if(ev===5)flow(c,[[240,250],[200,250],[200,120],[184,120]],C.g,t,{lw:2.2});
+  if(ev===4){box(c,730,276,250,110,{r:10,f:'#0b1a2b',s:false,al:A});['{ "requestContext": {','    "http": {"method": "POST"} },','  "body": "{\\"cliente\\":\\"camila\\"}" }'].forEach(function(l,i){tx(c,l,742,300+i*22,{s:9,w:500,f:FM,c:'#e6edf3',al:A})})}
+  narrW(c,EV,ev,u,A);pillsW(c,sec,EV,ev,A,470)};
+wireW('apigw',6);
+
+/* DynamoDB por dentro: particiones y zonas (1100×520) */
+S.dynsv=function(c,t,sec){var A=E.out(P(t,.1,.6)),R=evW(sec,t),ev=R[0],u=R[1],all=ev<0;
+  var EV=[{k:'la tabla',t:'La tabla tienda-pedidos: cada ítem tiene llave de partición (cliente) y llave de orden (fecha)'},{k:'PutItem',t:'PutItem: DynamoDB usa el cliente para decidir en qué partición guarda el pedido de Camila'},{k:'3 zonas',t:'Cada partición se guarda copiada en 3 zonas de disponibilidad: si una falla, no se pierde nada'},{k:'Query',t:'Query cliente = camila: va directo a SU partición → rapidísimo, aunque haya millones'},{k:'Scan',t:'Scan: recorre TODAS las particiones → lento y caro cuando la tabla crece'},{k:'crece sola',t:'On-demand: si llegan más pedidos, DynamoDB divide y reparte en más particiones, solo'}];
+  nodeW(c,'AWSLambda',90,200,'Lambda','app.py',ev===1||ev===3||ev===4);
+  grp(c,180,14,906,400,'#232F3E','DynamoDB · tabla tienda-pedidos (on-demand)','DynamoDB',{al:A,fill:'rgba(138,92,246,.03)'});
+  /* ítem */
+  box(c,200,46,300,96,{r:12,f:ev===0?'#fff7ed':'#fff',s:ev===0?C.o:C.line,lw:ev===0?2.2:1.2,al:A});tx(c,'un ítem (un pedido)',214,64,{s:10,w:800,f:FD,c:C.mut,al:A});
+  [['cliente','camila',C.o,'🔑 partición'],['fecha','2026-10-16 19:02',C.o,'↕ orden'],['producto','gorra',C.ink,''],['talla','L',C.ink,'']].forEach(function(f,i){var x=214+(i%2)*144,y=88+Math.floor(i/2)*26;tx(c,f[0]+':',x,y,{s:9,w:700,f:FM,c:C.mut,al:A});tx(c,f[1],x+52,y,{s:9.5,w:800,f:FM,c:f[2],al:A})});
+  var np=ev===5?3+Math.min(1,Math.floor(u*2)):3,AZ=['zona a','zona b','zona c'],PT=[['P1','a–h','camila · carlos'],['P2','i–p','pedro · laura'],['P3','q–z','sofía · tomás'],['P4','nueva','(se dividió P1)']];
+  AZ.forEach(function(z,j){var x=540+j*180;grp(c,x,46,170,356,'#7AA116',z,'',{al:A,fill:ev===2?'rgba(122,161,22,.07)':'rgba(122,161,22,.02)',lw:ev===2?2:1});
+    for(var p=0;p<4;p++){var y=82+p*78;if(p>=np){c.save();c.globalAlpha*=A*.4;c.setLineDash([3,4]);c.strokeStyle=C.faint;rr(c,x+10,y,150,66,8);c.stroke();c.restore();continue}
+      var mine=p===0,hl=(ev===1&&mine)||(ev===3&&mine)||ev===4||(ev===5&&p===3),col=ev===4?C.red:ev===5&&p===3?C.g:C.p;box(c,x+10,y,150,66,{r:8,f:hl?rgba(col,.12):'#fff',s:hl?col:C.line,lw:hl?2:1,al:A});tx(c,PT[p][0]+' · '+PT[p][1],x+20,y+18,{s:10,w:800,f:FM,c:C.p,al:A});tx(c,PT[p][2],x+20,y+38,{s:8.5,w:700,f:FD,c:C.ink,al:A});if(j>0)tx(c,'copia',x+150,y+56,{s:7.5,w:700,a:'right',f:FM,c:C.faint,al:A})}});
+  var d=function(k){return all?.4:k?1:.08};
+  flow(c,[[152,190],[540,115]],C.o,t,{lw:2.4,a:A*d(ev===1),label:ev===1?'PutItem · cliente=camila':'',lp:.4});
+  if(ev===1||ev===2){[1,2].forEach(function(j){flow(c,[[700+(j-1)*180,115],[730+(j-1)*180,115]],C.g,t,{lw:2,a:A*(ev===2?1:.3)})})}
+  flow(c,[[152,205],[548,120]],C.p,t,{lw:2.6,a:A*d(ev===3),label:ev===3?'Query → 1 partición · 5 ms':'',lp:.4,ly:18});
+  if(ev===4){for(var p2=0;p2<3;p2++)flow(c,[[152,215],[548,115+p2*78]],C.red,t,{lw:1.8});chip(c,'Scan → todas las particiones · lento',330,380,C.red,'#fff1f1',1,{s:10})}
+  if(ev===5)chip(c,'✨ P1 se llenó: DynamoDB la dividió en P1 y P4',330,380,C.g,'#ecfbf3',1,{s:10});
+  if(ev===2)chip(c,'3 copias = si una zona se cae, la tienda sigue',330,380,C.g,'#ecfbf3',1,{s:10});
+  narrW(c,EV,ev,u,A);pillsW(c,sec,EV,ev,A,470)};
+wireW('dynsv',6);
+
+/* Aurora Serverless v2 por dentro (1100×520) */
+S.aurora=function(c,t,sec){var A=E.out(P(t,.1,.6)),R=evW(sec,t),ev=R[0],u=R[1],all=ev<0;
+  var EV=[{k:'el endpoint',t:'La app se conecta al endpoint de Aurora con el SQL de siempre (MySQL o PostgreSQL)'},{k:'madrugada',t:'Madrugada: casi nadie consulta; la base baja a 0,5 ACU… o se pausa en 0 si nadie la usa'},{k:'el pico',t:'Llega el pico: más consultas → Aurora sube a 8 ACU en segundos, sin cortar las conexiones'},{k:'el disco',t:'El almacenamiento va aparte: 6 copias en 3 zonas, y crece solo con los datos'},{k:'réplica',t:'Una réplica de lectura también escala sola, para los reportes de Laura'},{k:'vs. RDS',t:'Compara: un RDS normal se queda en su tamaño fijo (db.t3.medium) todo el día'}];
+  var acu=all?4:ev===1?.5+(1-u)*1:ev===2?.5+7.5*E.io(u):ev===4?8:ev===5?2:ev===0?2:2,racu=ev===4?2+4*E.io(u):1;
+  nodeW(c,'AWSLambda',90,150,'tu app','Lambda o EC2',ev===0);
+  grp(c,180,14,906,400,'#232F3E','AWS Cloud · us-east-1','G_AWSCloudlogo',{al:A});
+  grp(c,200,40,620,250,C.p,'clúster Aurora Serverless v2 (MySQL)','Aurora',{al:A,fill:'rgba(21,96,130,.03)'});
+  box(c,224,70,190,40,{r:10,f:ev===0?'#fff7ed':'#fff',s:ev===0?C.o:C.line,lw:ev===0?2.2:1.2,al:A});tx(c,'endpoint: tienda.cluster-…',319,90,{s:9.5,w:800,a:'center',f:FM,c:C.p,al:A});
+  function inst(x,y,lab,a,on){box(c,x,y,260,140,{r:14,f:'#fff',s:on?C.o:C.line,lw:on?2.4:1.2,al:A});icon(c,'Aurora',x+24,y+24,24,A);tx(c,lab,x+44,y+24,{s:11,w:800,f:FD,al:A});
+    tx(c,'capacidad: '+(a<.05?'0 (pausada)':a.toFixed(1)+' ACU'),x+14,y+56,{s:11,w:800,f:FM,c:a<.6?C.mut:a>6?C.o:C.p,al:A});for(var i=0;i<16;i++){var on2=i<Math.round(a*2);box(c,x+14+i*14.5,y+72,12,26,{r:3,f:on2?(a>6?C.o:C.p2):C.soft,s:false,al:A})}tx(c,'≈ '+(a*2).toFixed(0)+' GB de RAM · cobra por ACU-hora',x+14,y+118,{s:8.5,w:700,f:FM,c:C.mut,al:A})}
+  inst(224,126,'escritor',ev===1&&u>.85?0:acu,ev===1||ev===2);inst(540,126,'réplica de lectura',racu,ev===4);
+  /* almacenamiento */
+  grp(c,200,304,620,96,'#7AA116','volumen compartido · 6 copias en 3 zonas','',{al:A,fill:ev===3?'rgba(122,161,22,.08)':'rgba(122,161,22,.02)',lw:ev===3?2:1});
+  for(var z=0;z<3;z++)for(var k=0;k<2;k++){var x=224+z*200+k*86;box(c,x,336,76,46,{r:8,f:'#fff',s:'#7AA116',lw:1.2,al:A});gl(c,'db',x+20,359,16,'#5a7d0a',A);tx(c,'zona '+'abc'[z],x+48,359,{s:8.5,w:700,a:'center',f:FM,c:C.mut,al:A})}
+  flow(c,[[354,266],[354,304]],C.g,t,{lw:2,a:A*(ev===3?1:.3)});flow(c,[[670,266],[670,304]],C.g,t,{lw:2,a:A*(ev===3?1:.3)});
+  /* app → endpoint */
+  var d=function(k){return all?.5:k?1:.15};flow(c,[[152,150],[224,90]],C.o,t,{lw:2.4,a:A*d(ev===0||ev===2),label:'SELECT / INSERT'});flow(c,[[414,90],[440,90],[440,126]],C.p,t,{lw:2,a:A*d(ev<=2)});
+  if(ev===2){for(var q=0;q<10;q++){var kk=((t*1.2)+q*.1)%1;dot(c,152+kk*70,150-kk*60,3.5,C.o,A,6)}}
+  /* RDS fijo */
+  box(c,840,40,230,360,{r:14,f:ev===5?'#fff7ed':C.soft,s:ev===5?C.o:false,lw:2,al:A});icon(c,'RDS',866,66,26,A);tx(c,'RDS normal',890,66,{s:11.5,w:800,f:FD,c:C.o,al:A});tx(c,'db.t3.medium · fijo',890,84,{s:9,w:700,f:FM,c:C.mut,al:A});
+  var HR=[['3:00',.3],['12:00',3],['20:00',12]];HR.forEach(function(h,i){var y=120+i*84;tx(c,h[0],856,y,{s:9.5,w:800,f:FM,al:A});c.save();c.globalAlpha*=A;rr(c,906,y-8,150,16,8);c.fillStyle='#fff';c.fill();rr(c,906,y-8,150*Math.min(1,h[1]/6),16,8);c.fillStyle=h[1]>6?C.red:C.g;c.fill();c.restore();tx(c,h[1]>6?'se queda corta':h[1]<1?'sobra (pagada)':'bien',981,y+22,{s:9,w:800,a:'center',f:FD,c:h[1]>6?C.red:h[1]<1?C.o:C.g,al:A})});
+  tx(c,'misma capacidad 24 h',955,370,{s:10,w:800,a:'center',f:FD,c:C.o,al:A});
+  narrW(c,EV,ev,u,A);pillsW(c,sec,EV,ev,A,470)};
+wireW('aurora',6);
 
 /* motor: corre la escena de la diapositiva visible */
 var raf=0,cur=null,TOFF=parseFloat((location.search.match(/[?&]mt=([\d.]+)/)||[])[1])||0;function tick(){return document.hidden?setTimeout(function(){frame(performance.now())},33):requestAnimationFrame(frame)}
