@@ -19,6 +19,7 @@ Se filtra por **Grupo** + **N° de clase** + **Marca temporal** (la hora delata 
 | 9 | 2026-10-06 | Despliegue moderno: API, CLI de AWS, llave IAM, Terraform (init/plan/apply/destroy) y LAB pyme-vpc + EC2 desde código | 33 | 10 | [RED-01/clase-09.md](RED-01/clase-09.md) |
 | 10 | 2026-10-08 | Almacenamiento: bloque, archivos y objetos (EBS, EFS, FSx, S3, Glacier) y web en S3 por consola y Terraform | 32 | 11 | [RED-01/clase-10.md](RED-01/clase-10.md) |
 | 11 | 2026-10-13 | Pendiente S3 + CloudFront (Terraform) + bases de datos: SGBD, ACID, SQL vs. NoSQL, bases de AWS y LAB MariaDB en la EC2 | 33 | 10 | [RED-01/clase-11.md](RED-01/clase-11.md) |
+| 12 | 2026-10-15 | Pendiente LAB RDS (Terraform) + ciberseguridad: la noche en que atacaron la tienda de Laura (IAM, cifrado, KMS, WAF, detección) y LAB hash | 27 | 16 | [RED-01/clase-12.md](RED-01/clase-12.md) |
 
 ## RED-02 (Mié/Vie)
 | Clase | Fecha | Tema | Pres. | Aus. | Registro |
