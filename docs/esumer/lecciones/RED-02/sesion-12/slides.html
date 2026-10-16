@@ -267,8 +267,8 @@ ul.clean li:first-child { border-top:0; }
   <img class="cover-bg" src="../../../assets/portada.png" alt="">
   <div class="cover-txt">
     <span class="cover-k">Estud-IA · Ruta TI · 2026-2 · Sesión {{SESION}} · clase virtual · {{G_ID}}</span>
-    <h1 class="cover-h">La tienda que se apaga sola</h1>
-    <p class="cover-s">Basado en servidores vs. serverless: por qué la tienda de Laura paga aunque nadie compre, cómo funcionan Lambda, API Gateway y DynamoDB… y tu tienda completa sin un solo servidor prendido.<br>Alejandro Barrera · Cloud Architect</p>
+    <h1 class="cover-h">Server-based vs. serverless</h1>
+    <p class="cover-s">La tienda que se apaga sola: qué es server-based, qué es serverless y en qué se diferencian; cómo funcionan por dentro Lambda, ECS y Fargate… y tu tienda completa sin un solo servidor prendido.<br>Alejandro Barrera · Cloud Architect</p>
   </div>
   <img class="cover-logo" src="../../../assets/estudia-blanco.png" alt="Estud-IA">
 </section>
@@ -278,11 +278,11 @@ ul.clean li:first-child { border-top:0; }
   <span class="k">El plan de hoy · clase {{SESION}}</span>
   <h2>Objetivo de hoy: <span class="grad">una tienda que no necesita servidores</span>.</h2>
   <ul class="rows">
-    <li><span class="t">Basado en servidores<small>un día con una EC2 prendida · el Black Friday · EC2 Auto Scaling y lo que no resuelve</small></span><span class="m">historia</span></li>
-    <li><span class="t">¿Qué es serverless?<small>serverless vs. basado en servidores · carro propio vs. taxi · eventos · escala sola · Auto Scaling vs. Lambda · pagar por uso</small></span><span class="m">concepto</span></li>
-    <li><span class="t">Por dentro<small>la flota y las microVM · capacidad compartida · la vida de una instancia · por qué es automático · arranque en frío · límites</small></span><span class="m">a fondo</span></li>
-    <li><span class="t">Front, back y dónde corre cada uno<small>el salón y la cocina · Lambda · contenedores, ECS y Fargate · de EC2 a Lambda · qué corre dónde</small></span><span class="m">servicios</span></li>
-    <li><span class="t">La tienda serverless en AWS<small>API Gateway · DynamoDB · RDS serverless (Aurora Serverless v2) · la familia serverless · el viaje de un pedido</small></span><span class="m">arquitectura</span></li>
+    <li><span class="t">¿Qué es server-based?<small>la EC2 que Laura escoge, prende y cuida · un día con servidor · el Black Friday · Auto Scaling y lo que no resuelve</small></span><span class="m">concepto</span></li>
+    <li><span class="t">¿Qué es serverless?<small>Lambda: solo tu código · carro propio vs. taxi · quién se encarga de qué · eventos · escala sola</small></span><span class="m">concepto</span></li>
+    <li><span class="t">Las diferencias<small>tabla comparativa · el mismo pico con Auto Scaling y con Lambda · costos · juego: ¿servidor o serverless?</small></span><span class="m">comparación</span></li>
+    <li><span class="t">Cada uno a fondo<small>server-based: contenedores, ECS, EC2 o Fargate · serverless: la flota, capacidad compartida, instancias, arranque en frío, límites, Fargate por dentro</small></span><span class="m">a fondo</span></li>
+    <li><span class="t">La tienda: front, back y servicios<small>el salón y la cocina · qué corre dónde · API Gateway · DynamoDB · Aurora Serverless · el viaje de un pedido</small></span><span class="m">arquitectura</span></li>
     <li><span class="t">Laboratorio · 2 retos<small>tu primera Lambda a clics · la tienda completa con Terraform: S3 + CloudFront + API Gateway + Lambda + DynamoDB</small></span><span class="m">lab</span></li>
   </ul>
 </section>
@@ -593,16 +593,26 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu dark sep">
   <div>
-    <div class="mtag" style="color:#7f9bb5"><b>Parte 1</b>de 6</div>
-    <h2 style="max-width:15ch">Basado en servidores: <span class="g">un servidor prendido</span></h2>
-    <p class="msub">Hasta hoy, la tienda de Laura vive en una EC2: un computador en la nube, prendido día y noche, esperando clientes. A eso se le llama una arquitectura <b>basada en servidores</b> (server-based): lo contrario de serverless.</p>
+    <div class="mtag" style="color:#7f9bb5"><b>Parte 1</b>de 7</div>
+    <h2 style="max-width:15ch">Server-based: <span class="g">¿qué es?</span></h2>
+    <p class="msub">Así ha vivido la tienda de Laura hasta hoy: en una EC2, un servidor que ella escoge, prende y cuida. A eso se le llama server-based (basado en servidores).</p>
   </div>
-  <div class="mviz"><canvas data-mu="ruta" data-part="1" aria-label="Ruta de la clase: parte 1 de 6"></canvas></div>
+  <div class="mviz"><canvas data-mu="ruta" data-part="1" aria-label="Ruta de la clase: parte 1 de 7"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>1.1</b>basado en servidores · un día<b></b></div>
+    <div class="mtag"><b>1.1</b>server-based · la definición<b></b></div>
+    <h2>¿Qué es <span class="g">server-based</span>?</h2>
+    <div class="mnote"><span>// como</span> tener tu propio carro: lo escoges, lo mantienes y lo pagas aunque esté parqueado</div>
+    <p class="msub">En una arquitectura <b>server-based</b> (basada en servidores) tu app vive en un <b>servidor que tú escoges</b>: en AWS, una <b>EC2</b>. Eliges su tamaño (CPU y memoria fijas), instalas y cuidas todo lo de encima (Linux, NGINX, Python, tu código) y queda <b>prendido 24/7</b>. ¿Más clientes? Prendes más servidores.</p><p class="muse">👉 <b>Veamos un día de la tienda así</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="sbdef" aria-label="Qué es server-based: una EC2 que escoges por tamaño, donde instalas todo, prendida 24/7 y que se multiplica a mano o con Auto Scaling"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>1.2</b>basado en servidores · un día<b></b></div>
     <h2>Un día <span class="g">con servidor</span></h2>
     <div class="mnote"><span>// como</span> un local abierto 24 horas, con o sin clientes</div>
     <p class="msub">La EC2 de Laura no se apaga nunca. A las 3:00 a. m. no hay nadie comprando… y AWS le cobra igual cada hora. A las 8:00 p. m. llegan todos al tiempo y la EC2 <b>no da abasto</b>. Con un servidor pagas por <b>tenerlo prendido</b>, no por lo que usas.</p><p class="muse">👉 <b>Y además, el servidor da trabajo</b></p>
@@ -612,7 +622,7 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>1.2</b>basado en servidores · el trabajo<b></b></div>
+    <div class="mtag"><b>1.3</b>basado en servidores · el trabajo<b></b></div>
     <h2>Un servidor <span class="g">da trabajo</span></h2>
     <div class="mnote"><span>// como</span> tener carro propio: también hay que llevarlo al taller</div>
     <p class="msub">Con la EC2, Laura es dueña de todo lo que va <b>encima</b> del hardware: parchar Linux, instalar y actualizar NGINX y Python, vigilar el disco, reiniciar si se cuelga y, en los picos, crear más EC2 a mano. Es tiempo que no pasa vendiendo.</p><p class="muse">👉 <b>¿Y qué pasa en el Black Friday?</b></p>
@@ -622,7 +632,7 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>1.3</b>basado en servidores · el pico<b></b></div>
+    <div class="mtag"><b>1.4</b>basado en servidores · el pico<b></b></div>
     <h2>El Black Friday <span class="g">de Laura</span></h2>
     <div class="mnote"><span>// como</span> una sola caja registradora el día de la gran promoción</div>
     <p class="msub">Laura anuncia descuentos y llegan <b>20 veces</b> más clientes. La EC2 llega al 100 % de CPU, la página se pone lenta y empieza a responder <b>503</b>. Cuando Laura logra crear otra EC2, los clientes ya se fueron a otra tienda.</p><p class="muse">👉 <b>¿Y si la EC2 creciera sola?</b></p>
@@ -632,7 +642,7 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>1.4</b>basado en servidores · la primera solución<b></b></div>
+    <div class="mtag"><b>1.5</b>basado en servidores · la primera solución<b></b></div>
     <h2>Auto Scaling: <span class="g">la EC2 que se multiplica</span></h2>
     <div class="mnote"><span>// como</span> contratar cajeros temporales cuando se llena la tienda</div>
     <p class="msub">Después del susto, Laura pone su tienda detrás de un <b>balanceador</b> (ALB) y arma un <b>grupo de Auto Scaling</b>: mínimo 2 EC2, máximo 6. <b>CloudWatch</b> vigila la CPU; si pasa del 70 %, Auto Scaling <b>prende EC2 nuevas</b> y el balanceador les reparte clientes. Cuando baja, las apaga.</p><p class="muse">👉 <b>¿Problema resuelto? Casi…</b></p>
@@ -642,26 +652,36 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>1.5</b>basado en servidores · lo que falta<b></b></div>
+    <div class="mtag"><b>1.6</b>basado en servidores · lo que falta<b></b></div>
     <h2>Lo que Auto Scaling <span class="g">no resuelve</span></h2>
     <div class="mnote"><span>// como</span> cajeros temporales que tardan media hora en llegar</div>
-    <p class="msub">Auto Scaling es una gran herramienta (y se usa muchísimo), pero tiene límites: <b>reacciona en minutos</b>, el <b>mínimo se paga siempre</b>, crece de a <b>un servidor completo</b> y los servidores <b>siguen siendo de Laura</b>: parches, imagen, discos.</p><p class="muse">👉 <b>¿Y si no tuviera que pensar en servidores?</b></p>
+    <p class="msub">Auto Scaling es una gran herramienta (y se usa muchísimo), pero tiene límites: <b>reacciona en minutos</b>, el <b>mínimo se paga siempre</b>, crece de a <b>un servidor completo</b> y los servidores <b>siguen siendo de Laura</b>: parches, imagen, discos.</p><p class="muse">👉 <b>Hay otra forma: que los servidores no sean tu problema</b></p>
   </div>
   <div class="mviz"><canvas data-mu="asgno" aria-label="Cuatro límites de Auto Scaling: reacciona en minutos, mínimo pagado, crece por servidor completo y servidores propios"></canvas></div>
 </section>
 
 <section class="slide mu dark sep">
   <div>
-    <div class="mtag" style="color:#7f9bb5"><b>Parte 2</b>de 6</div>
-    <h2 style="max-width:15ch">¿Qué es <span class="g">serverless</span>?</h2>
-    <p class="msub">Serverless (“sin servidor”) es lo contrario de basado en servidores: sí hay servidores, pero dejan de ser tu problema.</p>
+    <div class="mtag" style="color:#7f9bb5"><b>Parte 2</b>de 7</div>
+    <h2 style="max-width:15ch">Serverless: <span class="g">¿qué es?</span></h2>
+    <p class="msub">Lo contrario de server-based: sí hay servidores, pero no los escoges, no los prendes y no los cuidas. En AWS, el ejemplo estrella es Lambda.</p>
   </div>
-  <div class="mviz"><canvas data-mu="ruta" data-part="2" aria-label="Ruta de la clase: parte 2 de 6"></canvas></div>
+  <div class="mviz"><canvas data-mu="ruta" data-part="2" aria-label="Ruta de la clase: parte 2 de 7"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>2.1</b>la idea<b></b></div>
+    <div class="mtag"><b>2.1</b>serverless · la definición<b></b></div>
+    <h2>¿Qué es <span class="g">serverless</span>?</h2>
+    <div class="mnote"><span>// como</span> pedir un taxi: llega cuando lo llamas y pagas solo el viaje</div>
+    <p class="msub">En <b>serverless</b> subes <b>solo tu código</b>: en AWS, una función <b>Lambda</b>. No escoges servidor (solo la memoria), no corre todo el tiempo sino cuando llega un <b>evento</b>, AWS prende <b>las copias que hagan falta</b> y pagas <b>por petición y milisegundo</b>. Si nadie llama: cero copias y cero pesos.</p><p class="muse">👉 <b>La idea en una sola imagen</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="svdef" aria-label="Qué es serverless: subes solo tu código, eliges memoria, despierta con eventos, AWS prende copias y pagas por uso"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>2.2</b>la idea<b></b></div>
     <h2>Carro propio <span class="g">vs. taxi</span></h2>
     <div class="mnote"><span>// como</span> la idea en una sola imagen</div>
     <p class="msub">El <b>carro propio</b> (un servidor) lo pagas aunque esté parqueado: cuota, seguro, taller. El <b>taxi</b> (serverless) lo pagas solo cuando te mueves, y no te importa quién le cambia el aceite. Si un día necesitas 20, pides 20.</p><p class="muse">👉 <b>¿Quién se encarga de qué en cada caso?</b></p>
@@ -671,7 +691,7 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>2.2</b>la idea · responsabilidades<b></b></div>
+    <div class="mtag"><b>2.3</b>la idea · responsabilidades<b></b></div>
     <h2>¿Quién se encarga <span class="g">de qué</span>?</h2>
     <div class="mnote"><span>// como</span> del local propio al local con todo incluido</div>
     <p class="msub">En tu propio data center haces <b>todo</b>. Con <b>EC2</b>, AWS pone el hardware, pero tú cuidas el sistema operativo, el software y el escalado. Con <b>Lambda</b>, tú solo escribes <b>el código</b>: AWS se encarga de lo demás.</p><p class="muse">👉 <b>Entonces, ¿cuándo corre mi código?</b></p>
@@ -681,7 +701,7 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>2.3</b>cómo funciona · eventos<b></b></div>
+    <div class="mtag"><b>2.4</b>cómo funciona · eventos<b></b></div>
     <h2>Despierta, trabaja <span class="g">y se apaga</span></h2>
     <div class="mnote"><span>// como</span> un mesero que aparece solo cuando alguien lo llama</div>
     <p class="msub">Serverless funciona por <b>eventos</b>: llega un pedido, se sube una foto, suena una alarma a las 7:00 a. m. Cada evento <b>despierta</b> una función, que trabaja unos milisegundos y se vuelve a dormir. Sin eventos no corre nada… y no pagas nada.</p><p class="muse">👉 <b>¿Y si llegan mil eventos al tiempo?</b></p>
@@ -691,165 +711,75 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>2.4</b>cómo funciona · escalado<b></b></div>
+    <div class="mtag"><b>2.5</b>cómo funciona · escalado<b></b></div>
     <h2>Uno o mil: <span class="g">da igual</span></h2>
     <div class="mnote"><span>// como</span> abrir 20 cajas registradoras en un segundo</div>
-    <p class="msub">Si llegan 1.000 pedidos al tiempo, AWS prende <b>muchas copias</b> de la función en paralelo, sin que Laura toque nada. Cuando pasa el pico, las apaga. Eso es <b>escalado automático</b>, y es la gran diferencia con el Black Friday de la EC2.</p><p class="muse">👉 <b>¿Y no era eso lo que hacía Auto Scaling?</b></p>
+    <p class="msub">Si llegan 1.000 pedidos al tiempo, AWS prende <b>muchas copias</b> de la función en paralelo, sin que Laura toque nada. Cuando pasa el pico, las apaga. Eso es <b>escalado automático</b>, y es la gran diferencia con el Black Friday de la EC2.</p><p class="muse">👉 <b>Pongamos los dos lado a lado</b></p>
   </div>
   <div class="mviz"><canvas data-mu="escala" aria-label="Una EC2 saturada con pedidos en fila frente a muchas copias de Lambda atendiendo en paralelo"></canvas></div>
 </section>
 
-<section class="slide mu">
-  <div>
-    <div class="mtag"><b>2.5</b>cómo funciona · el mismo pico<b></b></div>
-    <h2>Auto Scaling <span class="g">vs. Lambda</span></h2>
-    <div class="mnote"><span>// como</span> escalera contra rampa</div>
-    <p class="msub">En el mismo pico de 60 minutos, Auto Scaling sube <b>en escalera</b>: mide, espera y prende EC2 completas, y mientras tanto hay clientes esperando. Lambda <b>sigue la curva</b>: cada petición nueva tiene su propia copia en milisegundos. Y fuera del pico, Auto Scaling sigue pagando su mínimo; Lambda, <b>nada</b>.</p><p class="muse">👉 <b>¿Y cuánto cuesta eso?</b></p>
-  </div>
-  <div class="mviz"><canvas data-mu="asgvs" aria-label="Capacidad de Auto Scaling en escalera frente a Lambda que sigue la curva de clientes en un pico de sesenta minutos"></canvas></div>
-</section>
-
-<section class="slide mu">
-  <div>
-    <div class="mtag"><b>2.6</b>cómo funciona · costo<b></b></div>
-    <h2>Pagar <span class="g">por uso</span></h2>
-    <div class="mnote"><span>// como</span> la factura del agua: pagas los litros que gastas</div>
-    <p class="msub">Una EC2 pequeña cuesta lo mismo con 0 o con 10.000 pedidos. Lambda cobra por <b>petición</b> y por <b>milisegundo</b> de trabajo, y su capa gratuita regala <b>1 millón de peticiones al mes</b>, siempre. Para una tienda pequeña, la cuenta da casi <b>cero</b>.</p><div class="mfacts"><span><i>Lambda gratis</i>1 millón de peticiones/mes</span><span><i>1 EC2 t3.micro</i>≈ US$7,6/mes prendida</span></div><p class="muse">👉 <b>¿Cómo logra AWS hacer eso? Miremos por dentro</b></p>
-  </div>
-  <div class="mviz"><canvas data-mu="costo" aria-label="Costo mensual de una EC2 fija frente al costo de serverless según la cantidad de pedidos"></canvas></div>
-</section>
-
 <section class="slide mu dark sep">
   <div>
-    <div class="mtag" style="color:#7f9bb5"><b>Parte 3</b>de 6</div>
-    <h2 style="max-width:15ch">Por dentro: <span class="g">cómo funciona</span></h2>
-    <p class="msub">Si no hay un servidor de Laura, ¿dónde corre su código? ¿Y cómo consigue espacio en milisegundos?</p>
+    <div class="mtag" style="color:#7f9bb5"><b>Parte 3</b>de 7</div>
+    <h2 style="max-width:15ch">Server-based <span class="g">vs. serverless</span></h2>
+    <p class="msub">Ya sabemos qué es cada uno. Ahora, sus diferencias: cómo crecen, cuánto cuestan y cuándo conviene cada uno.</p>
   </div>
-  <div class="mviz"><canvas data-mu="ruta" data-part="3" aria-label="Ruta de la clase: parte 3 de 6"></canvas></div>
+  <div class="mviz"><canvas data-mu="ruta" data-part="3" aria-label="Ruta de la clase: parte 3 de 7"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>3.1</b>por dentro · la flota<b></b></div>
-    <h2>Sí hay servidores… <span class="g">de todos</span></h2>
-    <div class="mnote"><span>// como</span> un edificio de oficinas por horas: nadie es dueño de un piso</div>
-    <p class="msub">Lambda corre en <b>miles de servidores físicos</b> de AWS. Cada uno se divide en espacios pequeñísimos llamados <b>microVM</b> (con una tecnología de AWS llamada <b>Firecracker</b>), que arrancan en milisegundos y están <b>aisladas</b>: la función de Laura y la de un banco pueden correr en el mismo servidor sin verse jamás.</p><p class="muse">👉 <b>¿Y cómo alcanza para todos?</b></p>
-  </div>
-  <div class="mviz"><canvas data-mu="flota" aria-label="Servidores físicos de AWS llenos de microVM de distintos clientes que aparecen y desaparecen"></canvas></div>
-</section>
-
-<section class="slide mu">
-  <div>
-    <div class="mtag"><b>3.2</b>por dentro · capacidad compartida<b></b></div>
-    <h2>Una capacidad <span class="g">compartida</span></h2>
-    <div class="mnote"><span>// como</span> un parqueadero por horas: nadie compra el suyo</div>
-    <p class="msub">Cada cliente tiene su pico a una hora distinta: el colegio en la mañana, el banco al mediodía, la tienda de Laura en la noche. Si cada uno comprara servidores para su pico, sobraría casi todo el día. <b>Juntos</b>, los picos se reparten y una sola flota alcanza para todos. Esa flota <b>ya está prendida</b>: por eso tu función consigue espacio al instante.</p><p class="muse">👉 <b>¿Y qué pasa con mi función cuando llega una petición?</b></p>
-  </div>
-  <div class="mviz"><canvas data-mu="compartir" aria-label="Demanda apilada de cuatro clientes durante el día frente a la capacidad compartida de la flota"></canvas></div>
-</section>
-
-<section class="slide mu">
-  <div>
-    <div class="mtag"><b>3.3</b>por dentro · la vida de una instancia<b></b></div>
-    <h2>Nace, trabaja, <span class="g">espera y se recicla</span></h2>
-    <div class="mnote"><span>// como</span> el cajero que abre la caja una vez y atiende a muchos</div>
-    <p class="msub">Cada copia de tu Lambda vive en un <b>entorno de ejecución</b>: nace (<b>INIT</b>), atiende una petición (<b>INVOKE</b>), queda <b>congelada y caliente</b> esperando la siguiente y, tras unos minutos sin uso, AWS la <b>recicla</b>. Regla de oro: una instancia atiende <b>una petición a la vez</b>.</p><p class="muse">👉 <b>¿Y quién decide cuántas instancias hay?</b></p>
-  </div>
-  <div class="mviz"><canvas data-mu="ciclo" aria-label="Fases de una instancia de Lambda: INIT, INVOKE, congelada, INVOKE y apagada; una petición por instancia"></canvas></div>
-</section>
-
-<section class="slide mu">
-  <div>
-    <div class="mtag"><b>3.4</b>por dentro · por qué es automático<b></b></div>
-    <h2>Nadie decide: <span class="g">cada petición decide</span></h2>
-    <div class="mnote"><span>// como</span> la fila del banco: si no hay cajero libre, se abre otra caja</div>
-    <p class="msub">Con EC2, Auto Scaling mira una métrica, espera y prende servidores. En Lambda no hay que decidir: cada petición llega al servicio de Lambda, que pregunta <b>“¿hay una instancia libre y caliente?”</b>. Si la hay, la usa; si no, crea una en la flota compartida; si nadie llama, se reciclan solas. Por eso escala <b>sola y a cero</b>.</p><p class="muse">👉 <b>Ese “crear una nueva” tiene un costo: el arranque en frío</b></p>
-  </div>
-  <div class="mviz"><canvas data-mu="enrutador" aria-label="El servicio de Lambda decide por cada petición si usa una instancia caliente o crea una nueva"></canvas></div>
-</section>
-
-<section class="slide mu">
-  <div>
-    <div class="mtag"><b>3.5</b>lo que hay que saber · arranque en frío<b></b></div>
-    <h2>El arranque <span class="g">en frío</span></h2>
-    <div class="mnote"><span>// como</span> la cafetera de la mañana: el primer café tarda porque tiene que calentarse</div>
-    <p class="msub">La primera petición, o la que llega tras un rato sin uso, espera a que AWS <b>prenda</b> una instancia y cargue tu código (unos cientos de milisegundos). Las siguientes encuentran la instancia <b>caliente</b> y son rapidísimas. Hoy lo van a ver en su propia tienda: 🥶 o 🔥.</p><p class="muse">👉 <b>Y hay cosas que serverless no hace</b></p>
-  </div>
-  <div class="mviz"><canvas data-mu="frio" aria-label="Línea de tiempo de una petición en frío, dos en caliente y otra en frío tras quince minutos sin uso"></canvas></div>
-</section>
-
-<section class="slide mu">
-  <div>
-    <div class="mtag"><b>3.6</b>lo que hay que saber · límites<b></b></div>
-    <h2>Lo que serverless <span class="g">no hace</span></h2>
-    <div class="mnote"><span>// como</span> el taxi no sirve para hacer un trasteo</div>
-    <p class="msub">Una Lambda vive máximo <b>15 minutos</b> por ejecución, no guarda nada entre una petición y otra (<b>sin estado</b>: los datos van a DynamoDB o S3), no está siempre prendida y te ata a la forma de trabajar de AWS. Para procesos largos o programas siempre conectados, sigue mandando el servidor.</p><p class="muse">👉 <b>Resumamos en una tabla</b></p>
-  </div>
-  <div class="mviz"><canvas data-mu="limites" aria-label="Cuatro límites de serverless: quince minutos, sin estado, por eventos y dependencia de AWS"></canvas></div>
-</section>
-
-<section class="slide mu">
-  <div>
-    <div class="mtag"><b>3.7</b>el resumen<b></b></div>
+    <div class="mtag"><b>3.1</b>el resumen<b></b></div>
     <h2>Basado en servidores <span class="g">vs. serverless</span></h2>
     <div class="mnote"><span>// como</span> dos herramientas, no un ganador</div>
-    <p class="msub">Ninguno es mejor siempre. Lo basado en servidores gana en trabajos largos, siempre prendidos o con software instalado; serverless gana en peticiones cortas, por eventos y con picos. Muchas empresas usan <b>los dos</b> en la misma aplicación.</p><p class="muse">👉 <b>Ahora te toca a ti decidir</b></p>
+    <p class="msub">Ninguno es mejor siempre. Lo basado en servidores gana en trabajos largos, siempre prendidos o con software instalado; serverless gana en peticiones cortas, por eventos y con picos. Muchas empresas usan <b>los dos</b> en la misma aplicación.</p><p class="muse">👉 <b>Veámoslo en un pico real</b></p>
   </div>
   <div class="mviz"><canvas data-mu="versus" aria-label="Tabla comparativa entre un servidor EC2 y Lambda en siete aspectos"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>3.8</b>juego<b></b></div>
+    <div class="mtag"><b>3.2</b>cómo funciona · el mismo pico<b></b></div>
+    <h2>Auto Scaling <span class="g">vs. Lambda</span></h2>
+    <div class="mnote"><span>// como</span> escalera contra rampa</div>
+    <p class="msub">En el mismo pico de 60 minutos, Auto Scaling sube <b>en escalera</b>: mide, espera y prende EC2 completas, y mientras tanto hay clientes esperando. Lambda <b>sigue la curva</b>: cada petición nueva tiene su propia copia en milisegundos. Y fuera del pico, Auto Scaling sigue pagando su mínimo; Lambda, <b>nada</b>.</p><p class="muse">👉 <b>¿Y cuánto cuesta cada uno?</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="asgvs" aria-label="Capacidad de Auto Scaling en escalera frente a Lambda que sigue la curva de clientes en un pico de sesenta minutos"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>3.3</b>cómo funciona · costo<b></b></div>
+    <h2>Pagar <span class="g">por uso</span></h2>
+    <div class="mnote"><span>// como</span> la factura del agua: pagas los litros que gastas</div>
+    <p class="msub">Una EC2 pequeña cuesta lo mismo con 0 o con 10.000 pedidos. Lambda cobra por <b>petición</b> y por <b>milisegundo</b> de trabajo, y su capa gratuita regala <b>1 millón de peticiones al mes</b>, siempre. Para una tienda pequeña, la cuenta da casi <b>cero</b>.</p><div class="mfacts"><span><i>Lambda gratis</i>1 millón de peticiones/mes</span><span><i>1 EC2 t3.micro</i>≈ US$7,6/mes prendida</span></div><p class="muse">👉 <b>Ahora te toca a ti decidir</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="costo" aria-label="Costo mensual de una EC2 fija frente al costo de serverless según la cantidad de pedidos"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>3.4</b>juego<b></b></div>
     <h2>¿Servidor <span class="g">o serverless?</span></h2>
     
-    <p class="msub">Seis casos reales. Piensa la respuesta antes de avanzar con → (o haz clic): cada tarjeta se voltea y muestra cuál conviene y por qué.</p><p class="muse">👉 <b>Ya sabemos qué es. ¿Con qué piezas se arma en AWS?</b></p>
+    <p class="msub">Seis casos reales. Piensa la respuesta antes de avanzar con → (o haz clic): cada tarjeta se voltea y muestra cuál conviene y por qué.</p><p class="muse">👉 <b>Ahora sí, cada uno a fondo. Primero: server-based</b></p>
   </div>
   <div class="mviz"><canvas data-mu="cuando" aria-label="Juego de seis casos que se voltean para mostrar si conviene un servidor o serverless"></canvas></div>
 </section>
 
 <section class="slide mu dark sep">
   <div>
-    <div class="mtag" style="color:#7f9bb5"><b>Parte 4</b>de 6</div>
-    <h2 style="max-width:15ch">Front, back <span class="g">y dónde corre cada uno</span></h2>
-    <p class="msub">Las dos mitades de toda aplicación y los servicios de AWS donde puede vivir cada una: S3, Lambda, contenedores con ECS y Fargate, o EC2.</p>
+    <div class="mtag" style="color:#7f9bb5"><b>Parte 4</b>de 7</div>
+    <h2 style="max-width:15ch">Server-based <span class="g">a fondo</span></h2>
+    <p class="msub">Hoy casi nadie instala la app directo en la EC2: la empaca en un contenedor y la pone a correr con ECS.</p>
   </div>
-  <div class="mviz"><canvas data-mu="ruta" data-part="4" aria-label="Ruta de la clase: parte 4 de 6"></canvas></div>
+  <div class="mviz"><canvas data-mu="ruta" data-part="4" aria-label="Ruta de la clase: parte 4 de 7"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>4.1</b>antes de las piezas · front y back<b></b></div>
-    <h2>Front y back: <span class="g">el salón y la cocina</span></h2>
-    <div class="mnote"><span>// como</span> un restaurante: el cliente ve el salón y la carta; la comida se hace en la cocina</div>
-    <p class="msub">Toda aplicación tiene dos mitades. El <b>front</b> es lo que Camila ve y toca: la página, hecha con HTML, CSS y JavaScript, que corre <b>en su navegador</b>. El <b>back</b> es la cocina: corre <b>en la nube</b>, valida, aplica las reglas del negocio y guarda en la <b>base de datos</b>. Se hablan por una <b>API</b>, como un mesero que lleva pedidos y trae platos.</p><p class="muse">👉 <b>¿Y dónde vive cada mitad en AWS?</b></p>
-  </div>
-  <div class="mviz"><canvas data-mu="frontback" aria-label="El front en el navegador de Camila manda un pedido por la API al back en la nube, que guarda en la base y responde"></canvas></div>
-</section>
-
-<section class="slide mu">
-  <div>
-    <div class="mtag"><b>4.2</b>antes de las piezas · front y back en AWS<b></b></div>
-    <h2>Cada mitad, <span class="g">su servicio de AWS</span></h2>
-    <div class="mnote"><span>// como</span> de un local donde todo está junto a un centro comercial con un local para cada cosa</div>
-    <p class="msub">Antes, todo vivía en una EC2: NGINX servía la página, ahí corría el código y hasta la base. En serverless cada mitad tiene su servicio: el <b>front</b> en <b>S3 + CloudFront</b>, la <b>puerta</b> en <b>API Gateway</b>, el <b>back</b> en <b>Lambda</b> y los <b>datos</b> en <b>DynamoDB</b>. Cada pieza escala y se cobra por separado.</p><p class="muse">👉 <b>Empecemos por el back: Lambda</b></p>
-  </div>
-  <div class="mviz"><canvas data-mu="fbaws" aria-label="Cada capa de la EC2 de antes se separa en su servicio: front en S3 y CloudFront, puerta en API Gateway, back en Lambda y datos en DynamoDB"></canvas></div>
-</section>
-
-<section class="slide mu">
-  <div>
-    <div class="mtag"><b>4.3</b>el cerebro · AWS Lambda<b></b></div>
-    <h2>AWS Lambda: <span class="g">el cerebro</span></h2>
-    <div class="mnote"><span>// como</span> una receta: le das los ingredientes y te entrega el plato</div>
-    <p class="msub">Una Lambda es <b>una función</b>: recibe un <b>evento</b> (los datos del pedido), ejecuta tu código (el <code>handler</code>) y devuelve una <b>respuesta</b>. Tú eliges el lenguaje (Python), la memoria y el tiempo máximo; su <b>rol de IAM</b> dice qué puede tocar. Todo lo que imprime queda en <b>CloudWatch Logs</b>.</p><p class="muse">👉 <b>¿Y si mi back no cabe en una función de 15 minutos?</b></p>
-  </div>
-  <div class="mviz"><canvas data-mu="lambda" aria-label="Un evento JSON entra al handler de Python, que guarda en DynamoDB, escribe en CloudWatch y responde 200"></canvas></div>
-</section>
-
-<section class="slide mu">
-  <div>
-    <div class="mtag"><b>4.4</b>otro back · contenedores<b></b></div>
+    <div class="mtag"><b>4.1</b>otro back · contenedores<b></b></div>
     <h2>Un contenedor: <span class="g">la app en una caja</span></h2>
     <div class="mnote"><span>// como</span> una lonchera: todo lo que necesitas para almorzar, en una sola caja que llevas a cualquier parte</div>
     <p class="msub">Un back necesita varias piezas: tu código, el lenguaje (Python), las librerías y la configuración. Un <b>contenedor</b> las empaca juntas en una <b>imagen</b> (lo vieron con Docker en la clase 7), que se guarda en <b>Amazon ECR</b> y corre <b>igual</b> en tu PC, en una EC2 o en Fargate.</p><p class="muse">👉 <b>¿Y quién pone a correr esas cajas?</b></p>
@@ -859,7 +789,7 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>4.5</b>otro back · Amazon ECS<b></b></div>
+    <div class="mtag"><b>4.2</b>otro back · Amazon ECS<b></b></div>
     <h2>ECS: <span class="g">el jefe de cocina</span></h2>
     <div class="mnote"><span>// como</span> el jefe de cocina: sabe la receta, decide cuántos cocineros trabajan y reemplaza al que se va</div>
     <p class="msub"><b>Amazon ECS</b> (Elastic Container Service) pone a correr tus contenedores. Le das una <b>definición de tarea</b> (la receta: imagen, CPU, memoria y puerto) y un <b>servicio</b> (“quiero 3 copias siempre”). Si una copia se cae, ECS la <b>reemplaza</b>; si llegan más clientes, <b>agrega</b> copias, y un balanceador reparte el tráfico.</p><p class="muse">👉 <b>¿Y en qué máquinas corren esas tareas?</b></p>
@@ -869,46 +799,155 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>4.6</b>otro back · AWS Fargate<b></b></div>
-    <h2>Fargate: <span class="g">contenedores sin servidores</span></h2>
+    <div class="mtag"><b>4.3</b>server-based a fondo · dónde corren las tareas<b></b></div>
+    <h2>ECS: <span class="g">¿en EC2 o en Fargate?</span></h2>
     <div class="mnote"><span>// como</span> pedir el plato a domicilio en vez de alquilar la cocina</div>
-    <p class="msub">Las tareas de ECS pueden correr en <b>EC2 que tú administras</b> (parches, tamaño, espacio libre que igual pagas) o en <b>AWS Fargate</b>: solo pides CPU y memoria por tarea y AWS pone la máquina. Pagas <b>por segundo</b> lo que usa cada tarea. Fargate es <b>serverless para contenedores</b>.</p><p class="muse">👉 <b>Entonces, ¿cuál escoger?</b></p>
+    <p class="msub">Las tareas de ECS tienen que correr en alguna máquina. Con <b>ECS sobre EC2</b> (server-based) tú escoges, parchas y pagas esas EC2, llenas o no. Con <b>ECS sobre Fargate</b> solo pides CPU y memoria por tarea y AWS pone la máquina: es <b>serverless para contenedores</b>. Mismo ECS, misma imagen; cambia quién cuida los servidores.</p><p class="muse">👉 <b>Ahora sí: serverless a fondo</b></p>
   </div>
   <div class="mviz"><canvas data-mu="fargate" aria-label="Comparación de ECS sobre EC2, con máquinas que cuidas, y ECS sobre Fargate, solo con tareas"></canvas></div>
 </section>
 
+<section class="slide mu dark sep">
+  <div>
+    <div class="mtag" style="color:#7f9bb5"><b>Parte 5</b>de 7</div>
+    <h2 style="max-width:15ch">Serverless <span class="g">a fondo</span></h2>
+    <p class="msub">Si no hay un servidor de Laura, ¿dónde corre su código? ¿Cómo consigue espacio en milisegundos? ¿Y cómo funciona Fargate por dentro?</p>
+  </div>
+  <div class="mviz"><canvas data-mu="ruta" data-part="5" aria-label="Ruta de la clase: parte 5 de 7"></canvas></div>
+</section>
+
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>4.7</b>el espectro<b></b></div>
+    <div class="mtag"><b>5.1</b>el cerebro · AWS Lambda<b></b></div>
+    <h2>AWS Lambda: <span class="g">el cerebro</span></h2>
+    <div class="mnote"><span>// como</span> una receta: le das los ingredientes y te entrega el plato</div>
+    <p class="msub">Una Lambda es <b>una función</b>: recibe un <b>evento</b> (los datos del pedido), ejecuta tu código (el <code>handler</code>) y devuelve una <b>respuesta</b>. Tú eliges el lenguaje (Python), la memoria y el tiempo máximo; su <b>rol de IAM</b> dice qué puede tocar. Todo lo que imprime queda en <b>CloudWatch Logs</b>.</p><p class="muse">👉 <b>Pero ¿dónde corre de verdad ese código?</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="lambda" aria-label="Un evento JSON entra al handler de Python, que guarda en DynamoDB, escribe en CloudWatch y responde 200"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>5.2</b>por dentro · la flota<b></b></div>
+    <h2>Sí hay servidores… <span class="g">de todos</span></h2>
+    <div class="mnote"><span>// como</span> un edificio de oficinas por horas: nadie es dueño de un piso</div>
+    <p class="msub">Lambda corre en <b>miles de servidores físicos</b> de AWS. Cada uno se divide en espacios pequeñísimos llamados <b>microVM</b> (con una tecnología de AWS llamada <b>Firecracker</b>), que arrancan en milisegundos y están <b>aisladas</b>: la función de Laura y la de un banco pueden correr en el mismo servidor sin verse jamás.</p><p class="muse">👉 <b>¿Y cómo alcanza para todos?</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="flota" aria-label="Servidores físicos de AWS llenos de microVM de distintos clientes que aparecen y desaparecen"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>5.3</b>por dentro · capacidad compartida<b></b></div>
+    <h2>Una capacidad <span class="g">compartida</span></h2>
+    <div class="mnote"><span>// como</span> un parqueadero por horas: nadie compra el suyo</div>
+    <p class="msub">Cada cliente tiene su pico a una hora distinta: el colegio en la mañana, el banco al mediodía, la tienda de Laura en la noche. Si cada uno comprara servidores para su pico, sobraría casi todo el día. <b>Juntos</b>, los picos se reparten y una sola flota alcanza para todos. Esa flota <b>ya está prendida</b>: por eso tu función consigue espacio al instante.</p><p class="muse">👉 <b>¿Y qué pasa con mi función cuando llega una petición?</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="compartir" aria-label="Demanda apilada de cuatro clientes durante el día frente a la capacidad compartida de la flota"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>5.4</b>por dentro · la vida de una instancia<b></b></div>
+    <h2>Nace, trabaja, <span class="g">espera y se recicla</span></h2>
+    <div class="mnote"><span>// como</span> el cajero que abre la caja una vez y atiende a muchos</div>
+    <p class="msub">Cada copia de tu Lambda vive en un <b>entorno de ejecución</b>: nace (<b>INIT</b>), atiende una petición (<b>INVOKE</b>), queda <b>congelada y caliente</b> esperando la siguiente y, tras unos minutos sin uso, AWS la <b>recicla</b>. Regla de oro: una instancia atiende <b>una petición a la vez</b>.</p><p class="muse">👉 <b>¿Y quién decide cuántas instancias hay?</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="ciclo" aria-label="Fases de una instancia de Lambda: INIT, INVOKE, congelada, INVOKE y apagada; una petición por instancia"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>5.5</b>por dentro · por qué es automático<b></b></div>
+    <h2>Nadie decide: <span class="g">cada petición decide</span></h2>
+    <div class="mnote"><span>// como</span> la fila del banco: si no hay cajero libre, se abre otra caja</div>
+    <p class="msub">Con EC2, Auto Scaling mira una métrica, espera y prende servidores. En Lambda no hay que decidir: cada petición llega al servicio de Lambda, que pregunta <b>“¿hay una instancia libre y caliente?”</b>. Si la hay, la usa; si no, crea una en la flota compartida; si nadie llama, se reciclan solas. Por eso escala <b>sola y a cero</b>.</p><p class="muse">👉 <b>Ese “crear una nueva” tiene un costo: el arranque en frío</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="enrutador" aria-label="El servicio de Lambda decide por cada petición si usa una instancia caliente o crea una nueva"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>5.6</b>lo que hay que saber · arranque en frío<b></b></div>
+    <h2>El arranque <span class="g">en frío</span></h2>
+    <div class="mnote"><span>// como</span> la cafetera de la mañana: el primer café tarda porque tiene que calentarse</div>
+    <p class="msub">La primera petición, o la que llega tras un rato sin uso, espera a que AWS <b>prenda</b> una instancia y cargue tu código (unos cientos de milisegundos). Las siguientes encuentran la instancia <b>caliente</b> y son rapidísimas. Hoy lo van a ver en su propia tienda: 🥶 o 🔥.</p><p class="muse">👉 <b>Y hay cosas que Lambda no hace</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="frio" aria-label="Línea de tiempo de una petición en frío, dos en caliente y otra en frío tras quince minutos sin uso"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>5.7</b>lo que hay que saber · límites<b></b></div>
+    <h2>Lo que serverless <span class="g">no hace</span></h2>
+    <div class="mnote"><span>// como</span> el taxi no sirve para hacer un trasteo</div>
+    <p class="msub">Una Lambda vive máximo <b>15 minutos</b> por ejecución, no guarda nada entre una petición y otra (<b>sin estado</b>: los datos van a DynamoDB o S3), no está siempre prendida y te ata a la forma de trabajar de AWS. Para procesos largos o programas siempre conectados, sigue mandando el servidor.</p><p class="muse">👉 <b>¿Y si mi back no cabe en 15 minutos? Para eso está Fargate</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="limites" aria-label="Cuatro límites de serverless: quince minutos, sin estado, por eventos y dependencia de AWS"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>5.8</b>serverless a fondo · AWS Fargate<b></b></div>
+    <h2>Fargate: <span class="g">cómo funciona por dentro</span></h2>
+    <div class="mnote"><span>// como</span> un hotel: pides una habitación del tamaño justo, te dan la llave y pagas las noches que te quedas</div>
+    <p class="msub">Fargate es <b>serverless para contenedores</b>. Le das a ECS tu receta (imagen, CPU y memoria) y Fargate arma una <b>microVM solo para tu tarea</b> en su flota, baja tu imagen de <b>ECR</b>, le da una <b>IP dentro de tu VPC</b> y la pone a recibir clientes. No ves ninguna máquina y pagas <b>por segundo</b> mientras corre; a diferencia de Lambda, la tarea queda <b>prendida</b> el tiempo que quieras.</p><p class="muse">👉 <b>Entonces, ¿cuál escoger?</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="fargate2" aria-label="Cómo funciona Fargate: ECS pide la tarea, Fargate arma una microVM en su flota, baja la imagen de ECR, le da una IP en tu VPC y el balanceador le manda clientes"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>5.9</b>el espectro<b></b></div>
     <h2>De EC2 a Lambda: <span class="g">control vs. trabajo</span></h2>
     <div class="mnote"><span>// como</span> de cocinar en tu casa a pedir a domicilio</div>
-    <p class="msub">Cuatro formas de correr un back, de más control a menos trabajo: <b>EC2</b> (todo es tuyo), <b>ECS sobre EC2</b> (contenedores, pero cuidas las máquinas), <b>ECS sobre Fargate</b> (contenedores sin servidores) y <b>Lambda</b> (solo tu código, por evento). Cambian lo que cuidas y cómo pagas.</p><p class="muse">👉 <b>¿Y qué puedo correr en cada uno: front o back?</b></p>
+    <p class="msub">Cuatro formas de correr un back, de más control a menos trabajo: <b>EC2</b> (todo es tuyo), <b>ECS sobre EC2</b> (contenedores, pero cuidas las máquinas), <b>ECS sobre Fargate</b> (contenedores sin servidores) y <b>Lambda</b> (solo tu código, por evento). Cambian lo que cuidas y cómo pagas.</p><p class="muse">👉 <b>Y en la tienda de Laura, ¿qué parte va dónde?</b></p>
   </div>
   <div class="mviz"><canvas data-mu="espectro" aria-label="Espectro de EC2, ECS sobre EC2, ECS sobre Fargate y Lambda con lo que pagas y lo que cuidas en cada uno"></canvas></div>
 </section>
 
+<section class="slide mu dark sep">
+  <div>
+    <div class="mtag" style="color:#7f9bb5"><b>Parte 6</b>de 7</div>
+    <h2 style="max-width:15ch">La tienda: <span class="g">front, back y servicios</span></h2>
+    <p class="msub">Laura arma su tienda serverless: ¿qué parte es front, cuál es back y en qué servicio de AWS vive cada una?</p>
+  </div>
+  <div class="mviz"><canvas data-mu="ruta" data-part="6" aria-label="Ruta de la clase: parte 6 de 7"></canvas></div>
+</section>
+
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>4.8</b>el mapa<b></b></div>
+    <div class="mtag"><b>6.1</b>antes de las piezas · front y back<b></b></div>
+    <h2>Front y back: <span class="g">el salón y la cocina</span></h2>
+    <div class="mnote"><span>// como</span> un restaurante: el cliente ve el salón y la carta; la comida se hace en la cocina</div>
+    <p class="msub">Toda aplicación tiene dos mitades. El <b>front</b> es lo que Camila ve y toca: la página, hecha con HTML, CSS y JavaScript, que corre <b>en su navegador</b>. El <b>back</b> es la cocina: corre <b>en la nube</b>, valida, aplica las reglas del negocio y guarda en la <b>base de datos</b>. Se hablan por una <b>API</b>, como un mesero que lleva pedidos y trae platos.</p><p class="muse">👉 <b>¿Y dónde vive cada mitad en AWS?</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="frontback" aria-label="El front en el navegador de Camila manda un pedido por la API al back en la nube, que guarda en la base y responde"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>6.2</b>antes de las piezas · front y back en AWS<b></b></div>
+    <h2>Cada mitad, <span class="g">su servicio de AWS</span></h2>
+    <div class="mnote"><span>// como</span> de un local donde todo está junto a un centro comercial con un local para cada cosa</div>
+    <p class="msub">Antes, todo vivía en una EC2: NGINX servía la página, ahí corría el código y hasta la base. En serverless cada mitad tiene su servicio: el <b>front</b> en <b>S3 + CloudFront</b>, la <b>puerta</b> en <b>API Gateway</b>, el <b>back</b> en <b>Lambda</b> y los <b>datos</b> en <b>DynamoDB</b>. Cada pieza escala y se cobra por separado.</p><p class="muse">👉 <b>¿Y qué puedo correr en cada servicio?</b></p>
+  </div>
+  <div class="mviz"><canvas data-mu="fbaws" aria-label="Cada capa de la EC2 de antes se separa en su servicio: front en S3 y CloudFront, puerta en API Gateway, back en Lambda y datos en DynamoDB"></canvas></div>
+</section>
+
+<section class="slide mu">
+  <div>
+    <div class="mtag"><b>6.3</b>el mapa<b></b></div>
     <h2>¿Qué corre <span class="g">dónde</span>?</h2>
     <div class="mnote"><span>// como</span> el mapa del centro comercial: qué local vende qué</div>
-    <p class="msub">No todo cabe en todas partes. Una <b>página estática</b> (front) vive mejor en <b>S3 + CloudFront</b>; una <b>API corta</b> (back) en <b>Lambda</b>; un <b>proceso largo o siempre conectado</b> en <b>Fargate</b> o EC2; y el <b>software viejo</b> con su sistema, en <b>EC2</b>. La tabla se ilumina fila por fila.</p><p class="muse">👉 <b>Volvamos a la tienda de Laura: su puerta, su memoria y su viaje</b></p>
+    <p class="msub">No todo cabe en todas partes. Una <b>página estática</b> (front) vive mejor en <b>S3 + CloudFront</b>; una <b>API corta</b> (back) en <b>Lambda</b>; un <b>proceso largo o siempre conectado</b> en <b>Fargate</b> o EC2; y el <b>software viejo</b> con su sistema, en <b>EC2</b>. La tabla se ilumina fila por fila.</p><p class="muse">👉 <b>Laura escoge: front en S3 + CloudFront y back en Lambda. Falta la puerta</b></p>
   </div>
   <div class="mviz"><canvas data-mu="quecorre" aria-label="Tabla de seis tipos de front y back y si corren en S3 con CloudFront, Lambda, Fargate o EC2"></canvas></div>
 </section>
 
-<section class="slide mu dark sep">
-  <div>
-    <div class="mtag" style="color:#7f9bb5"><b>Parte 5</b>de 6</div>
-    <h2 style="max-width:15ch">La tienda serverless <span class="g">en AWS</span></h2>
-    <p class="msub">Laura escoge: front en S3 + CloudFront, back en Lambda. Faltan la puerta y la memoria… y ver el viaje completo de un pedido.</p>
-  </div>
-  <div class="mviz"><canvas data-mu="ruta" data-part="5" aria-label="Ruta de la clase: parte 5 de 6"></canvas></div>
-</section>
-
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>5.1</b>la puerta · API Gateway<b></b></div>
+    <div class="mtag"><b>6.4</b>la puerta · API Gateway<b></b></div>
     <h2>API Gateway: <span class="g">la puerta</span></h2>
     <div class="mnote"><span>// como</span> el portero de un edificio que lleva cada visita al apartamento correcto</div>
     <p class="msub">La página no llama a la Lambda directamente: llama a una <b>URL</b> de <b>API Gateway</b>. La puerta revisa la <b>ruta</b> (GET para leer, POST para guardar), el permiso de la página que llama (<b>CORS</b>) y el límite de peticiones, y despierta a la Lambda correcta.</p><p class="muse">👉 <b>¿Y dónde quedan guardados los pedidos?</b></p>
@@ -918,7 +957,7 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>5.2</b>la memoria · DynamoDB<b></b></div>
+    <div class="mtag"><b>6.5</b>la memoria · DynamoDB<b></b></div>
     <h2>DynamoDB: <span class="g">la memoria</span></h2>
     <div class="mnote"><span>// como</span> el archivador que crece solo</div>
     <p class="msub">La Lambda olvida todo al terminar, así que los pedidos se guardan en <b>DynamoDB</b>, que también es serverless: sin servidor que prender y, en modo <b>on-demand</b>, cobra por petición. Ya la conocen: llave de partición (<b>cliente</b>) y de orden (<b>fecha</b>).</p><p class="muse">👉 <b>¿Y si Laura quiere seguir con SQL, como en RDS?</b></p>
@@ -928,7 +967,7 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>5.3</b>la memoria · RDS serverless<b></b></div>
+    <div class="mtag"><b>6.6</b>la memoria · RDS serverless<b></b></div>
     <h2>RDS serverless: <span class="g">Aurora Serverless v2</span></h2>
     <div class="mnote"><span>// como</span> un restaurante que agrega y quita mesas según llegue la gente</div>
     <p class="msub">La base de pedidos también tiene madrugadas y picos. Un <b>RDS normal</b> tiene un tamaño fijo, como una EC2. <b>Aurora Serverless v2</b> (MySQL o PostgreSQL) mide su capacidad en <b>ACU</b> y la sube o baja <b>en segundos</b> según la carga; si nadie la usa, puede <b>pausarse en 0</b>. Es SQL de siempre, con capacidad serverless. (No entra en la capa gratuita: hoy usamos DynamoDB.)</p><p class="muse">👉 <b>Y hay más piezas en la familia</b></p>
@@ -938,7 +977,7 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>5.4</b>la familia serverless<b></b></div>
+    <div class="mtag"><b>6.7</b>la familia serverless<b></b></div>
     <h2>La familia <span class="g">serverless</span></h2>
     <div class="mnote"><span>// como</span> cada pieza tiene un oficio</div>
     <p class="msub">Además de Lambda, API Gateway y DynamoDB: <b>S3</b> y <b>CloudFront</b> para la vitrina; <b>SQS</b>, <b>SNS</b> y <b>EventBridge</b> para mensajes y eventos; <b>Step Functions</b> para encadenar pasos; <b>Cognito</b> para el login de los clientes y <b>Fargate</b> para contenedores sin servidores.</p><p class="muse">👉 <b>Juntemos las piezas: el viaje de un pedido</b></p>
@@ -948,7 +987,7 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu wide">
   <div>
-    <div class="mtag"><b>5.5</b>la arquitectura de hoy<b></b></div>
+    <div class="mtag"><b>6.8</b>la arquitectura de hoy<b></b></div>
     <h2>El viaje <span class="g">de un pedido</span></h2>
     
     <p class="msub">La vitrina sale de S3 por CloudFront; el pedido entra por API Gateway, la Lambda lo procesa y DynamoDB lo guarda.</p>
@@ -958,16 +997,16 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 
 <section class="slide mu dark sep">
   <div>
-    <div class="mtag" style="color:#7f9bb5"><b>Parte 6</b>de 6</div>
+    <div class="mtag" style="color:#7f9bb5"><b>Parte 7</b>de 7</div>
     <h2 style="max-width:15ch">Laboratorio: <span class="g">la tienda sin servidores</span></h2>
     <p class="msub">Primero tu primera Lambda a clics, para entenderla. Después, la tienda completa con Terraform: vitrina, puerta, cerebro y memoria.</p>
   </div>
-  <div class="mviz"><canvas data-mu="ruta" data-part="6" aria-label="Ruta de la clase: parte 6 de 6"></canvas></div>
+  <div class="mviz"><canvas data-mu="ruta" data-part="7" aria-label="Ruta de la clase: parte 7 de 7"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>6.1</b>LAB 1 · el diagrama<b></b></div>
+    <div class="mtag"><b>7.1</b>LAB 1 · el diagrama<b></b></div>
     <h2>LAB 1: <span class="g">tu primera Lambda</span></h2>
     
     <p class="msub"><ol class="msteps"><li><span>1</span><p>Creas la función <b>hola-laura</b> en la consola (Python 3.12) y pegas el código.</p></li><li><span>2</span><p>El botón <b>Test</b> le manda un evento: <code>{"cliente": "camila"}</code>.</p></li><li><span>3</span><p>Tu código responde: <b>“Hola, camila. Tu gorra va en camino”</b>.</p></li><li><span>4</span><p>Lo que imprimió aparece en <b>CloudWatch Logs</b>.</p></li></ol></p><p class="msub">Sin Terraform ni servidores · gratis · al final la borras</p>
@@ -1010,7 +1049,7 @@ def lambda_handler(event, context):
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>6.2</b>LAB 2 · el diagrama<b></b></div>
+    <div class="mtag"><b>7.2</b>LAB 2 · el diagrama<b></b></div>
     <h2>LAB 2: <span class="g">la tienda serverless</span></h2>
     
     <p class="msub"><ol class="msteps"><li><span>1</span><p><b>terraform apply</b> crea 13 recursos: tabla, rol, Lambda, API, bucket privado y CloudFront.</p></li><li><span>2</span><p>Abres <b>tu_tienda</b>: CloudFront te entrega la página desde el S3 privado.</p></li><li><span>3</span><p><b>Guardar pedido</b>: POST a API Gateway → Lambda → PutItem en DynamoDB.</p></li><li><span>4</span><p>La <b>ráfaga</b> de 20 pedidos: ¿cuántas instancias prende AWS?</p></li><li><span>5</span><p>Miras por dentro: pedidos en DynamoDB y logs en CloudWatch.</p></li></ol></p><p class="msub">≈ 4 min de apply · capa gratuita · al final: <b>terraform destroy</b></p>
@@ -2453,7 +2492,7 @@ S.dwaf=function(c,t){var A=E.out(P(t,.1,.5)),st=Math.floor(Math.max(0,t-1.2)/2.8
   box(c,150,350,390,100,{r:12,f:'#0E2841',s:false,al:A});wrap(c,on?T[st]:'',166,376,360,18,{s:12.5,w:700,f:FD,c:'#fff',al:A})};
 /* ===== Historia: la noche en que atacaron la tienda de Laura ===== */
 function clock(c,x,y,txt,col,a){box(c,x-34,y-13,68,26,{r:13,f:'#0E2841',s:false,al:a});tx(c,'🕘 '+txt,x,y+1,{s:10.5,w:800,a:'center',f:FM,c:col||'#fff',al:a})}
-S.ruta=function(c,t,sec){var cur=+(sec.querySelector('canvas[data-mu]').dataset.part||1),L=[['1','Basado en servidores'],['2','¿Qué es serverless?'],['3','Por dentro: cómo funciona'],['4','Front, back y dónde corren'],['5','La tienda serverless en AWS'],['6','Lab: la tienda sin servidores']],n=L.length,x=70,y0=40,dy=400/(n-1);
+S.ruta=function(c,t,sec){var cur=+(sec.querySelector('canvas[data-mu]').dataset.part||1),L=[['1','¿Qué es server-based?'],['2','¿Qué es serverless?'],['3','Las diferencias'],['4','Server-based a fondo'],['5','Serverless a fondo'],['6','La tienda: front y back'],['7','Lab: la tienda sin servidores']],n=L.length,x=70,y0=40,dy=400/(n-1);
   var g=c.createLinearGradient(0,y0,0,y0+dy*(n-1));g.addColorStop(0,'#0F9ED5');g.addColorStop(1,'#39c8e8');
   c.save();c.strokeStyle='rgba(180,200,218,.25)';c.lineWidth=4;c.beginPath();c.moveTo(x,y0);c.lineTo(x,y0+dy*(n-1));c.stroke();var k=E.io(P(t,.2,1));c.strokeStyle=g;c.beginPath();c.moveTo(x,y0);c.lineTo(x,y0+dy*(cur-1)*k);c.stroke();c.restore();
   L.forEach(function(l,i){var y=y0+i*dy,on=i+1===cur,done=i+1<cur,a=E.out(P(t,.1+i*.08,.5)),pl=on?1+.06*Math.sin(t*3):1;
@@ -3482,6 +3521,83 @@ S.quecorre=function(c,t){var A=E.out(P(t,.1,.5)),per=2.6,
     rw[3].forEach(function(m,j){var x=262+j*72,col=m==='✓'?C.g:m==='✗'?C.red:C.o,bg=m==='✓'?'#ecfbf3':m==='✗'?'#fff1f1':'#fff7ed';box(c,x-16,y+9,32,28,{r:8,f:bg,s:false,al:A*a});tx(c,m,x,y+24,{s:14,w:800,a:'center',f:FD,c:col,al:A*a})})});
   tx(c,'✓ ideal o muy bien · ~ se puede, con peros · ✗ no sirve',280,388,{s:9.5,w:700,a:'center',f:FM,c:C.mut,al:A});
   if(t>.8)band(c,ROW.map(function(rw){return rw[4]}),Math.max(0,n),A)};
+
+/* 1.1 · ¿qué es server-based? */
+S.sbdef=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,6,3),st=t<.8?-1:r[0],u=r[1],all=st<0;
+  /* servidor */
+  box(c,10,14,250,300,{r:16,f:'#fff7ed',s:C.o,lw:2,al:A,sh:'rgba(14,40,65,.07)'});icon(c,'EC2',38,40,28,A);tx(c,'tu servidor: una EC2',60,36,{s:12.5,w:800,f:FD,c:C.o,al:A});tx(c,'tú la escoges, la prendes y la cuidas',60,54,{s:9,w:700,f:FM,c:C.mut,al:A});
+  var LY=[['tu código','app.py',C.o],['Python + librerías','lo instalas tú',C.p2],['NGINX','lo instalas tú',C.g],['Linux','lo parchas tú','#8a5cf6']];
+  LY.forEach(function(l,i){var y=118+i*44,k=all||st>=2?(st===2?E.out(P(u,(3-i)*.2,.3)):1):0;if(k<=0)return;box(c,28,y-36+(1-k)*-30,214,38,{r:8,f:rgba(l[2],.14),s:l[2],lw:1.2,al:A*k});tx(c,l[0],40,y-17+(1-k)*-30,{s:11,w:800,f:FD,al:A*k});tx(c,l[1],228,y-17+(1-k)*-30,{s:9,w:700,a:'right',f:FM,c:l[2],al:A*k})});
+  box(c,28,264,214,34,{r:8,f:'#fff',s:C.line,al:A});tx(c,'CPU y memoria fijas',40,281,{s:10.5,w:800,f:FD,al:A});tx(c,st===1?'t3.small':'t3.micro',228,281,{s:9.5,w:800,a:'right',f:FM,c:C.o,al:A});
+  /* tamaños */
+  box(c,276,14,274,96,{r:14,f:st===1?'#fff7ed':'#fff',s:st===1?C.o:C.line,lw:st===1?2:1.2,al:A});tx(c,'1 · escoges el tamaño',290,34,{s:11,w:800,f:FD,c:C.o,al:A});
+  [['t3.micro','2 vCPU · 1 GB'],['t3.small','2 vCPU · 2 GB'],['t3.large','2 vCPU · 8 GB']].forEach(function(s,i){var on=(st===1?1:0)===i;box(c,290+i*86,50,80,48,{r:8,f:on?C.o:C.soft,s:false,al:A});tx(c,s[0],330+i*86,66,{s:10,w:800,a:'center',f:FM,c:on?'#fff':C.ink,al:A});tx(c,s[1],330+i*86,84,{s:8,w:600,a:'center',f:FM,c:on?'#ffe7d6':C.mut,al:A})});
+  /* 24/7 */
+  box(c,276,120,274,96,{r:14,f:st===3?'#fff7ed':'#fff',s:st===3?C.o:C.line,lw:st===3?2:1.2,al:A});tx(c,'2 · prendida 24/7',290,140,{s:11,w:800,f:FD,c:C.o,al:A});
+  var h=(t*2)%24;c.save();c.globalAlpha*=A;c.strokeStyle=C.line;c.lineWidth=5;c.beginPath();c.arc(326,180,24,0,7);c.stroke();c.strokeStyle=C.o;c.beginPath();c.arc(326,180,24,-Math.PI/2,-Math.PI/2+h/24*Math.PI*2);c.stroke();c.restore();tx(c,(h<10?'0':'')+Math.floor(h)+':00',326,181,{s:9,w:800,a:'center',f:FM,al:A});
+  tx(c,'con o sin clientes',366,170,{s:10,w:700,f:FD,al:A});tx(c,'US$ '+(0.0104*(t*2)).toFixed(2),366,192,{s:14,w:800,f:FM,c:C.o,al:A});
+  /* más servidores */
+  box(c,276,226,274,88,{r:14,f:st===4?'#fff7ed':'#fff',s:st===4?C.o:C.line,lw:st===4?2:1.2,al:A});tx(c,'3 · ¿más clientes? más servidores',290,246,{s:11,w:800,f:FD,c:C.o,al:A});
+  var ns=st===4?1+Math.min(3,Math.floor(u*4)):1;for(var i=0;i<4;i++){var on=i<ns;if(on)icon(c,'EC2',306+i*46,282,26,A);else{c.save();c.globalAlpha*=A*.5;c.setLineDash([3,3]);c.strokeStyle=C.faint;rr(c,293+i*46,269,26,26,6);c.stroke();c.restore()}}tx(c,'a mano o con Auto Scaling',492,282,{s:8.5,w:700,a:'right',f:FM,c:C.mut,al:A});
+  /* ejemplos */
+  box(c,10,326,540,78,{r:14,f:st===5?'#0E2841':C.soft,s:false,al:A});tx(c,'ejemplos de server-based',28,346,{s:10.5,w:800,f:FD,c:st===5?'#ffb86b':C.mut,al:A});
+  [['EC2','EC2'],['ElasticContainerService','ECS sobre EC2'],['R_Client','tu propio data center']].forEach(function(e,i){icon(c,e[0],44+i*176,378,24,A);tx(c,e[1],62+i*176,378,{s:11,w:800,f:FD,c:st===5?'#fff':C.ink,al:A})});
+  if(t>.8)band(c,['Server-based: tu app vive en un servidor que tú escoges y prendes (en AWS, una EC2)','Escoges el tamaño: CPU y memoria fijas (t3.micro, t3.small, t3.large…)','Instalas y cuidas todo encima: Linux, NGINX, Python y tu código','Queda prendido 24/7 esperando clientes, y pagas cada hora','¿Más clientes? Prendes más servidores, a mano o con Auto Scaling','Ejemplos: EC2, ECS sobre EC2 y tu propio data center'],st,A)};
+
+/* 2.1 · ¿qué es serverless? */
+S.svdef=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,6,3),st=t<.8?-1:r[0],u=r[1],all=st<0;
+  /* tu código */
+  box(c,10,30,150,110,{r:14,f:'#0b1a2b',s:C.p2,lw:1.5,al:A});tx(c,'app.py',26,50,{s:10.5,w:800,f:FM,c:'#9fd8f0',al:A});['def handler(event,','            context):','    guarda(pedido)','    return 200'].forEach(function(l,i){tx(c,l,22,74+i*16,{s:8.5,w:500,f:FM,c:'#e6edf3',al:A})});
+  tx(c,'lo ÚNICO que subes',85,156,{s:10,w:800,a:'center',f:FD,c:C.p,al:A});
+  /* nube de AWS */
+  box(c,186,14,364,300,{r:16,f:'#f2f8fc',s:C.p2,lw:1.6,al:A});icon(c,'G_AWSCloudlogo',210,34,20,A);tx(c,'AWS se encarga del resto',228,34,{s:11,w:800,f:FD,c:C.p,al:A});
+  ['servidores','Linux y parches','Python','escalado','alta disponibilidad'].forEach(function(l,i){chip(c,'✓ '+l,250+(i%3)*104,62+Math.floor(i/3)*28,C.p,'#fff',A,{s:8.5})});
+  if(st===0||all){var k0=st===0?E.io(u):1;flow(c,[[160,85],[186+60*k0,85+30*k0]],C.p,t,{lw:2.4,a:A*(st===0?1:.4),label:st===0?'subir':''})}
+  /* memoria */
+  if(st===1||all){box(c,200,124,170,46,{r:10,f:'#fff',s:st===1?C.p:C.line,lw:st===1?2:1,al:A});tx(c,'solo eliges memoria',212,140,{s:9.5,w:800,f:FD,al:A});var mm=st===1?128+Math.round(896*E.io(Math.min(1,u*1.4))):128;c.save();c.globalAlpha*=A;rr(c,212,152,120,6,3);c.fillStyle=C.soft;c.fill();rr(c,212,152,120*mm/1024,6,3);c.fillStyle=C.p;c.fill();c.restore();tx(c,mm+' MB',360,155,{s:9,w:800,a:'right',f:FM,c:C.p,al:A})}
+  /* eventos y copias */
+  var nc=st===2?1:st===3?1+Math.min(5,Math.floor(u*7)):st===4||st===5||all?3:0;
+  for(var i=0;i<6;i++){var x=230+(i%3)*96,y=210+Math.floor(i/3)*56;if(i<nc){icon(c,'AWSLambda',x,y,30,A);dot(c,x+14,y-14,4,C.g,A,6)}else{c.save();c.globalAlpha*=A*.4;c.setLineDash([3,4]);c.strokeStyle=C.faint;rr(c,x-15,y-15,30,30,7);c.stroke();c.restore()}}
+  if(st===2||st===3){var nb=st===2?1:6;for(var b=0;b<nb;b++){var kb=((t*.9)+b*.17)%1;tx(c,'⚡',196+kb*20,200+b*12,{s:12,al:A*(1-kb)})}}
+  tx(c,st===2?'despierta con un evento':st===3?'muchos eventos → muchas copias':st===4?'cada petición suma unos milisegundos':'nadie llama → 0 copias, $0',368,296,{s:10,w:800,a:'center',f:FD,c:C.p,al:A*(st>=2&&st<=4||st===5?1:0)});
+  /* costo */
+  box(c,10,170,160,144,{r:14,f:st===4?'#ecfbf3':'#fff',s:st===4?C.g:C.line,lw:st===4?2:1.2,al:A});tx(c,'pagas por uso',26,192,{s:11,w:800,f:FD,c:C.g,al:A});var reqs=Math.floor(t*37)%100000;tx(c,nf(reqs)+' peticiones',26,222,{s:12,w:800,f:FM,al:A});tx(c,'× ms de trabajo',26,244,{s:10,w:700,f:FM,c:C.mut,al:A});tx(c,'1 millón gratis/mes',26,280,{s:10,w:800,f:FD,c:C.g,al:A});
+  /* ejemplos */
+  box(c,10,326,540,78,{r:14,f:st===5?'#0E2841':C.soft,s:false,al:A});tx(c,'ejemplos de serverless',28,346,{s:10.5,w:800,f:FD,c:st===5?'#7fd3f2':C.mut,al:A});
+  [['AWSLambda','Lambda'],['AWSFargate','Fargate'],['DynamoDB','DynamoDB'],['SimpleStorageService','S3'],['APIGateway','API Gateway']].forEach(function(e,i){icon(c,e[0],40+i*106,378,22,A);tx(c,e[1],56+i*106,378,{s:10.5,w:800,f:FD,c:st===5?'#fff':C.ink,al:A})});
+  if(t>.8)band(c,['Serverless: subes solo tu código (en AWS, una función Lambda)','No escoges servidor: dices cuánta memoria y AWS pone lo demás','No corre todo el tiempo: despierta cuando llega un evento','Si llegan muchos, AWS prende copias solo; si no llega nadie, cero','Pagas por petición y por milisegundo de trabajo','Ejemplos: Lambda, Fargate, DynamoDB, S3 y API Gateway'],st,A)};
+
+/* 5.x · cómo funciona Fargate por dentro */
+S.fargate2=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,7,3.2),st=t<.8?-1:r[0],u=r[1],all=st<0,on=function(k){return all||st===k?1:.18};
+  /* tu cuenta */
+  box(c,10,14,232,330,{r:16,f:'#fff',s:C.line,al:A});tx(c,'tu cuenta de AWS',126,32,{s:11,w:800,a:'center',f:FD,c:C.mut,al:A});
+  box(c,24,46,204,92,{r:12,f:st===0?'#fff7ed':'#fff',s:st===0||st===1?C.o:C.line,lw:st<=1&&st>=0?2:1.2,al:A});icon(c,'ElasticContainerService',46,68,22,A);tx(c,'servicio de ECS',64,68,{s:10.5,w:800,f:FD,al:A});
+  tx(c,'imagen: tienda:v1',38,96,{s:9,w:700,f:FM,c:C.mut,al:A});tx(c,'CPU: ½ vCPU · memoria: 1 GB',38,114,{s:9,w:700,f:FM,c:C.mut,al:A});tx(c,'copias: 1',38,130,{s:9,w:700,f:FM,c:C.mut,al:A});
+  grp(c,24,156,204,120,'#7AA116','tu VPC · subred privada','G_Privatesubnet',{al:A,fill:'rgba(122,161,22,.04)'});
+  var hasEni=all||st>=4&&st<6||(st===6&&u<.4);if(hasEni){var k4=st===4?E.back(u):1;box(c,44,196,164,62,{r:10,f:st===4?'#ecfbf3':'#fff',s:st===4?C.g:C.line,lw:st===4?2:1.2,al:A*Math.min(1,k4)});tx(c,'🔌 tarjeta de red (ENI)',56,214,{s:9.5,w:800,f:FD,al:A*Math.min(1,k4)});tx(c,'IP privada 10.0.11.23',56,236,{s:9.5,w:800,f:FM,c:'#5a7d0a',al:A*Math.min(1,k4)})}
+  else tx(c,'(aún sin IP)',126,224,{s:9.5,w:700,a:'center',f:FM,c:C.faint,al:A});
+  box(c,24,288,204,46,{r:10,f:st===5?'#f5f0ff':'#fff',s:st===5?'#8a5cf6':C.line,lw:st===5?2:1.2,al:A});tx(c,'balanceador (ALB)',126,304,{s:10,w:800,a:'center',f:FD,c:'#8a5cf6',al:A});tx(c,'manda clientes a esa IP',126,322,{s:8.5,w:700,a:'center',f:FM,c:C.mut,al:A});
+  /* flota Fargate */
+  box(c,262,14,288,330,{r:16,f:'#f2f8fc',s:C.p2,al:A});icon(c,'AWSFargate',284,34,22,A);tx(c,'la flota de Fargate (de AWS)',302,34,{s:11,w:800,f:FD,c:C.p,al:A});tx(c,'tú nunca ves estas máquinas',406,52,{s:8.5,w:700,a:'center',f:FM,c:C.mut,al:A});
+  var hx=276,hy=62;box(c,hx,hy,260,150,{r:12,f:'#fff',s:C.line,al:A});gx(c,'server',hx+14,hy+14,13,C.faint,A);tx(c,'un servidor físico de la flota',hx+28,hy+14,{s:9,w:700,f:FM,c:C.mut,al:A});
+  for(var s2=0;s2<6;s2++){var sx=hx+10+(s2%3)*84,sy=hy+30+Math.floor(s2/3)*58,mine=s2===4,other=s2!==2&&!mine;
+    if(mine){var show=all||st>=2&&!(st===6&&u>.4);if(show){var k2=st===2?E.back(u):1,hl=st===2||st===3;box(c,sx-4,sy-4,84,58,{r:9,f:hl?'#fff7ed':'#e8f3f9',s:C.o,lw:2.4,al:A*Math.min(1,k2),sh:hl?'rgba(233,113,50,.35)':null});tx(c,'TU TAREA',sx+38,sy+8,{s:8,w:800,a:'center',f:FM,c:C.o,al:A*Math.min(1,k2)});tx(c,st===3&&u<.6?'⬇ bajando imagen':'🐳 tienda:v1',sx+38,sy+24,{s:9,w:800,a:'center',f:FM,c:C.ink,al:A*Math.min(1,k2)});tx(c,'½ vCPU · 1 GB',sx+38,sy+40,{s:8,w:700,a:'center',f:FM,c:C.mut,al:A*Math.min(1,k2)})}
+      else{c.save();c.globalAlpha*=A*.7;c.setLineDash([3,3]);c.strokeStyle=st===6?C.red:C.faint;rr(c,sx,sy,76,50,7);c.stroke();c.restore();tx(c,st===6?'liberada':st===1?'¿espacio libre?':'libre',sx+38,sy+25,{s:8.5,w:800,a:'center',f:FM,c:st===6?C.red:C.faint,al:A})}}
+    else if(other){box(c,sx,sy,76,50,{r:7,f:C.soft,s:false,al:A});tx(c,'microVM de',sx+38,sy+20,{s:7.5,w:700,a:'center',f:FM,c:C.faint,al:A});tx(c,'otro cliente',sx+38,sy+32,{s:7.5,w:700,a:'center',f:FM,c:C.faint,al:A})}
+    else{c.save();c.globalAlpha*=A*.5;c.setLineDash([3,3]);c.strokeStyle=C.faint;rr(c,sx,sy,76,50,7);c.stroke();c.restore()}}
+  /* explicación del paso */
+  var EX=['la receta: qué imagen y cuánta CPU y memoria','ECS no busca máquinas: se lo pide a Fargate','microVM = una mini máquina virtual SOLO para tu tarea, aislada de los demás','la imagen viaja desde ECR hasta tu microVM','tu tarea queda “conectada” a tu red como si fuera tuya','tú no administras ninguna EC2: solo la tarea','el espacio vuelve a la flota para otro cliente'];
+  box(c,276,222,260,70,{r:12,f:'#0E2841',s:false,al:A});wrap(c,st<0?'Fargate pone una máquina a la medida para cada tarea':EX[st],290,246,232,16,{s:11,w:800,f:FD,c:'#fff',al:A});
+  box(c,276,300,260,36,{r:10,f:st===3?'#fff7ed':'#fff',s:st===3?C.o:C.line,lw:st===3?2:1,al:A});icon(c,'ElasticContainerRegistry',296,318,20,A);tx(c,'Amazon ECR · aquí vive tu imagen tienda:v1',312,318,{s:9.5,w:800,f:FD,al:A});
+  /* flechas */
+  flow(c,[[228,92],[262,92]],C.o,t,{lw:2.4,a:A*on(1),label:'1 · corre esta tarea',ly:-14});
+  flow(c,[[536,318],[546,318],[546,175],[452,175]],C.o,t,{lw:2.2,a:A*on(3)});
+  flow(c,[[366,190],[262,206],[208,222]],C.g,t,{lw:2.2,a:A*on(4),label:'su IP en tu VPC',lp:.4});
+  flow(c,[[126,288],[126,258]],'#8a5cf6',t,{lw:2.2,a:A*on(5)});
+  /* contador */
+  var secs=st===5?Math.floor(40+u*80):st===6?120:st>=3?Math.floor((st-3)*20+u*20):0,mmss=Math.floor(secs/60)+':'+(secs%60<10?'0':'')+(secs%60);
+  box(c,10,354,540,50,{r:12,f:'#0E2841',s:false,al:A});tx(c,'💵 pagas mientras corre:',28,379,{s:11,w:800,f:FD,c:'#b4c8da',al:A});tx(c,mmss+' min · ½ vCPU + 1 GB',200,379,{s:12,w:800,f:FM,c:'#ffb86b',al:A});tx(c,st===6?'se detuvo → dejas de pagar':'por segundo (mínimo 1 min)',536,379,{s:10,w:700,a:'right',f:FD,c:st===6?'#7be0a6':'#b4c8da',al:A});
+  if(t>.8)band(c,['1 · Le das a ECS tu receta: imagen tienda:v1, ½ vCPU y 1 GB','2 · ECS le pide a Fargate: “corre esta tarea”','3 · Fargate busca espacio en su flota y arma una microVM SOLO para tu tarea','4 · La microVM baja tu imagen desde ECR y arranca el contenedor','5 · La tarea recibe su propia IP privada dentro de TU VPC','6 · El balanceador le manda clientes, y pagas por segundo mientras corre','7 · Si se detiene, Fargate libera el espacio y ECS pide otra si hace falta'],st,A)};
 
 /* 3.5 · el viaje de un pedido (diapositiva ancha 1100×520) */
 function bandW(c,T,st,A,w,y){box(c,10,y,w-20,50,{r:12,f:'#0E2841',s:false,al:A});tx(c,T[st]||'',w/2,y+21,{s:13.5,w:700,a:'center',f:FD,c:'#fff',al:A});for(var i=0;i<T.length;i++)dot(c,w/2-(T.length-1)*9+i*18,y+40,i===st?4.5:3,i===st?C.o:'#2b4f74',A)}
