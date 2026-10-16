@@ -639,14 +639,14 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
   <div class="mviz"><canvas data-mu="blackfriday" aria-label="Llegan veinte veces más clientes, la EC2 llega al cien por ciento de CPU y responde 503"></canvas></div>
 </section>
 
-<section class="slide mu">
+<section class="slide mu wide">
   <div>
     <div class="mtag"><b>1.5</b>server-based · la primera solución<b></b></div>
     <h2>Auto Scaling: <span class="g">la EC2 que se multiplica</span></h2>
-    <div class="mnote"><span>// como</span> contratar cajeros temporales cuando se llena la tienda</div>
-    <p class="msub">Después del susto, Laura pone su tienda detrás de un <b>balanceador</b> (ALB) y arma un <b>grupo de Auto Scaling</b>: mínimo 2 EC2, máximo 6. <b>CloudWatch</b> vigila la CPU; si pasa del 70 %, Auto Scaling <b>prende EC2 nuevas</b> y el balanceador les reparte clientes. Cuando baja, las apaga.</p><p class="muse">👉 <b>¿Problema resuelto? Casi…</b></p>
+    
+    <p class="msub"><b>Balanceador</b> + <b>grupo de Auto Scaling</b> en dos zonas: si la CPU pasa del 70 %, se lanzan EC2 nuevas. Escoge un paso o avanza con →.</p>
   </div>
-  <div class="mviz"><canvas data-mu="asg" aria-label="Un grupo de Auto Scaling detrás de un balanceador: CloudWatch ve la CPU alta y se prenden dos EC2 nuevas"></canvas></div>
+  <div class="mviz"><canvas data-mu="asgarq" data-w="1100" data-h="520" data-maxh=".64" aria-label="Arquitectura de Auto Scaling: clientes, balanceador, EC2 en dos zonas, CloudWatch, alarma y plantilla de lanzamiento"></canvas></div>
 </section>
 
 <section class="slide mu">
@@ -669,14 +669,14 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
   <div class="mviz"><canvas data-mu="contenedor" aria-label="Código, lenguaje, librerías y configuración entran a un contenedor, que se guarda como imagen en ECR y corre igual en todas partes"></canvas></div>
 </section>
 
-<section class="slide mu">
+<section class="slide mu wide">
   <div>
-    <div class="mtag"><b>1.8</b>server-based · Amazon ECS<b></b></div>
-    <h2>ECS: <span class="g">el jefe de cocina</span></h2>
-    <div class="mnote"><span>// como</span> el jefe de cocina: sabe la receta, decide cuántos cocineros trabajan y reemplaza al que se va</div>
-    <p class="msub"><b>Amazon ECS</b> (Elastic Container Service) pone a correr tus contenedores. Le das una <b>definición de tarea</b> (la receta: imagen, CPU, memoria y puerto) y un <b>servicio</b> (“quiero 3 copias siempre”). Si una copia se cae, ECS la <b>reemplaza</b>; si llegan más clientes, <b>agrega</b> copias, y un balanceador reparte el tráfico.</p><p class="muse">👉 <b>Hay otra forma: que los servidores no sean tu problema</b></p>
+    <div class="mtag"><b>1.8</b>server-based · Amazon ECS sobre EC2<b></b></div>
+    <h2>ECS sobre EC2: <span class="g">contenedores en tus servidores</span></h2>
+    
+    <p class="msub"><b>ECS</b> corre tus contenedores y reemplaza los que se caen; en server-based, dentro de <b>EC2 que Laura administra</b>. Escoge un paso o avanza con →.</p>
   </div>
-  <div class="mviz"><canvas data-mu="ecs" aria-label="ECS usa la definición de tarea, mantiene tres tareas, reemplaza la que se cae, escala a cinco y el balanceador reparte"></canvas></div>
+  <div class="mviz"><canvas data-mu="ecsarq" data-w="1100" data-h="520" data-maxh=".64" aria-label="Arquitectura de ECS sobre EC2: ECR con la imagen, clúster con dos EC2, tres tareas, balanceador y una tarea que se reemplaza"></canvas></div>
 </section>
 
 <section class="slide mu dark sep">
@@ -903,7 +903,7 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
     
     <p class="msub"><b>Front</b>: lo que se descarga y se ve en el navegador · <b>back</b>: lo que corre en la nube y nadie ve. Escoge un paso o avanza con →.</p>
   </div>
-  <div class="mviz"><canvas data-mu="fbarq" data-w="1100" data-h="520" data-maxh=".66" aria-label="Arquitectura de la tienda con la zona front (navegador, CloudFront, S3) y la zona back (API Gateway, Lambda, IAM, DynamoDB), paso a paso"></canvas></div>
+  <div class="mviz"><canvas data-mu="fbarq" data-w="1100" data-h="520" data-maxh=".64" aria-label="Arquitectura de la tienda con la zona front (navegador, CloudFront, S3) y la zona back (API Gateway, Lambda, IAM, DynamoDB), paso a paso"></canvas></div>
 </section>
 
 <section class="slide mu">
@@ -3726,6 +3726,65 @@ S.fbarq=function(c,t,sec){var A=E.out(P(t,.1,.6)),R=evW(sec,t),ev=R[0],u=R[1],al
   if(ev===3&&u>.3)chip(c,'cruza de FRONT a BACK',650,394,C.o,'#fff7ed',1,{s:9.5});
   narrW(c,EV,ev,u,A);pillsW(c,sec,EV,ev,A,470)};
 wireW('fbarq',8);
+
+/* Auto Scaling como arquitectura (1100×520) */
+S.asgarq=function(c,t,sec){var A=E.out(P(t,.1,.6)),R=evW(sec,t),ev=R[0],u=R[1],all=ev<0;
+  var EV=[{k:'el balanceador',t:'Los clientes entran por el balanceador (ALB), que reparte entre las EC2'},{k:'dos zonas',t:'Las EC2 viven en 2 zonas de disponibilidad: si una zona falla, la otra sigue vendiendo'},{k:'CloudWatch mide',t:'CloudWatch mide la CPU de todas las EC2, minuto a minuto'},{k:'la alarma',t:'Llega el pico: la CPU pasa del 70 % y suena la alarma'},{k:'EC2 nuevas',t:'Auto Scaling lanza 2 EC2 nuevas desde la plantilla (imagen AMI)… y tardan minutos en arrancar'},{k:'entran a trabajar',t:'Pasan las verificaciones de salud y el ALB empieza a mandarles clientes'},{k:'se encoge',t:'Pasa el pico: Auto Scaling apaga las que sobran, pero nunca menos de 2'}];
+  var n=all?2:ev<4?2:ev===4?4:ev===5?4:(u<.5?4:2),boot=ev===4,cpu=all?45:ev<=2?40:ev===3?40+50*E.io(u):ev===4?92:ev===5?92-40*E.io(u):45-20*E.io(u);
+  /* clientes */
+  icon(c,'R_Users',60,110,40,A);tx(c,ev===3||ev===4?'×20 clientes':'clientes',60,148,{s:11,w:800,a:'center',f:FD,c:ev===3||ev===4?C.red:C.ink,al:A});
+  grp(c,130,14,960,400,'#232F3E','AWS Cloud · us-east-1','G_AWSCloudlogo',{al:A});grp(c,150,48,700,356,'#8C4FFF','VPC de la tienda','G_VirtualprivatecloudVPC',{al:A});
+  var AZ=[[170,'zona us-east-1a'],[514,'zona us-east-1b']];AZ.forEach(function(z,i){grp(c,z[0]+10,150,316,240,'#7AA116',z[1]+' · subred pública','G_Publicsubnet',{al:A,fill:ev===1?'rgba(122,161,22,.08)':'rgba(122,161,22,.03)',lw:ev===1?2:1})});
+  /* ALB */
+  box(c,330,70,360,54,{r:12,f:ev===0||ev===5?'#f5f0ff':'#fff',s:'#8a5cf6',lw:ev===0||ev===5?2.4:1.4,al:A});tx(c,'balanceador de carga (ALB)',510,90,{s:12,w:800,a:'center',f:FD,c:'#8a5cf6',al:A});tx(c,'reparte · revisa salud',510,108,{s:9,w:700,a:'center',f:FM,c:C.mut,al:A});
+  flow(c,[[84,110],[330,97]],C.t,t,{lw:2.6,a:A*(ev===0||ev===3||all?1:.35)});
+  /* grupo de Auto Scaling */
+  grp(c,176,178,664,198,C.o,'grupo de Auto Scaling · mín 2 · deseado '+n+' · máx 6','',{al:A,dash:[6,4],lw:1.8});
+  var SL=[[260,276],[598,276],[400,276],[738,276]];
+  SL.forEach(function(p,i){var live=i<n,isNew=i>=2;if(!live){c.save();c.globalAlpha*=A*.5;c.setLineDash([3,4]);c.strokeStyle=C.faint;rr(c,p[0]-56,p[1]-50,112,96,10);c.stroke();c.restore();tx(c,'(espacio para crecer)',p[0],p[1],{s:8.5,w:700,a:'center',f:FM,c:C.faint,al:A});return}
+    var bootNow=isNew&&boot;box(c,p[0]-56,p[1]-50,112,96,{r:10,f:bootNow?'#fff':isNew&&ev===5?'#ecfbf3':'#fff7ed',s:bootNow?C.o:isNew&&ev===5?C.g:C.o,lw:1.8,al:A});
+    if(bootNow){var k=Math.min(1,u*1.1);icon(c,'EC2',p[0],p[1]-20,30,A*.5);tx(c,'arrancando…',p[0],p[1]+10,{s:9.5,w:800,a:'center',f:FM,c:C.o,al:A});c.save();c.globalAlpha*=A;rr(c,p[0]-40,p[1]+22,80,6,3);c.fillStyle=C.soft;c.fill();rr(c,p[0]-40,p[1]+22,80*k,6,3);c.fillStyle=C.o;c.fill();c.restore();tx(c,Math.round(k*4)+' de 4 min',p[0],p[1]+38,{s:8.5,w:700,a:'center',f:FM,c:C.mut,al:A})}
+    else{icon(c,'EC2',p[0],p[1]-20,30,A);tx(c,'EC2 '+(i+1),p[0],p[1]+12,{s:10,w:800,a:'center',f:FM,al:A});var pc=Math.round(cpu*(n===4&&!boot?.6:1));tx(c,'CPU '+Math.min(99,pc)+' %',p[0],p[1]+30,{s:9,w:800,a:'center',f:FM,c:pc>70?C.red:C.g,al:A});
+      flow(c,[[510,124],[p[0],p[1]-50]],'#8a5cf6',t,{lw:1.6,a:A*(ev===0||ev===5&&isNew?1:.25),noHead:false})}});
+  /* CloudWatch */
+  var alarm=ev===3||ev===4;box(c,870,60,200,150,{r:14,f:alarm?'#fff1f1':'#fff',s:alarm?C.red:ev===2?C.p:C.line,lw:alarm||ev===2?2.4:1.2,al:A});icon(c,'CloudWatch',900,88,28,A);tx(c,'CloudWatch',922,84,{s:11,w:800,f:FD,al:A});tx(c,alarm?'🚨 ALARMA':'CPU promedio',922,100,{s:9,w:800,f:FM,c:alarm?C.red:C.mut,al:A*(alarm?.6+.4*Math.sin(t*8):1)});
+  c.save();c.globalAlpha*=A;rr(c,886,130,168,14,7);c.fillStyle=C.soft;c.fill();rr(c,886,130,168*Math.min(1,cpu/100),14,7);c.fillStyle=cpu>70?C.red:cpu>50?C.o:C.g;c.fill();c.restore();poly(c,[[886+168*.7,124],[886+168*.7,150]],C.red,2,[3,3],A);tx(c,Math.round(cpu)+' %',970,172,{s:18,w:800,a:'center',f:FM,c:cpu>70?C.red:C.ink,al:A});tx(c,'umbral 70 %',970,194,{s:8.5,w:700,a:'center',f:FM,c:C.red,al:A});
+  if(ev===2||all)flow(c,[[840,250],[870,180]],C.p,t,{lw:2,a:A*(ev===2?1:.3)});
+  /* plantilla */
+  box(c,870,228,200,92,{r:14,f:ev===4?'#fff7ed':'#fff',s:ev===4?C.o:C.line,lw:ev===4?2.2:1.2,al:A});tx(c,'plantilla de lanzamiento',970,248,{s:10.5,w:800,a:'center',f:FD,c:C.o,al:A});tx(c,'AMI de la tienda · t3.small',970,268,{s:9,w:700,a:'center',f:FM,c:C.mut,al:A});tx(c,'+ script que instala todo',970,286,{s:9,w:700,a:'center',f:FM,c:C.mut,al:A});
+  if(ev===4)flow(c,[[870,300],[790,300]],C.o,t,{lw:2.4,label:'lanza 2'});if(ev===3)flow(c,[[970,210],[970,228]],C.red,t,{lw:2.4});
+  box(c,870,334,200,60,{r:12,f:C.soft,s:false,al:A});tx(c,'💵 pagas '+n+' EC2 por hora',970,354,{s:10.5,w:800,a:'center',f:FD,c:C.o,al:A});tx(c,'aunque sea de madrugada, mínimo 2',970,374,{s:8.5,w:700,a:'center',f:FM,c:C.mut,al:A});
+  narrW(c,EV,ev,u,A);pillsW(c,sec,EV,ev,A,470)};
+wireW('asgarq',7);
+
+/* ECS sobre EC2 como arquitectura (1100×520) */
+S.ecsarq=function(c,t,sec){var A=E.out(P(t,.1,.6)),R=evW(sec,t),ev=R[0],u=R[1],all=ev<0;
+  var EV=[{k:'la imagen',t:'Laura empaca la tienda en un contenedor y sube la imagen tienda:v1 a ECR'},{k:'el clúster',t:'Crea un clúster de ECS con 2 EC2: esas máquinas son suyas (server-based)'},{k:'la receta',t:'La definición de tarea dice: imagen tienda:v1, ½ vCPU, 1 GB y puerto 8080'},{k:'3 tareas',t:'El servicio pide 3 tareas: ECS las acomoda en las EC2 y cada EC2 baja la imagen'},{k:'el balanceador',t:'El ALB reparte los clientes entre las 3 tareas'},{k:'una se cae',t:'Una tarea se cae: ECS lo nota y lanza otra para volver a 3'},{k:'lo que cuidas',t:'Las EC2 siguen siendo de Laura: parches, tamaño y el espacio libre que igual paga'}];
+  icon(c,'R_Users',60,110,40,A);tx(c,'clientes',60,148,{s:11,w:800,a:'center',f:FD,al:A});
+  /* ECR */
+  box(c,20,250,150,120,{r:14,f:ev===0?'#fff7ed':'#fff',s:ev===0?C.o:C.line,lw:ev===0?2.2:1.2,al:A});icon(c,'ElasticContainerRegistry',95,286,34,A);tx(c,'Amazon ECR',95,318,{s:11,w:800,a:'center',f:FD,al:A});tx(c,'🐳 tienda:v1',95,338,{s:9.5,w:800,a:'center',f:FM,c:C.o,al:A*(all||ev>=0?1:.3)});
+  if(ev===0){var k0=E.io(u);chip(c,'docker push',95,236-20*k0,C.o,'#fff7ed',1,{s:9})}
+  grp(c,190,14,900,400,'#232F3E','AWS Cloud · us-east-1','G_AWSCloudlogo',{al:A});grp(c,206,48,680,356,'#8C4FFF','VPC de la tienda','G_VirtualprivatecloudVPC',{al:A});
+  /* ALB */
+  box(c,370,64,360,50,{r:12,f:ev===4?'#f5f0ff':'#fff',s:'#8a5cf6',lw:ev===4?2.4:1.4,al:A});tx(c,'balanceador (ALB)',550,82,{s:12,w:800,a:'center',f:FD,c:'#8a5cf6',al:A});tx(c,'reparte entre las tareas vivas',550,100,{s:9,w:700,a:'center',f:FM,c:C.mut,al:A});
+  flow(c,[[84,110],[370,89]],C.t,t,{lw:2.6,a:A*(ev===4||all?1:.3)});
+  /* clúster */
+  var cl=all||ev>=1;grp(c,222,134,648,256,C.o,'clúster de ECS · servicio “tienda” · deseadas: 3','ElasticContainerService',{al:A*(cl?1:.35),dash:[6,4],lw:ev===1?2.4:1.4});
+  var EC=[[380,265],[700,265]];
+  var placed=all?3:ev<3?0:ev===3?Math.min(3,Math.floor(u*4)):3,dead=ev===5&&u<.5,rep=ev===5&&u>=.5||ev===6;
+  EC.forEach(function(p,i){if(!cl){c.save();c.globalAlpha*=A*.4;c.setLineDash([3,4]);c.strokeStyle=C.faint;rr(c,p[0]-140,p[1]-90,280,180,12);c.stroke();c.restore();return}
+    var kk=ev===1?E.back(Math.min(1,u*2-i*.3)):1;box(c,p[0]-140,p[1]-90,280,180,{r:12,f:ev===6?'#fff7ed':'#fff',s:C.o,lw:ev===6?2.4:1.6,al:A*Math.max(0,Math.min(1,kk))});icon(c,'EC2',p[0]-118,p[1]-70,22,A);tx(c,'EC2 '+(i+1)+' · t3.medium · 2 vCPU · 4 GB',p[0]-100,p[1]-70,{s:9.5,w:800,f:FM,c:C.o,al:A});
+    for(var s=0;s<4;s++){var sx=p[0]-128+(s%2)*130,sy=p[1]-46+Math.floor(s/2)*62,idx=i===0?[0,2,-1,-1][s]:[1,-1,-1,-1][s],has=idx>=0&&idx<placed;
+      if(has){var isDead=dead&&idx===1,isRep=rep&&idx===1;box(c,sx,sy,124,54,{r:8,f:isDead?'#fff1f1':isRep?'#ecfbf3':'#e8f3f9',s:isDead?C.red:isRep?C.g:C.p,lw:1.6,al:A});icon(c,'R_AmazonElasticContainerServiceContainer1',sx+18,sy+20,20,A*(isDead?.4:1));tx(c,isDead?'💥 se cayó':isRep?'✨ tarea nueva':'tarea '+(idx+1),sx+34,sy+18,{s:10,w:800,f:FM,c:isDead?C.red:isRep?C.g:C.ink,al:A});tx(c,'tienda:v1 · ½ vCPU',sx+34,sy+36,{s:8,w:700,f:FM,c:C.mut,al:A});
+        if(ev===3&&idx===placed-1)flow(c,[[170,300],[sx,sy+27]],C.o,t,{lw:1.8,label:'baja la imagen',lp:.3});if(ev===4)flow(c,[[550,114],[sx+62,sy]],'#8a5cf6',t,{lw:1.6})}
+      else{box(c,sx,sy,124,54,{r:8,f:ev===6?'#fff1f1':C.soft,s:false,al:A});tx(c,ev===6?'libre, pero pagado':'espacio libre',sx+62,sy+27,{s:8.5,w:700,a:'center',f:FM,c:ev===6?C.red:C.faint,al:A})}}});
+  /* receta */
+  box(c,900,60,180,150,{r:14,f:ev===2?'#fff7ed':'#fff',s:ev===2?C.o:C.line,lw:ev===2?2.4:1.2,al:A});icon(c,'R_AmazonElasticContainerServiceTask',924,84,22,A);tx(c,'definición de tarea',944,84,{s:10,w:800,f:FD,al:A});
+  [['imagen','tienda:v1'],['CPU','½ vCPU'],['memoria','1 GB'],['puerto','8080']].forEach(function(k,i){tx(c,k[0],914,112+i*22,{s:9,w:700,f:FM,c:C.mut,al:A});tx(c,k[1],1066,112+i*22,{s:9.5,w:800,a:'right',f:FM,al:A})});
+  if(ev===2)flow(c,[[900,150],[870,180]],C.o,t,{lw:2.2});
+  box(c,900,224,180,170,{r:14,f:ev===6?'#0E2841':C.soft,s:false,al:A});tx(c,'lo que Laura cuida',990,246,{s:10.5,w:800,a:'center',f:FD,c:ev===6?'#ffb86b':C.mut,al:A});['🔧 parches de las EC2','📐 cuántas y de qué tamaño','🧩 que quepan las tareas','💵 pagar las EC2 completas'].forEach(function(l,i){tx(c,l,912,274+i*26,{s:9.5,w:700,f:FD,c:ev===6?'#fff':C.ink,al:A})});
+  narrW(c,EV,ev,u,A);pillsW(c,sec,EV,ev,A,470)};
+wireW('ecsarq',7);
 
 /* 3.5 · el viaje de un pedido (diapositiva ancha 1100×520) */
 function bandW(c,T,st,A,w,y){box(c,10,y,w-20,50,{r:12,f:'#0E2841',s:false,al:A});tx(c,T[st]||'',w/2,y+21,{s:13.5,w:700,a:'center',f:FD,c:'#fff',al:A});for(var i=0;i<T.length;i++)dot(c,w/2-(T.length-1)*9+i*18,y+40,i===st?4.5:3,i===st?C.o:'#2b4f74',A)}
