@@ -1,13 +1,13 @@
 # =====================================================================
 #  La tienda serverless de Laura · Esumer · Cloud Computing, Redes y Ciberseguridad
 #
-#  Navegador → CloudFront → S3 (index.html, la vitrina)
-#  Navegador → API Gateway → Lambda (app.py) → DynamoDB (los pedidos)
+#  FRONT  ../front  → S3 (privado) + CloudFront (HTTPS)
+#  BACK   ../back   → API Gateway → Lambda (Python) → DynamoDB
 #
-#  Uso (terminal de VS Code, carpeta con main.tf, app.py e index.html):
+#  Uso (terminal de VS Code, DENTRO de esta carpeta terraform):
 #    terraform init
 #    terraform apply      (unos 4 minutos: CloudFront es el que más tarda)
-#    terraform destroy    (al final)
+#    terraform destroy    (al final de la clase)
 # =====================================================================
 
 terraform {
@@ -21,12 +21,26 @@ provider "aws" {
   region = "us-east-1"
 }
 
-# ---------- 1 · Los datos: tabla DynamoDB (llave de partición + llave de orden)
+locals {
+  front = "${path.module}/../front"
+  back  = "${path.module}/../back"
+  tipos = {
+    html = "text/html; charset=utf-8"
+    css  = "text/css; charset=utf-8"
+    js   = "application/javascript; charset=utf-8"
+    svg  = "image/svg+xml"
+    png  = "image/png"
+    jpg  = "image/jpeg"
+  }
+}
+
+# ======================= DATOS ========================================
+# 1 · La tabla DynamoDB (llave de partición + llave de orden)
 resource "aws_dynamodb_table" "pedidos" {
   name         = "tienda-pedidos"
-  billing_mode = "PAY_PER_REQUEST" # serverless: sin capacidad fija, pagas por petición
-  hash_key     = "cliente"         # llave de partición: reparte los datos
-  range_key    = "fecha"           # llave de orden: ordena los pedidos de cada cliente
+  billing_mode = "PAY_PER_REQUEST" # serverless: pagas por petición
+  hash_key     = "cliente"         # llave de partición
+  range_key    = "fecha"           # llave de orden
 
   attribute {
     name = "cliente"
@@ -38,7 +52,8 @@ resource "aws_dynamodb_table" "pedidos" {
   }
 }
 
-# ---------- 2 · El permiso de la Lambda (rol): solo guardar y leer ESTA tabla
+# ======================= BACK =========================================
+# 2 · El permiso de la Lambda (rol): solo guardar y leer ESTA tabla
 resource "aws_iam_role" "lambda" {
   name = "tienda-serverless-lambda"
   assume_role_policy = jsonencode({
@@ -61,34 +76,34 @@ resource "aws_iam_role_policy_attachment" "logs" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole" # escribir en CloudWatch Logs
 }
 
-# ---------- 3 · El cerebro: la Lambda en Python (sale del archivo app.py)
-data "archive_file" "app" {
+# 3 · El cerebro: la Lambda (sale de ../back/app.py)
+data "archive_file" "back" {
   type        = "zip"
-  source_file = "${path.module}/app.py"
-  output_path = "${path.module}/app.zip"
+  source_file = "${local.back}/app.py"
+  output_path = "${path.module}/back.zip"
 }
 
-resource "aws_lambda_function" "app" {
+resource "aws_lambda_function" "back" {
   function_name    = "tienda-serverless"
   role             = aws_iam_role.lambda.arn
   runtime          = "python3.12"
   handler          = "app.handler" # archivo app.py → función handler
-  memory_size      = 128           # MB: lo mínimo alcanza
-  timeout          = 10            # segundos máximos por petición
-  filename         = data.archive_file.app.output_path
-  source_code_hash = data.archive_file.app.output_base64sha256
+  memory_size      = 128
+  timeout          = 10
+  filename         = data.archive_file.back.output_path
+  source_code_hash = data.archive_file.back.output_base64sha256
   environment {
     variables = { TABLA = aws_dynamodb_table.pedidos.name }
   }
 }
 
-# ---------- 4 · La puerta: API Gateway (HTTP API) que despierta a la Lambda
+# 4 · La puerta: API Gateway (HTTP API)
 resource "aws_apigatewayv2_api" "api" {
   name          = "tienda-serverless-api"
   protocol_type = "HTTP"
-  target        = aws_lambda_function.app.arn # crea la ruta y la etapa por defecto
+  target        = aws_lambda_function.back.arn
   cors_configuration {
-    allow_origins = ["*"] # en producción: solo el dominio de la tienda
+    allow_origins = ["https://${aws_cloudfront_distribution.cdn.domain_name}"] # solo la página de Laura
     allow_methods = ["GET", "POST"]
     allow_headers = ["content-type"]
   }
@@ -97,36 +112,47 @@ resource "aws_apigatewayv2_api" "api" {
 resource "aws_lambda_permission" "api" {
   statement_id  = "api-gateway"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.app.function_name
+  function_name = aws_lambda_function.back.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.api.execution_arn}/*"
 }
 
-# ---------- 5 · La vitrina: bucket S3 PRIVADO con la página (como en la clase 9)
-resource "aws_s3_bucket" "web" {
-  bucket_prefix = "tienda-serverless-"
+# ======================= FRONT ========================================
+# 5 · El bucket S3 PRIVADO con la página
+resource "aws_s3_bucket" "front" {
+  bucket_prefix = "tienda-laura-"
   force_destroy = true # permite borrarlo aunque tenga archivos (solo para el lab)
 }
 
-resource "aws_s3_bucket_public_access_block" "web" {
-  bucket                  = aws_s3_bucket.web.id
+resource "aws_s3_bucket_public_access_block" "front" {
+  bucket                  = aws_s3_bucket.front.id
   block_public_acls       = true
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
 
-resource "aws_s3_object" "index" {
-  bucket       = aws_s3_bucket.web.id
-  key          = "index.html"
-  content_type = "text/html; charset=utf-8"
-  # la página sale de index.html con la dirección de TU API adentro
-  content = templatefile("${path.module}/index.html", { api = aws_apigatewayv2_api.api.api_endpoint })
+# sube TODOS los archivos de ../front (index.html, estilos.css, app.js…)
+resource "aws_s3_object" "front" {
+  for_each     = fileset(local.front, "**")
+  bucket       = aws_s3_bucket.front.id
+  key          = each.value
+  source       = "${local.front}/${each.value}"
+  etag         = filemd5("${local.front}/${each.value}")
+  content_type = lookup(local.tipos, reverse(split(".", each.value))[0], "application/octet-stream")
 }
 
-# ---------- 6 · CloudFront: HTTPS al mundo; solo él puede leer el bucket (OAC)
+# config.js: le dice al front cuál es la dirección de TU API
+resource "aws_s3_object" "config" {
+  bucket       = aws_s3_bucket.front.id
+  key          = "config.js"
+  content      = "window.API_URL = \"${aws_apigatewayv2_api.api.api_endpoint}\";\n"
+  content_type = "application/javascript; charset=utf-8"
+}
+
+# 6 · CloudFront: HTTPS al mundo; solo él puede leer el bucket (OAC)
 resource "aws_cloudfront_origin_access_control" "oac" {
-  name                              = "oac-${aws_s3_bucket.web.id}"
+  name                              = "oac-${aws_s3_bucket.front.id}"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
@@ -139,7 +165,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   comment             = "Tienda serverless de Laura"
 
   origin {
-    domain_name              = aws_s3_bucket.web.bucket_regional_domain_name
+    domain_name              = aws_s3_bucket.front.bucket_regional_domain_name
     origin_id                = "s3-tienda"
     origin_access_control_id = aws_cloudfront_origin_access_control.oac.id
   }
@@ -164,7 +190,7 @@ resource "aws_cloudfront_distribution" "cdn" {
 data "aws_iam_policy_document" "solo_cloudfront" {
   statement {
     actions   = ["s3:GetObject"]
-    resources = ["${aws_s3_bucket.web.arn}/*"]
+    resources = ["${aws_s3_bucket.front.arn}/*"]
     principals {
       type        = "Service"
       identifiers = ["cloudfront.amazonaws.com"]
@@ -177,13 +203,13 @@ data "aws_iam_policy_document" "solo_cloudfront" {
   }
 }
 
-resource "aws_s3_bucket_policy" "web" {
-  bucket     = aws_s3_bucket.web.id
+resource "aws_s3_bucket_policy" "front" {
+  bucket     = aws_s3_bucket.front.id
   policy     = data.aws_iam_policy_document.solo_cloudfront.json
-  depends_on = [aws_s3_bucket_public_access_block.web]
+  depends_on = [aws_s3_bucket_public_access_block.front]
 }
 
-# ---------- Lo que Terraform te muestra al terminar
+# ======================= LO QUE TE MUESTRA AL TERMINAR ================
 output "tu_tienda" {
   value = "https://${aws_cloudfront_distribution.cdn.domain_name}"
 }

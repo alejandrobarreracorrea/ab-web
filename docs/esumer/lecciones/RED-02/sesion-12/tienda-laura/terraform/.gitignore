@@ -1,5 +1,5 @@
-app.zip
 .terraform/
 .terraform.lock.hcl
 *.tfstate
 *.tfstate.*
+back.zip

@@ -282,7 +282,7 @@ ul.clean li:first-child { border-top:0; }
     <li><span class="t">Serverless<small>qué es · carro vs. taxi · eventos · escala sola · Lambda por dentro · la flota y las microVM · arranque en frío · límites · Fargate</small></span><span class="m">parte 2</span></li>
     <li><span class="t">Las diferencias<small>tabla comparativa · el mismo pico · costos · las mismas 5 tareas en EC2 y en Fargate · de EC2 a Lambda · juego</small></span><span class="m">parte 3</span></li>
     <li><span class="t">La tienda: front, back y servicios<small>el salón y la cocina · qué corre dónde · API Gateway · DynamoDB · Aurora Serverless · el viaje de un pedido</small></span><span class="m">parte 4</span></li>
-    <li><span class="t">Laboratorio · 2 retos<small>tu primera Lambda a clics · la tienda completa con Terraform: S3 + CloudFront + API Gateway + Lambda + DynamoDB</small></span><span class="m">lab</span></li>
+    <li><span class="t">Laboratorio<small>la tienda de Laura completa con un solo terraform apply: S3 + CloudFront + API Gateway + Lambda + DynamoDB</small></span><span class="m">lab</span></li>
   </ul>
 </section>
 
@@ -979,67 +979,24 @@ window.wireSnips=window.wireSnips||function(sec){sec.querySelectorAll('.snip').f
 <section class="slide mu dark sep">
   <div>
     <div class="mtag" style="color:#7f9bb5"><b>Parte 5</b>de 5</div>
-    <h2 style="max-width:15ch">Laboratorio: <span class="g">la tienda sin servidores</span></h2>
-    <p class="msub">Primero tu primera Lambda a clics, para entenderla. Después, la tienda completa con Terraform: vitrina, puerta, cerebro y memoria.</p>
+    <h2 style="max-width:15ch">Laboratorio: <span class="g">la tienda de Laura</span></h2>
+    <p class="msub">Les llegó al correo el zip tienda-laura con el front, el back y el Terraform. Un terraform apply y la tienda queda en internet, sin un solo servidor.</p>
   </div>
   <div class="mviz"><canvas data-mu="ruta" data-part="5" aria-label="Ruta de la clase: parte 5 de 5"></canvas></div>
 </section>
 
 <section class="slide mu">
   <div>
-    <div class="mtag"><b>5.1</b>LAB 1 · el diagrama<b></b></div>
-    <h2>LAB 1: <span class="g">tu primera Lambda</span></h2>
+    <div class="mtag"><b>5.1</b>el laboratorio · el diagrama<b></b></div>
+    <h2>LAB: <span class="g">la tienda serverless de Laura</span></h2>
     
-    <p class="msub"><ol class="msteps"><li><span>1</span><p>Creas la función <b>hola-laura</b> en la consola (Python 3.12) y pegas el código.</p></li><li><span>2</span><p>El botón <b>Test</b> le manda un evento: <code>{"cliente": "camila"}</code>.</p></li><li><span>3</span><p>Tu código responde: <b>“Hola, camila. Tu gorra va en camino”</b>.</p></li><li><span>4</span><p>Lo que imprimió aparece en <b>CloudWatch Logs</b>.</p></li></ol></p><p class="msub">Sin Terraform ni servidores · gratis · al final la borras</p>
+    <p class="msub"><ol class="msteps"><li><span>1</span><p><b>terraform apply</b> crea 16 recursos: tabla, rol, Lambda, API, bucket privado, los archivos del front y CloudFront.</p></li><li><span>2</span><p>Abres <b>tu_tienda</b>: CloudFront te entrega la página desde el S3 privado.</p></li><li><span>3</span><p><b>Guardar pedido</b>: POST a API Gateway → Lambda → PutItem en DynamoDB.</p></li><li><span>4</span><p>La <b>ráfaga</b> de 20 pedidos: ¿cuántas instancias prende AWS?</p></li><li><span>5</span><p>Miras por dentro: pedidos en DynamoDB y logs en CloudWatch.</p></li></ol></p><p class="msub">≈ 4 min de apply · capa gratuita · al final: <b>terraform destroy</b></p>
   </div>
-  <div class="mviz"><canvas data-mu="arqhola" aria-label="Diagrama del LAB 1: tu consola manda un evento de prueba a la Lambda hola-laura, que responde y escribe en CloudWatch Logs"></canvas></div>
-</section>
-
-<section class="slide" id="labH0">
-  <span class="k"><span class="act-chip">🧪 LAB 1 · PASO 1</span> en la consola de AWS</span>
-  <h2 style="font-size:clamp(1.15rem,2.3vw,1.6rem)">Crea la función y pega tu código</h2>
-  <div class="grid2" style="align-items:start;grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
-    <ul class="cmdlist"><li><span>Buscador → <b>Lambda</b></span><span>región <b>us-east-1</b> (N. Virginia)</span></li><li><span><b>Crear una función</b> → Crear desde cero</span><span>nombre: <b>hola-laura</b></span></li><li><span>Tiempo de ejecución</span><span><b>Python 3.12</b> · arquitectura x86_64</span></li><li><span>Permisos</span><span>“Crear un nuevo rol con permisos básicos de Lambda”</span></li><li><span><b>Crear función</b> → pestaña <b>Código</b></span><span>borra todo, pega el código y pulsa <b>Deploy</b></span></li></ul>
-    <div class="snips"><div class="snip"><div class="top"><span>lambda_function.py  (reemplaza todo y Deploy)</span><button type="button">📋 Copiar</button></div><pre>import json
-
-def lambda_handler(event, context):
-    cliente = event.get(&quot;cliente&quot;, &quot;anónimo&quot;)
-    producto = event.get(&quot;producto&quot;, &quot;camiseta&quot;)
-    print(&quot;Llegó un pedido de&quot;, cliente, &quot;-&gt;&quot;, producto)   # esto sale en CloudWatch Logs
-    mensaje = &quot;Hola, &quot; + cliente + &quot;. Tu &quot; + producto + &quot; va en camino&quot;
-    return {
-        &quot;statusCode&quot;: 200,
-        &quot;body&quot;: json.dumps({&quot;mensaje&quot;: mensaje}, ensure_ascii=False)
-    }
-</pre></div></div>
-  </div>
-</section>
-
-<section class="slide" id="labH1">
-  <span class="k"><span class="act-chip">🧪 LAB 1 · PASO 2</span> evento de prueba y logs</span>
-  <h2 style="font-size:clamp(1.15rem,2.3vw,1.6rem)">Pruébala y mira lo que dejó en los logs</h2>
-  <div class="grid2" style="align-items:start;grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
-    <ul class="cmdlist"><li><span>Botón <b>Test</b> → Crear un evento nuevo</span><span>nombre: <b>pedido-camila</b>, pega el JSON</span></li><li><span><b>Guardar</b> → otra vez <b>Test</b></span><span>Estado: <b>Succeeded</b> y tu mensaje</span></li><li><span>Mira la <b>Duración</b></span><span>la 1.ª vez trae “Init duration”: arranque en frío 🥶</span></li><li><span><b>Test</b> otra vez</span><span>sin Init: la instancia está caliente 🔥</span></li><li><span>Pestaña <b>Supervisar</b> → Ver los registros de CloudWatch</span><span>ahí está tu <b>print</b></span></li></ul>
-    <div class="snips"><div class="snip"><div class="top"><span>evento de prueba (JSON)</span><button type="button">📋 Copiar</button></div><pre>{
-  &quot;cliente&quot;: &quot;camila&quot;,
-  &quot;producto&quot;: &quot;gorra&quot;
-}</pre></div></div>
-  </div>
-  <p class="sub" style="margin-top:12px">Al terminar: <b>Acciones → Eliminar</b> la función hola-laura. El rol que creó la consola (hola-laura-role-…) lo puedes borrar en IAM → Roles.</p>
-</section>
-
-<section class="slide mu">
-  <div>
-    <div class="mtag"><b>5.2</b>LAB 2 · el diagrama<b></b></div>
-    <h2>LAB 2: <span class="g">la tienda serverless</span></h2>
-    
-    <p class="msub"><ol class="msteps"><li><span>1</span><p><b>terraform apply</b> crea 13 recursos: tabla, rol, Lambda, API, bucket privado y CloudFront.</p></li><li><span>2</span><p>Abres <b>tu_tienda</b>: CloudFront te entrega la página desde el S3 privado.</p></li><li><span>3</span><p><b>Guardar pedido</b>: POST a API Gateway → Lambda → PutItem en DynamoDB.</p></li><li><span>4</span><p>La <b>ráfaga</b> de 20 pedidos: ¿cuántas instancias prende AWS?</p></li><li><span>5</span><p>Miras por dentro: pedidos en DynamoDB y logs en CloudWatch.</p></li></ol></p><p class="msub">≈ 4 min de apply · capa gratuita · al final: <b>terraform destroy</b></p>
-  </div>
-  <div class="mviz"><canvas data-mu="arqsv" aria-label="Diagrama del LAB 2: Terraform crea CloudFront, S3, API Gateway, Lambda, DynamoDB y el rol; el navegador usa la tienda"></canvas></div>
+  <div class="mviz"><canvas data-mu="arqsv" aria-label="Diagrama del laboratorio: Terraform crea CloudFront, S3, API Gateway, Lambda, DynamoDB y el rol; el navegador usa la tienda"></canvas></div>
 </section>
 
 <section class="slide" id="labS0">
-  <span class="k"><span class="act-chip">🔑 LAB 2 · PASO 0</span> permisos de terraform-lab</span>
+  <span class="k"><span class="act-chip">🔑 PASO 0</span> permisos de terraform-lab</span>
   <h2 style="font-size:clamp(1.15rem,2.3vw,1.6rem)">Tu usuario terraform-lab necesita Lambda y API Gateway</h2>
   <div class="grid2" style="align-items:start;grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
     <ul class="cmdlist"><li><span>IAM → Usuarios → <b>terraform-lab</b></span><span>Agregar permisos → Adjuntar políticas directamente</span></li><li><span>Marca <b>AWSLambda_FullAccess</b></span><span>y <b>AmazonAPIGatewayAdministrator</b> → Agregar permisos</span></li><li><span>Otra vez: Agregar permisos → <b>Crear política insertada</b></span><span>pestaña <b>JSON</b>: borra y pega la política</span></li><li><span>Nombre: <b>solo-roles-tienda</b></span><span><b>Crear política</b></span></li><li><span>¿Por qué no IAMFullAccess?</span><span><b>mínimo privilegio</b>: solo roles que empiecen por <b>tienda-</b></span></li></ul>
@@ -1065,405 +1022,32 @@ def lambda_handler(event, context):
 </section>
 
 <section class="slide" id="labS1">
-  <span class="k"><span class="act-chip">🚀 LAB 2 · PASO 1</span> tres archivos, un apply</span>
-  <h2 style="font-size:clamp(1.15rem,2.3vw,1.6rem)">Copia, guarda y terraform apply</h2>
+  <span class="k"><span class="act-chip">🚀 PASO 1</span> descomprime y un apply</span>
+  <h2 style="font-size:clamp(1.15rem,2.3vw,1.6rem)">Del zip a internet: terraform apply</h2>
   <div class="grid2" style="align-items:start;grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
-    <ul class="cmdlist"><li><span><code>mkdir $HOME\tienda-serverless</code><br><code>code $HOME\tienda-serverless</code></span><span>carpeta nueva, abierta en VS Code</span></li><li><span>Crea <b>main.tf</b>, <b>app.py</b> e <b>index.html</b></span><span>index.html = <b>front</b> · app.py = <b>back</b> · main.tf = la infraestructura · Ctrl+S en los tres</span></li><li><span><code>terraform init</code><br><code>terraform apply</code></span><span>Plan: <b>13 to add</b> → yes · ≈ 4 min ☕</span></li><li><span>Al terminar te muestra</span><span><b>tu_tienda</b> (https://d….cloudfront.net) y <b>tu_api</b></span></li><li><span>Mientras CloudFront se crea</span><span>repasamos el viaje de un pedido 😉</span></li></ul>
-    <div class="snips"><div class="snip"><div class="top"><span>main.tf  (la infraestructura)</span><button type="button">📋 Copiar</button></div><pre># =====================================================================
-#  La tienda serverless de Laura · Esumer · Cloud Computing, Redes y Ciberseguridad
-#
-#  Navegador → CloudFront → S3 (index.html, la vitrina)
-#  Navegador → API Gateway → Lambda (app.py) → DynamoDB (los pedidos)
-#
-#  Uso (terminal de VS Code, carpeta con main.tf, app.py e index.html):
-#    terraform init
-#    terraform apply      (unos 4 minutos: CloudFront es el que más tarda)
-#    terraform destroy    (al final)
-# =====================================================================
-
-terraform {
-  required_providers {
-    aws     = { source = &quot;hashicorp/aws&quot;, version = &quot;~&gt; 6.0&quot; }
-    archive = { source = &quot;hashicorp/archive&quot;, version = &quot;~&gt; 2.0&quot; }
-  }
-}
-
-provider &quot;aws&quot; {
-  region = &quot;us-east-1&quot;
-}
-
-# ---------- 1 · Los datos: tabla DynamoDB (llave de partición + llave de orden)
-resource &quot;aws_dynamodb_table&quot; &quot;pedidos&quot; {
-  name         = &quot;tienda-pedidos&quot;
-  billing_mode = &quot;PAY_PER_REQUEST&quot; # serverless: sin capacidad fija, pagas por petición
-  hash_key     = &quot;cliente&quot;         # llave de partición: reparte los datos
-  range_key    = &quot;fecha&quot;           # llave de orden: ordena los pedidos de cada cliente
-
-  attribute {
-    name = &quot;cliente&quot;
-    type = &quot;S&quot;
-  }
-  attribute {
-    name = &quot;fecha&quot;
-    type = &quot;S&quot;
-  }
-}
-
-# ---------- 2 · El permiso de la Lambda (rol): solo guardar y leer ESTA tabla
-resource &quot;aws_iam_role&quot; &quot;lambda&quot; {
-  name = &quot;tienda-serverless-lambda&quot;
-  assume_role_policy = jsonencode({
-    Version   = &quot;2012-10-17&quot;
-    Statement = [{ Effect = &quot;Allow&quot;, Principal = { Service = &quot;lambda.amazonaws.com&quot; }, Action = &quot;sts:AssumeRole&quot; }]
-  })
-}
-
-resource &quot;aws_iam_role_policy&quot; &quot;tabla&quot; {
-  name = &quot;solo-tabla-pedidos&quot;
-  role = aws_iam_role.lambda.id
-  policy = jsonencode({
-    Version   = &quot;2012-10-17&quot;
-    Statement = [{ Effect = &quot;Allow&quot;, Action = [&quot;dynamodb:PutItem&quot;, &quot;dynamodb:Query&quot;, &quot;dynamodb:Scan&quot;], Resource = aws_dynamodb_table.pedidos.arn }]
-  })
-}
-
-resource &quot;aws_iam_role_policy_attachment&quot; &quot;logs&quot; {
-  role       = aws_iam_role.lambda.name
-  policy_arn = &quot;arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole&quot; # escribir en CloudWatch Logs
-}
-
-# ---------- 3 · El cerebro: la Lambda en Python (sale del archivo app.py)
-data &quot;archive_file&quot; &quot;app&quot; {
-  type        = &quot;zip&quot;
-  source_file = &quot;${path.module}/app.py&quot;
-  output_path = &quot;${path.module}/app.zip&quot;
-}
-
-resource &quot;aws_lambda_function&quot; &quot;app&quot; {
-  function_name    = &quot;tienda-serverless&quot;
-  role             = aws_iam_role.lambda.arn
-  runtime          = &quot;python3.12&quot;
-  handler          = &quot;app.handler&quot; # archivo app.py → función handler
-  memory_size      = 128           # MB: lo mínimo alcanza
-  timeout          = 10            # segundos máximos por petición
-  filename         = data.archive_file.app.output_path
-  source_code_hash = data.archive_file.app.output_base64sha256
-  environment {
-    variables = { TABLA = aws_dynamodb_table.pedidos.name }
-  }
-}
-
-# ---------- 4 · La puerta: API Gateway (HTTP API) que despierta a la Lambda
-resource &quot;aws_apigatewayv2_api&quot; &quot;api&quot; {
-  name          = &quot;tienda-serverless-api&quot;
-  protocol_type = &quot;HTTP&quot;
-  target        = aws_lambda_function.app.arn # crea la ruta y la etapa por defecto
-  cors_configuration {
-    allow_origins = [&quot;*&quot;] # en producción: solo el dominio de la tienda
-    allow_methods = [&quot;GET&quot;, &quot;POST&quot;]
-    allow_headers = [&quot;content-type&quot;]
-  }
-}
-
-resource &quot;aws_lambda_permission&quot; &quot;api&quot; {
-  statement_id  = &quot;api-gateway&quot;
-  action        = &quot;lambda:InvokeFunction&quot;
-  function_name = aws_lambda_function.app.function_name
-  principal     = &quot;apigateway.amazonaws.com&quot;
-  source_arn    = &quot;${aws_apigatewayv2_api.api.execution_arn}/*&quot;
-}
-
-# ---------- 5 · La vitrina: bucket S3 PRIVADO con la página (como en la clase 9)
-resource &quot;aws_s3_bucket&quot; &quot;web&quot; {
-  bucket_prefix = &quot;tienda-serverless-&quot;
-  force_destroy = true # permite borrarlo aunque tenga archivos (solo para el lab)
-}
-
-resource &quot;aws_s3_bucket_public_access_block&quot; &quot;web&quot; {
-  bucket                  = aws_s3_bucket.web.id
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
-}
-
-resource &quot;aws_s3_object&quot; &quot;index&quot; {
-  bucket       = aws_s3_bucket.web.id
-  key          = &quot;index.html&quot;
-  content_type = &quot;text/html; charset=utf-8&quot;
-  # la página sale de index.html con la dirección de TU API adentro
-  content = templatefile(&quot;${path.module}/index.html&quot;, { api = aws_apigatewayv2_api.api.api_endpoint })
-}
-
-# ---------- 6 · CloudFront: HTTPS al mundo; solo él puede leer el bucket (OAC)
-resource &quot;aws_cloudfront_origin_access_control&quot; &quot;oac&quot; {
-  name                              = &quot;oac-${aws_s3_bucket.web.id}&quot;
-  origin_access_control_origin_type = &quot;s3&quot;
-  signing_behavior                  = &quot;always&quot;
-  signing_protocol                  = &quot;sigv4&quot;
-}
-
-resource &quot;aws_cloudfront_distribution&quot; &quot;cdn&quot; {
-  enabled             = true
-  default_root_object = &quot;index.html&quot;
-  price_class         = &quot;PriceClass_100&quot;
-  comment             = &quot;Tienda serverless de Laura&quot;
-
-  origin {
-    domain_name              = aws_s3_bucket.web.bucket_regional_domain_name
-    origin_id                = &quot;s3-tienda&quot;
-    origin_access_control_id = aws_cloudfront_origin_access_control.oac.id
-  }
-
-  default_cache_behavior {
-    target_origin_id       = &quot;s3-tienda&quot;
-    viewer_protocol_policy = &quot;redirect-to-https&quot;
-    allowed_methods        = [&quot;GET&quot;, &quot;HEAD&quot;]
-    cached_methods         = [&quot;GET&quot;, &quot;HEAD&quot;]
-    cache_policy_id        = &quot;4135ea2d-6df8-44a3-9df3-4b5a84be39ad&quot; # CachingDisabled: ves tus cambios al instante
-  }
-
-  restrictions {
-    geo_restriction { restriction_type = &quot;none&quot; }
-  }
-
-  viewer_certificate {
-    cloudfront_default_certificate = true
-  }
-}
-
-data &quot;aws_iam_policy_document&quot; &quot;solo_cloudfront&quot; {
-  statement {
-    actions   = [&quot;s3:GetObject&quot;]
-    resources = [&quot;${aws_s3_bucket.web.arn}/*&quot;]
-    principals {
-      type        = &quot;Service&quot;
-      identifiers = [&quot;cloudfront.amazonaws.com&quot;]
-    }
-    condition {
-      test     = &quot;StringEquals&quot;
-      variable = &quot;AWS:SourceArn&quot;
-      values   = [aws_cloudfront_distribution.cdn.arn]
-    }
-  }
-}
-
-resource &quot;aws_s3_bucket_policy&quot; &quot;web&quot; {
-  bucket     = aws_s3_bucket.web.id
-  policy     = data.aws_iam_policy_document.solo_cloudfront.json
-  depends_on = [aws_s3_bucket_public_access_block.web]
-}
-
-# ---------- Lo que Terraform te muestra al terminar
-output &quot;tu_tienda&quot; {
-  value = &quot;https://${aws_cloudfront_distribution.cdn.domain_name}&quot;
-}
-
-output &quot;tu_api&quot; {
-  value = aws_apigatewayv2_api.api.api_endpoint
-}
-</pre></div><div class="snip"><div class="top"><span>app.py  (el BACK: la Lambda)</span><button type="button">📋 Copiar</button></div><pre># La Lambda de la tienda: recibe pedidos de la página y los guarda en DynamoDB
-import base64, json, os, time, uuid
-from datetime import datetime, timezone
-
-import boto3
-from boto3.dynamodb.conditions import Key
-
-# Esto corre UNA sola vez, cuando AWS prende una instancia nueva (arranque en frío)
-tabla = boto3.resource(&quot;dynamodb&quot;).Table(os.environ[&quot;TABLA&quot;])
-INSTANCIA = uuid.uuid4().hex[:6]  # nombre corto de esta instancia de la Lambda
-frio = True
-
-
-def responder(codigo, datos):
-    return {&quot;statusCode&quot;: codigo, &quot;headers&quot;: {&quot;content-type&quot;: &quot;application/json&quot;}, &quot;body&quot;: json.dumps(datos, default=str)}
-
-
-def handler(event, context):
-    # Esto corre en CADA petición
-    global frio
-    inicio = time.time()
-    era_frio, frio = frio, False
-    metodo = event[&quot;requestContext&quot;][&quot;http&quot;][&quot;method&quot;]
-
-    if metodo == &quot;POST&quot;:  # guardar un pedido
-        cuerpo = event.get(&quot;body&quot;) or &quot;{}&quot;
-        if event.get(&quot;isBase64Encoded&quot;):
-            cuerpo = base64.b64decode(cuerpo).decode()
-        datos = json.loads(cuerpo)
-        cliente = str(datos.get(&quot;cliente&quot;, &quot;&quot;)).strip().lower()[:40]
-        if not cliente:
-            return responder(400, {&quot;error&quot;: &quot;falta el cliente&quot;})
-        pedido = {
-            &quot;cliente&quot;: cliente,                                                    # llave de partición
-            # llave de orden: la hora + 4 letras al azar (dos pedidos en el mismo milisegundo no se pisan)
-            &quot;fecha&quot;: datetime.now(timezone.utc).isoformat(timespec=&quot;milliseconds&quot;) + &quot;#&quot; + uuid.uuid4().hex[:4],
-            &quot;producto&quot;: str(datos.get(&quot;producto&quot;, &quot;camiseta&quot;))[:40],
-            &quot;talla&quot;: str(datos.get(&quot;talla&quot;, &quot;M&quot;))[:4],
-            &quot;instancia&quot;: INSTANCIA,
-        }
-        tabla.put_item(Item=pedido)  # PutItem: guardar
-        print(&quot;pedido guardado:&quot;, json.dumps(pedido))  # esto sale en CloudWatch Logs
-        resultado = {&quot;operacion&quot;: &quot;PutItem&quot;, &quot;pedido&quot;: pedido}
-    else:
-        # GET: ?cliente=camila → Query (solo su partición) · sin cliente → Scan (toda la tabla)
-        cliente = ((event.get(&quot;queryStringParameters&quot;) or {}).get(&quot;cliente&quot;) or &quot;&quot;).strip().lower()
-        if cliente:
-            items = tabla.query(KeyConditionExpression=Key(&quot;cliente&quot;).eq(cliente))[&quot;Items&quot;]
-            resultado = {&quot;operacion&quot;: &quot;Query&quot;, &quot;pedidos&quot;: items}
-        else:
-            items = tabla.scan()[&quot;Items&quot;]
-            items.sort(key=lambda p: p[&quot;fecha&quot;], reverse=True)
-            resultado = {&quot;operacion&quot;: &quot;Scan&quot;, &quot;pedidos&quot;: items}
-
-    resultado.update({&quot;instancia&quot;: INSTANCIA, &quot;frio&quot;: era_frio, &quot;ms&quot;: round((time.time() - inicio) * 1000)})
-    return responder(200, resultado)
-</pre></div><div class="snip"><div class="top"><span>index.html  (el FRONT: la página)</span><button type="button">📋 Copiar</button></div><pre>&lt;!doctype html&gt;
-&lt;html lang=&quot;es&quot;&gt;
-&lt;head&gt;
-&lt;meta charset=&quot;utf-8&quot;&gt;
-&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
-&lt;title&gt;Tienda de Laura · serverless&lt;/title&gt;
-&lt;style&gt;
-  body { font-family: system-ui, sans-serif; background: #f4f8fb; color: #0E2841; max-width: 760px; margin: 0 auto; padding: 24px 16px; }
-  h1 { color: #156082; margin: 0 0 4px; }
-  .ruta { font-size: 13px; color: #44546A; margin: 0 0 16px; }
-  .ruta b { color: #E97132; }
-  .card { background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 4px 16px rgba(14,40,65,.08); margin-bottom: 14px; }
-  form { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
-  label { display: flex; flex-direction: column; font-size: 13px; gap: 4px; }
-  input, select, button { font-size: 15px; padding: 8px 10px; border: 1px solid #dfe5ee; border-radius: 8px; }
-  button { background: #156082; color: #fff; border: 0; cursor: pointer; }
-  button.sec { background: #0F9ED5; }
-  button.naranja { background: #E97132; }
-  .botones { display: flex; flex-wrap: wrap; gap: 8px; }
-  #estado { font: 13px ui-monospace, monospace; background: #0E2841; color: #e6edf3; border-radius: 8px; padding: 10px 12px; min-height: 20px; white-space: pre-wrap; }
-  table { width: 100%; border-collapse: collapse; }
-  th, td { text-align: left; padding: 8px; border-bottom: 1px solid #dfe5ee; font-size: 14px; }
-  th { font-size: 12px; color: #8B98A9; }
-  .inst { font: 12px ui-monospace, monospace; background: #e8f3f9; color: #156082; border-radius: 6px; padding: 2px 6px; }
-&lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;h1&gt;🛍️ Tienda de Laura&lt;/h1&gt;
-  &lt;p class=&quot;ruta&quot;&gt;Esta página vive en &lt;b&gt;S3&lt;/b&gt; y llega por &lt;b&gt;CloudFront&lt;/b&gt;. Cada pedido viaja a &lt;b&gt;API Gateway&lt;/b&gt; → &lt;b&gt;Lambda&lt;/b&gt; → &lt;b&gt;DynamoDB&lt;/b&gt;. Ningún servidor prendido esperando.&lt;/p&gt;
-
-  &lt;div class=&quot;card&quot;&gt;
-    &lt;form id=&quot;f&quot;&gt;
-      &lt;label&gt;Cliente &lt;input id=&quot;cliente&quot; required maxlength=&quot;40&quot; placeholder=&quot;camila&quot;&gt;&lt;/label&gt;
-      &lt;label&gt;Producto
-        &lt;select id=&quot;producto&quot;&gt;&lt;option&gt;camiseta&lt;/option&gt;&lt;option&gt;gorra&lt;/option&gt;&lt;option&gt;buzo&lt;/option&gt;&lt;/select&gt;
-      &lt;/label&gt;
-      &lt;label&gt;Talla
-        &lt;select id=&quot;talla&quot;&gt;&lt;option&gt;S&lt;/option&gt;&lt;option selected&gt;M&lt;/option&gt;&lt;option&gt;L&lt;/option&gt;&lt;/select&gt;
-      &lt;/label&gt;
-      &lt;button&gt;Guardar pedido&lt;/button&gt;
-    &lt;/form&gt;
-  &lt;/div&gt;
-
-  &lt;div class=&quot;card botones&quot;&gt;
-    &lt;button class=&quot;sec&quot; id=&quot;todos&quot;&gt;Ver todos (Scan)&lt;/button&gt;
-    &lt;button class=&quot;sec&quot; id=&quot;uno&quot;&gt;Ver solo este cliente (Query)&lt;/button&gt;
-    &lt;button class=&quot;naranja&quot; id=&quot;rafaga&quot;&gt;⚡ Ráfaga: 20 pedidos a la vez&lt;/button&gt;
-  &lt;/div&gt;
-
-  &lt;div class=&quot;card&quot;&gt;&lt;div id=&quot;estado&quot;&gt;Lista. Guarda tu primer pedido.&lt;/div&gt;&lt;/div&gt;
-
-  &lt;div class=&quot;card&quot;&gt;
-    &lt;table&gt;
-      &lt;thead&gt;&lt;tr&gt;&lt;th&gt;cliente&lt;/th&gt;&lt;th&gt;fecha (UTC)&lt;/th&gt;&lt;th&gt;producto&lt;/th&gt;&lt;th&gt;talla&lt;/th&gt;&lt;th&gt;lo atendió&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
-      &lt;tbody id=&quot;lista&quot;&gt;&lt;/tbody&gt;
-    &lt;/table&gt;
-  &lt;/div&gt;
-
-&lt;script&gt;
-  var API = &quot;${api}&quot;;
-  var estado = document.getElementById(&quot;estado&quot;);
-
-  function esc(t) { return String(t == null ? &quot;&quot; : t).replace(/[&amp;&lt;&gt;&quot;]/g, function (c) { return { &quot;&amp;&quot;: &quot;&amp;amp;&quot;, &quot;&lt;&quot;: &quot;&amp;lt;&quot;, &quot;&gt;&quot;: &quot;&amp;gt;&quot;, &#x27;&quot;&#x27;: &quot;&amp;quot;&quot; }[c]; }); }
-
-  function contar(r) {
-    return (r.frio ? &quot;🥶 arranque en frío&quot; : &quot;🔥 instancia caliente&quot;) + &quot; · instancia &quot; + r.instancia + &quot; · &quot; + r.ms + &quot; ms dentro de la Lambda&quot;;
-  }
-
-  function pintar(r) {
-    estado.textContent = r.operacion + &quot;: &quot; + r.pedidos.length + &quot; pedido(s)\n&quot; + contar(r);
-    document.getElementById(&quot;lista&quot;).innerHTML = r.pedidos.map(function (p) {
-      return &quot;&lt;tr&gt;&lt;td&gt;&quot; + esc(p.cliente) + &quot;&lt;/td&gt;&lt;td&gt;&quot; + esc(String(p.fecha).split(&quot;#&quot;)[0]) + &quot;&lt;/td&gt;&lt;td&gt;&quot; + esc(p.producto) + &quot;&lt;/td&gt;&lt;td&gt;&quot; + esc(p.talla) + &quot;&lt;/td&gt;&lt;td&gt;&lt;span class=&#x27;inst&#x27;&gt;&quot; + esc(p.instancia) + &quot;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&quot;;
-    }).join(&quot;&quot;);
-  }
-
-  function ver(cliente) {
-    var url = API + (cliente ? &quot;/?cliente=&quot; + encodeURIComponent(cliente) : &quot;/&quot;);
-    return fetch(url).then(function (r) { return r.json(); }).then(pintar);
-  }
-
-  function guardar(pedido) {
-    return fetch(API + &quot;/&quot;, { method: &quot;POST&quot;, headers: { &quot;content-type&quot;: &quot;application/json&quot; }, body: JSON.stringify(pedido) })
-      .then(function (r) { return r.json(); });
-  }
-
-  function leerForm() {
-    return {
-      cliente: document.getElementById(&quot;cliente&quot;).value,
-      producto: document.getElementById(&quot;producto&quot;).value,
-      talla: document.getElementById(&quot;talla&quot;).value
-    };
-  }
-
-  document.getElementById(&quot;f&quot;).addEventListener(&quot;submit&quot;, function (e) {
-    e.preventDefault();
-    estado.textContent = &quot;enviando a API Gateway…&quot;;
-    guardar(leerForm()).then(function (r) {
-      estado.textContent = &quot;✅ &quot; + r.operacion + &quot;: pedido de &quot; + r.pedido.cliente + &quot; guardado en DynamoDB\n&quot; + contar(r);
-      return ver();
-    }).catch(function (err) { estado.textContent = &quot;❌ &quot; + err; });
-  });
-
-  document.getElementById(&quot;rafaga&quot;).onclick = function () {
-    var p = leerForm();
-    if (!p.cliente) { p.cliente = &quot;rafaga&quot;; }
-    estado.textContent = &quot;⚡ enviando 20 pedidos al mismo tiempo…&quot;;
-    var envios = [];
-    for (var i = 0; i &lt; 20; i++) {
-      envios.push(fetch(API + &quot;/&quot;, { method: &quot;POST&quot;, headers: { &quot;content-type&quot;: &quot;application/json&quot; }, body: JSON.stringify(p) })
-        .then(function (r) { return r.ok ? r.json() : null; })
-        .catch(function () { return null; }));
-    }
-    Promise.all(envios).then(function (rs) {
-      var inst = {}, frios = 0, frenados = 0;
-      rs.forEach(function (r) {
-        if (!r || !r.instancia) { frenados++; return; }
-        inst[r.instancia] = (inst[r.instancia] || 0) + 1; if (r.frio) { frios++; }
-      });
-      var n = Object.keys(inst).length;
-      estado.textContent = &quot;⚡ &quot; + (20 - frenados) + &quot; de 20 pedidos guardados. AWS prendió &quot; + n + &quot; instancia(s) de la Lambda (&quot; + frios + &quot; arranque(s) en frío)\n&quot; +
-        Object.keys(inst).map(function (k) { return &quot;instancia &quot; + k + &quot; → &quot; + inst[k] + &quot; pedido(s)&quot;; }).join(&quot;\n&quot;) +
-        (frenados ? &quot;\n🚦 &quot; + frenados + &quot; frenado(s) por el límite de concurrencia de tu cuenta (las cuentas nuevas pueden empezar con 10)&quot; : &quot;&quot;);
-      return fetch(API + &quot;/&quot;).then(function (r) { return r.json(); }).then(function (r) {
-        document.getElementById(&quot;lista&quot;).innerHTML = r.pedidos.map(function (x) {
-          return &quot;&lt;tr&gt;&lt;td&gt;&quot; + esc(x.cliente) + &quot;&lt;/td&gt;&lt;td&gt;&quot; + esc(String(x.fecha).split(&quot;#&quot;)[0]) + &quot;&lt;/td&gt;&lt;td&gt;&quot; + esc(x.producto) + &quot;&lt;/td&gt;&lt;td&gt;&quot; + esc(x.talla) + &quot;&lt;/td&gt;&lt;td&gt;&lt;span class=&#x27;inst&#x27;&gt;&quot; + esc(x.instancia) + &quot;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&quot;;
-        }).join(&quot;&quot;);
-      });
-    }).catch(function (err) { estado.textContent = &quot;❌ &quot; + err; });
-  };
-
-  document.getElementById(&quot;todos&quot;).onclick = function () { ver(); };
-  document.getElementById(&quot;uno&quot;).onclick = function () { ver(document.getElementById(&quot;cliente&quot;).value); };
-  ver().catch(function () {});
-&lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;
-</pre></div><div class="snip"><div class="top"><span>En la terminal de VS Code</span><button type="button">📋 Copiar</button></div><pre>terraform init
+    <ul class="cmdlist"><li><span>Descarga <b>tienda-laura.zip</b> del correo</span><span>clic derecho → <b>Extraer todo</b></span></li><li><span>VS Code → Archivo → <b>Abrir carpeta</b></span><span>la carpeta <b>tienda-laura</b>: mira front, back y terraform</span></li><li><span>Terminal: <code>cd terraform</code></span><span>¡dentro de la carpeta terraform!</span></li><li><span><code>terraform init</code><br><code>terraform apply</code></span><span>Plan: <b>16 to add</b> → yes · ≈ 4 min ☕</span></li><li><span>Al terminar te muestra</span><span><b>tu_tienda</b> (https://d….cloudfront.net) y <b>tu_api</b></span></li></ul>
+    <div class="snips"><div class="snip"><div class="top"><span>lo que trae el zip</span><button type="button">📋 Copiar</button></div><pre>tienda-laura/
+├── front/        ← FRONT: se sube a S3 y lo entrega CloudFront
+│   ├── index.html     la estructura
+│   ├── estilos.css    el diseño
+│   └── app.js         lo que reacciona
+├── back/         ← BACK: la función Lambda
+│   └── app.py         valida, pone el precio y guarda
+├── terraform/    ← la infraestructura
+│   └── main.tf
+├── politica-iam-roles.json
+└── README.md</pre></div><div class="snip"><div class="top"><span>En la terminal de VS Code</span><button type="button">📋 Copiar</button></div><pre>cd terraform
+terraform init
 terraform apply</pre></div></div>
   </div>
+  <p class="sub" style="margin-top:12px">¿No tienes el zip? También está en el repositorio del curso, carpeta tienda-laura.</p>
 </section>
 
 <section class="slide" id="labS2">
-  <span class="k"><span class="act-chip">🛍️ LAB 2 · PASO 2</span> úsala y mírala por dentro</span>
+  <span class="k"><span class="act-chip">🛍️ PASO 2</span> úsala y mírala por dentro</span>
   <h2 style="font-size:clamp(1.15rem,2.3vw,1.6rem)">Haz pedidos y mira cada pieza trabajar</h2>
   <div class="grid2" style="align-items:start;grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
-    <ul class="cmdlist"><li><span>Abre <b>tu_tienda</b> y guarda un pedido</span><span>dice 🥶 <b>arranque en frío</b></span></li><li><span>Guarda otro</span><span>🔥 <b>instancia caliente</b>: mucho más rápido</span></li><li><span>⚡ <b>Ráfaga: 20 pedidos a la vez</b></span><span>¿cuántas instancias prendió AWS?</span></li><li><span><b>DynamoDB</b> → Explorar elementos → <b>tienda-pedidos</b></span><span>ahí están tus pedidos</span></li><li><span><b>Lambda</b> → tienda-serverless → <b>Supervisar</b></span><span>invocaciones, duración y logs (“pedido guardado”)</span></li><li><span>Sin página: PowerShell → tu API</span><span>la misma puerta que usa la página</span></li></ul>
+    <ul class="cmdlist"><li><span>Abre <b>tu_tienda</b> y compra algo</span><span>mira el viaje y si fue 🥶 en frío</span></li><li><span>Guarda otro</span><span>🔥 <b>instancia caliente</b>: mucho más rápido</span></li><li><span>⚡ <b>Ráfaga: 20 pedidos a la vez</b></span><span>¿cuántas instancias prendió AWS?</span></li><li><span><b>DynamoDB</b> → Explorar elementos → <b>tienda-pedidos</b></span><span>ahí están tus pedidos</span></li><li><span><b>Lambda</b> → tienda-serverless → <b>Supervisar</b></span><span>invocaciones, duración y logs (“pedido guardado”)</span></li><li><span>Sin página: PowerShell → tu API</span><span>la misma puerta que usa la página</span></li></ul>
     <div class="snips"><div class="snip"><div class="top"><span>PowerShell: háblale a tu API sin la página</span><button type="button">📋 Copiar</button></div><pre># 1 · pega TU tu_api (la que te mostró terraform apply) entre las comillas
 $API = &quot;PEGA-AQUI-TU-tu_api&quot;
 
@@ -1482,13 +1066,12 @@ Invoke-RestMethod &quot;$API/?cliente=pedro&quot; | ConvertTo-Json -Depth 5
   <h2>Antes de irte: <span class="grad">terraform destroy</span></h2>
   <div class="grid2" style="align-items:start;grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
     <ul class="clean check">
-      <li><b>terraform destroy</b> en tienda-serverless → <b>13 destroyed</b></li>
-      <li>Borra la función <b>hola-laura</b> del LAB 1 (Lambda → Acciones → Eliminar)</li>
+      <li><b>terraform destroy</b> dentro de tienda-laura/terraform → <b>16 destroyed</b></li>
       <li>Los grupos de registros de CloudWatch (/aws/lambda/…) quedan: casi no cobran, y los puedes borrar en CloudWatch → Grupos de registros</li>
       <li>Lo de hoy: con un servidor pagas por <b>tenerlo prendido</b>; con serverless pagas por <b>usarlo</b></li>
     </ul>
     <div class="snips"><div class="snip"><div class="top"><span>En la terminal de VS Code</span><button type="button">📋 Copiar</button></div><pre>terraform destroy
-# escribe yes → Destroy complete! Resources: 13 destroyed.</pre></div></div>
+# escribe yes → Destroy complete! Resources: 16 destroyed.</pre></div></div>
   </div>
 </section>
 
@@ -3866,7 +3449,7 @@ S.arqhola=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,4,3),st=t<.8?-1:r[0],u=r
 
 /* 4.2 · LAB 2: la tienda serverless con Terraform */
 S.arqsv=function(c,t){var A=E.out(P(t,.1,.5)),r=stp(t,5,3),st=t<.8?-1:r[0],u=r[1];
-  grp(c,120,14,430,350,'#232F3E','AWS Cloud','G_AWSCloudlogo',{al:A});grp(c,136,46,400,306,'#00A4A6','us-east-1 · 13 recursos de Terraform','G_Region',{al:A,dash:[5,4]});
+  grp(c,120,14,430,350,'#232F3E','AWS Cloud','G_AWSCloudlogo',{al:A});grp(c,136,46,400,306,'#00A4A6','us-east-1 · 16 recursos de Terraform','G_Region',{al:A,dash:[5,4]});
   box(c,10,130,98,120,{r:14,al:A});icon(c,'R_Client',59,164,32,A);tx(c,'tu PC',59,196,{s:11,w:800,a:'center',f:FD,al:A});tx(c,'Terraform',59,214,{s:9,w:700,a:'center',f:FM,c:'#7b42bc',al:A});tx(c,'navegador',59,230,{s:9,w:700,a:'center',f:FM,c:C.p,al:A});
   function N(n,x,y,lab,sub,k,on){var a=st===0?E.back(P(u,k*.1,.3)):1;box(c,x-52,y-40,104,82,{r:12,f:on?'#f2f8fc':'#fff',s:on?C.p2:C.line,lw:on?2.2:1.2,al:A*Math.min(1,a)});lic(c,n,x,y-10,30,lab,A*Math.min(1,a),null,sub)}
   N('CloudFront',210,112,'CloudFront','tu_tienda',5,st===1);N('SimpleStorageService',330,112,'S3 privado','index.html',4,st===1);

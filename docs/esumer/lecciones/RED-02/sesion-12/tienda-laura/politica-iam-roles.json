@@ -1,0 +1,16 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "SoloRolesDeLaTienda",
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreateRole", "iam:DeleteRole", "iam:GetRole", "iam:TagRole", "iam:UntagRole",
+        "iam:UpdateAssumeRolePolicy", "iam:PutRolePolicy", "iam:GetRolePolicy", "iam:DeleteRolePolicy",
+        "iam:ListRolePolicies", "iam:AttachRolePolicy", "iam:DetachRolePolicy",
+        "iam:ListAttachedRolePolicies", "iam:ListInstanceProfilesForRole", "iam:PassRole"
+      ],
+      "Resource": "arn:aws:iam::*:role/tienda-*"
+    }
+  ]
+}

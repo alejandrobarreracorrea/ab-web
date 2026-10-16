@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laura · ropa que llega volando</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <!-- ===================== FRONT: lo que ve Camila ===================== -->
+  <header class="barra">
+    <a class="logo" href="#">laura<span>.</span></a>
+    <nav class="menu">
+      <a href="#coleccion">Colección</a>
+      <a href="#pedido">Comprar</a>
+      <a href="#pedidos">Pedidos</a>
+    </nav>
+    <span class="sello">⚡ 100 % serverless</span>
+  </header>
+
+  <section class="portada">
+    <div class="portada-texto">
+      <p class="antetitulo">Colección Medellín · otoño 2026</p>
+      <h1>Ropa que <em>llega volando</em>.</h1>
+      <p class="bajada">Camisetas, gorras y buzos hechos en Colombia. Esta tienda no tiene ningún servidor prendido: cada pedido despierta una función en la nube, se guarda y se vuelve a dormir.</p>
+      <div class="portada-botones">
+        <a class="boton" href="#pedido">Hacer un pedido</a>
+        <a class="boton boton-claro" href="#pedidos">Ver pedidos</a>
+      </div>
+    </div>
+    <div class="portada-arte" aria-hidden="true">
+      <div class="burbuja b1"></div><div class="burbuja b2"></div>
+      <svg viewBox="0 0 220 220" class="arte-buzo"><use href="#ico-buzo"/></svg>
+      <svg viewBox="0 0 220 220" class="arte-gorra"><use href="#ico-gorra"/></svg>
+      <svg viewBox="0 0 220 220" class="arte-camiseta"><use href="#ico-camiseta"/></svg>
+    </div>
+  </section>
+
+  <section id="coleccion" class="seccion">
+    <div class="seccion-titulo">
+      <h2>La colección</h2>
+      <p>Escoge una prenda: el precio lo calcula el back, no la página.</p>
+    </div>
+    <div class="productos" id="productos"></div>
+  </section>
+
+  <section id="pedido" class="seccion dos-columnas">
+    <form class="tarjeta formulario" id="formulario">
+      <h2>Tu pedido</h2>
+      <label>Tu nombre
+        <input id="cliente" required maxlength="40" placeholder="camila" autocomplete="off">
+      </label>
+      <label>Prenda
+        <select id="producto">
+          <option value="camiseta">Camiseta Laura</option>
+          <option value="gorra">Gorra Laura</option>
+          <option value="buzo">Buzo Laura</option>
+        </select>
+      </label>
+      <div class="fila">
+        <fieldset class="tallas">
+          <legend>Talla</legend>
+          <label><input type="radio" name="talla" value="S">S</label>
+          <label><input type="radio" name="talla" value="M" checked>M</label>
+          <label><input type="radio" name="talla" value="L">L</label>
+          <label><input type="radio" name="talla" value="XL">XL</label>
+        </fieldset>
+        <label class="cantidad">Cantidad
+          <input id="cantidad" type="number" min="1" max="5" value="1">
+        </label>
+      </div>
+      <button class="boton boton-grande" id="comprar" type="submit">Comprar</button>
+      <p class="mensaje" id="mensaje" role="status"></p>
+    </form>
+
+    <aside class="tarjeta viaje">
+      <h2>Así viajó tu pedido</h2>
+      <ol class="pasos" id="pasos">
+        <li data-paso="0"><b>Tu navegador</b><span>el FRONT arma el pedido en JSON</span></li>
+        <li data-paso="1"><b>API Gateway</b><span>la puerta revisa la ruta y el permiso</span></li>
+        <li data-paso="2"><b>Lambda</b><span>el BACK valida y pone el precio</span></li>
+        <li data-paso="3"><b>DynamoDB</b><span>guarda el pedido (PutItem)</span></li>
+        <li data-paso="4"><b>De vuelta</b><span>la respuesta llega a tu pantalla</span></li>
+      </ol>
+      <div class="medidor">
+        <div><small>arranque</small><strong id="m-frio">—</strong></div>
+        <div><small>instancia</small><strong id="m-inst">—</strong></div>
+        <div><small>dentro de Lambda</small><strong id="m-ms">—</strong></div>
+        <div><small>ida y vuelta</small><strong id="m-total">—</strong></div>
+      </div>
+    </aside>
+  </section>
+
+  <section id="pedidos" class="seccion">
+    <div class="seccion-titulo">
+      <h2>Pedidos guardados en DynamoDB</h2>
+      <p id="estado-lista">Cargando…</p>
+    </div>
+    <div class="herramientas">
+      <button class="boton boton-claro" id="ver-todos" type="button">Ver todos (Scan)</button>
+      <button class="boton boton-claro" id="ver-mios" type="button">Solo los míos (Query)</button>
+      <button class="boton boton-rafaga" id="rafaga" type="button">⚡ Ráfaga: 20 pedidos a la vez</button>
+    </div>
+    <p class="rafaga-resultado" id="rafaga-resultado" role="status"></p>
+    <div class="tabla-caja">
+      <table>
+        <thead><tr><th>cliente</th><th>prenda</th><th>talla</th><th>cant.</th><th>total</th><th>hora</th><th>lo atendió</th></tr></thead>
+        <tbody id="lista"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="pie">
+    <p><b>laura.</b> · página en <b>S3</b> entregada por <b>CloudFront</b> · pedidos por <b>API Gateway → Lambda → DynamoDB</b></p>
+    <p class="pie-curso">Esumer · Cloud Computing, Redes y Ciberseguridad · laboratorio serverless</p>
+  </footer>
+
+  <!-- dibujos de las prendas -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="ico-camiseta" viewBox="0 0 220 220"><path d="M70 40 L40 58 L20 98 L52 112 L60 96 L60 190 L160 190 L160 96 L168 112 L200 98 L180 58 L150 40 C142 58 126 66 110 66 C94 66 78 58 70 40 Z" fill="currentColor"/><path d="M84 40 C92 52 100 56 110 56 C120 56 128 52 136 40" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="6" stroke-linecap="round"/><text x="110" y="140" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="30" fill="rgba(255,255,255,.9)">laura.</text></symbol>
+    <symbol id="ico-gorra" viewBox="0 0 220 220"><path d="M40 130 C40 80 72 50 112 50 C152 50 180 80 180 130 Z" fill="currentColor"/><path d="M30 130 L196 130 C200 130 202 138 196 142 C170 156 120 160 70 150 L30 142 C24 140 24 130 30 130 Z" fill="rgba(0,0,0,.22)"/><circle cx="112" cy="52" r="8" fill="rgba(0,0,0,.25)"/><path d="M112 54 L112 128" stroke="rgba(0,0,0,.14)" stroke-width="4"/><text x="112" y="112" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="20" fill="rgba(255,255,255,.9)">L.</text></symbol>
+    <symbol id="ico-buzo" viewBox="0 0 220 220"><path d="M76 34 L44 52 L22 140 L48 150 L60 104 L60 196 L160 196 L160 104 L172 150 L198 140 L176 52 L144 34 C138 48 126 56 110 56 C94 56 82 48 76 34 Z" fill="currentColor"/><path d="M80 36 C80 70 140 70 140 36" fill="rgba(0,0,0,.18)"/><path d="M96 60 L96 96 M124 60 L124 96" stroke="rgba(255,255,255,.75)" stroke-width="4" stroke-linecap="round"/><rect x="78" y="140" width="64" height="34" rx="10" fill="rgba(0,0,0,.15)"/></symbol>
+  </svg>
+
+  <!-- config.js lo crea Terraform con la dirección de TU API -->
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
